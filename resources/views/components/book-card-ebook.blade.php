@@ -17,7 +17,7 @@
                 alt="Sampul {{ $coverLabel }} {{ $book->title }}"
                 loading="lazy"
                 decoding="async"
-                class="h-full w-full object-contain transition-transform duration-200 motion-safe:group-hover/cover:scale-[1.03] motion-reduce:transform-none"
+                class="h-full w-full object-cover transition-transform duration-200 motion-safe:group-hover/cover:scale-[1.03] motion-reduce:transform-none"
             >
         @else
             <div class="book-cover-fallback relative flex h-full w-full items-center justify-center overflow-hidden text-white" role="img" aria-label="Sampul {{ $coverLabel }} tidak tersedia untuk {{ $book->title }}">

@@ -33,7 +33,7 @@ class PublicNavbarTest extends TestCase
         $response->assertDontSee('Sains, teknologi, riset');
         $response->assertSee('Masuk');
         $response->assertSee('id="theme-toggle-btn"', false);
-        $response->assertSee('id="nav-search-toggle-btn"', false);
+        $response->assertDontSee('id="nav-search-toggle-btn"', false);
     }
 
     public function test_guest_auth_pages_use_the_litera_logo_and_png_favicon(): void

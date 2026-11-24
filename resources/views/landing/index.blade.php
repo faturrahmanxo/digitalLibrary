@@ -418,7 +418,7 @@
                                         alt="Sampul buku {{ $book->title }}"
                                         loading="lazy"
                                         decoding="async"
-                                        class="h-full w-full object-contain transition-transform duration-300 motion-safe:group-hover/card:scale-105"
+                                        class="h-full w-full object-cover transition-transform duration-300 motion-safe:group-hover/card:scale-105"
                                     >
                                 @else
                                     <div class="book-cover-fallback relative flex h-full w-full items-center justify-center overflow-hidden text-white" role="img" aria-label="Sampul buku tidak tersedia untuk {{ $book->title }}">
@@ -526,7 +526,7 @@
                                         alt="Sampul {{ $book->collection_type === 'novel' ? 'novel' : 'e-book' }} {{ $book->title }}"
                                         loading="lazy"
                                         decoding="async"
-                                        class="h-full w-full object-contain transition-transform duration-300 motion-safe:group-hover/card:scale-105"
+                                        class="h-full w-full object-cover transition-transform duration-300 motion-safe:group-hover/card:scale-105"
                                     >
                                 @else
                                     <div class="book-cover-fallback relative flex h-full w-full items-center justify-center overflow-hidden text-white" role="img" aria-label="Sampul {{ $book->collection_type === 'novel' ? 'novel' : 'e-book' }} tidak tersedia untuk {{ $book->title }}">

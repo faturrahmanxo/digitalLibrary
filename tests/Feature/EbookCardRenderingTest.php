@@ -33,7 +33,7 @@ class EbookCardRenderingTest extends TestCase
             ->assertSee('href="'.route('books.show', $ebook).'"', false)
             ->assertSee('alt="Sampul e-book Panduan Data"', false)
             ->assertSee('loading="lazy"', false)
-            ->assertSee('object-contain', false)
+            ->assertSee('object-cover', false)
             ->assertSee('Panduan Data')
             ->assertSee('2025')
             ->assertDontSee('Ayu Penulis')

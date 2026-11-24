@@ -41,6 +41,10 @@ class LandingController extends Controller
                 $q->whereIn('collection_type', [Book::COLLECTION_TYPE_PHYSICAL, 'physical', 'fisik'])
                     ->orWhereNull('collection_type');
             })
+            ->where(function ($q) {
+                $q->where('available_copies', '>', 0)
+                    ->orWhere('stock_available', '>', 0);
+            })
             ->latest('id')
             ->take(5)
             ->get();

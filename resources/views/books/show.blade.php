@@ -38,7 +38,7 @@
                             alt="Sampul {{ $isNovel ? 'novel' : 'e-book' }} {{ $book->title }}"
                             width="600"
                             height="800"
-                            class="h-full w-full object-contain"
+                            class="h-full w-full object-cover"
                         >
                     @else
                         <div class="book-cover-fallback relative flex h-full w-full items-center justify-center overflow-hidden text-white" role="img" aria-label="Sampul tidak tersedia untuk {{ $book->title }}">

@@ -102,7 +102,7 @@
                                 height="800"
                                 fetchpriority="high"
                                 decoding="async"
-                                class="h-full w-full object-contain"
+                                class="h-full w-full object-cover"
                             >
                         @else
                             <div
@@ -472,7 +472,7 @@
                                                 alt="Sampul {{ $seriesBook->title }}"
                                                 loading="lazy"
                                                 decoding="async"
-                                                class="h-full w-full object-contain transition-transform duration-300 motion-safe:group-hover/series-card:scale-105"
+                                                class="h-full w-full object-cover transition-transform duration-300 motion-safe:group-hover/series-card:scale-105"
                                             >
                                         @else
                                             <div class="book-cover-fallback relative flex h-full w-full items-center justify-center overflow-hidden text-white" role="img" aria-label="Sampul tidak tersedia untuk {{ $seriesBook->title }}">
@@ -532,7 +532,7 @@
                                             alt="Sampul Volume {{ $volume->volume_number }} - {{ $book->title }}"
                                             loading="lazy"
                                             decoding="async"
-                                            class="h-full w-full object-contain transition-transform duration-300 motion-safe:group-hover/series-card:scale-105"
+                                            class="h-full w-full object-cover transition-transform duration-300 motion-safe:group-hover/series-card:scale-105"
                                         >
                                     @else
                                         <div class="book-cover-fallback relative flex h-full w-full items-center justify-center overflow-hidden text-white" role="img" aria-label="Sampul tidak tersedia">

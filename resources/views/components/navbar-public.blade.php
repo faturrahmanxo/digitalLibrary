@@ -7,15 +7,15 @@
 
 <!-- Main Navigation Bar -->
 <header class="sticky top-0 z-40 bg-white/75 dark:bg-[#121c17]/80 backdrop-blur-xl backdrop-saturate-150 border-b border-white/40 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.2)] transition-colors duration-200">
-    <div class="max-w-7xl mx-auto px-3 sm:px-5 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-3">
+    <div class="max-w-7xl mx-auto px-3 sm:px-5 lg:px-8 h-16 relative flex items-center justify-between gap-2 sm:gap-3">
         
         <!-- Brand Lockup -->
         <a href="{{ route('home') }}" class="flex items-center gap-2.5 shrink-0 group focus-visible:outline-2 focus-visible:outline-focus rounded-xl">
             <img src="{{ asset('images/logo-Litera.png') }}" alt="Litera" width="1326" height="529" class="h-8 w-auto object-contain transition-transform duration-200 group-hover:scale-[1.02]">
         </a>
 
-        <!-- Desktop Navigation Links (Center) -->
-        <nav class="hidden lg:flex items-center gap-0.5 text-[13px] font-semibold" aria-label="Navigasi Utama">
+        <!-- Desktop Navigation Links (Centered) -->
+        <nav class="hidden lg:flex items-center gap-1 text-[13px] font-semibold absolute left-1/2 -translate-x-1/2" aria-label="Navigasi Utama">
             <!-- Beranda -->
             <a
                 href="{{ route('home') }}"
@@ -40,32 +40,32 @@
                     </svg>
                 </button>
 
-                <!-- Mega Dropdown Panel (Styled like the reference design in user image) -->
+                <!-- Mega Dropdown Panel (Centered) -->
                 <div
                     id="nav-jelajahi-dropdown-menu"
                     class="hidden fixed inset-x-4 sm:inset-x-6 top-[4.25rem] w-auto rounded-b-2xl bg-surface/98 dark:bg-surface/98 backdrop-blur-xl border border-line shadow-2xl p-4 sm:p-5 z-50 animate-fade-in-up"
                     role="menu"
                 >
-                    <div class="mx-auto grid max-w-7xl grid-cols-12 gap-4 sm:gap-6 items-center">
+                    <div class="mx-auto flex items-center justify-center gap-6 sm:gap-8 max-w-xl py-1">
                         <!-- Left Editorial Column -->
-                        <div class="col-span-3 border-r border-line pr-3 sm:pr-6">
+                        <div class="border-r border-line pr-6 sm:pr-8">
                             <h3 class="font-serif font-bold text-lg sm:text-xl text-ink leading-tight">
                                 Jelajahi
                             </h3>
                         </div>
 
                         <!-- Right Genre Column (Hanya Novel & Keilmuan) -->
-                        <div class="col-span-9 grid grid-cols-2 gap-2 sm:gap-5">
+                        <div class="flex items-center gap-4 sm:gap-6">
                             <a
                                 href="{{ url('/jelajahi?genre=novel-fiksi') }}"
-                                class="flex min-h-11 items-center rounded-xl px-3 py-2 text-sm font-semibold text-ink hover:bg-surface-soft hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+                                class="flex min-h-10 items-center rounded-xl px-3 py-1.5 text-sm font-semibold text-ink hover:bg-surface-soft hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
                                 role="menuitem"
                             >
                                 Novel
                             </a>
                             <a
                                 href="{{ url('/jelajahi?genre=keilmuan-edukasi') }}"
-                                class="flex min-h-11 items-center rounded-xl px-3 py-2 text-sm font-semibold text-ink hover:bg-surface-soft hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+                                class="flex min-h-10 items-center rounded-xl px-3 py-1.5 text-sm font-semibold text-ink hover:bg-surface-soft hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
                                 role="menuitem"
                             >
                                 Keilmuan
@@ -84,24 +84,9 @@
             </a>
         </nav>
 
-        <!-- Right Side Controls: Search, Theme Toggle, Auth, Mobile Toggle -->
+        <!-- Right Side Controls: Theme Toggle, Auth, Mobile Toggle (Search icon removed) -->
         <div class="flex items-center gap-1.5 sm:gap-2">
             
-            <!-- Search Button (Opens Expandable Desktop Search / Modal) -->
-            <div class="relative hidden lg:block" id="nav-search-container">
-                <button
-                    type="button"
-                    id="nav-search-toggle-btn"
-                    aria-label="Pencarian Buku"
-                    class="p-2 rounded-xl border border-line/70 dark:border-white/10 bg-white/50 dark:bg-white/5 backdrop-blur-md text-text-muted hover:text-ink hover:bg-white/80 dark:hover:bg-white/10 active:scale-95 transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-focus shadow-2xs"
-                    title="Cari Buku &amp; Penulis"
-                >
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </button>
-            </div>
-
             <!-- Theme Toggle with Smooth Rotational Flipping Animation -->
             <button
                 type="button"
