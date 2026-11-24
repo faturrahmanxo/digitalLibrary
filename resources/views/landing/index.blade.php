@@ -378,100 +378,104 @@
         </div>
     </section>
 
-    <!-- Curated Books & Academic Catalog Section (One Viewport / Compact 5-Card Row) -->
-    <section id="katalog" class="py-10 sm:py-14 bg-surface">
+    <!-- Section 1: Buku Fisik Terbaru -->
+    <section id="buku-fisik" class="py-12 sm:py-16 bg-surface border-b border-line/60">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <!-- Section Header (Academic Title with Left Eyebrow Line) -->
-            <div class="mb-6 sm:mb-8">
+            <!-- Section Header -->
+            <div class="mb-8 sm:mb-10">
                 <div class="inline-flex items-center gap-2.5">
                     <span class="w-8 h-0.5 bg-brand-600 dark:bg-brand-400 rounded-full"></span>
-                    <span class="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 font-sans">Keilmuan</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 font-sans">Koleksi Fisik</span>
                 </div>
-                <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-ink font-serif tracking-tight mt-1">E-Book Keilmuan Terbaru</h2>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-ink font-serif tracking-tight mt-1.5">Buku Fisik Terbaru</h2>
                 <p class="text-xs sm:text-sm text-text-muted mt-2 max-w-2xl leading-relaxed font-sans">
-                    Pilihan e-book keilmuan terbaru untuk mendukung pembelajaran, literasi, dan riset sivitas akademika.
+                    Koleksi buku fisik terbaru yang tersedia di rak perpustakaan dan siap dipinjam secara langsung oleh sivitas akademika.
                 </p>
             </div>
 
-            @if ($ebooks->isEmpty())
+            @if (($physicalBooks ?? collect())->isEmpty())
                 <div class="p-12 text-center rounded-3xl border border-line bg-surface-soft max-w-md mx-auto">
-                    <h3 class="text-base font-normal text-ink font-serif">Belum Ada E-Book Keilmuan</h3>
-                    <p class="text-xs text-text-muted mt-1 mb-4 font-sans">Koleksi e-book keilmuan terbaru akan tampil di sini.</p>
-                    <a href="{{ route('catalog.index', ['genre' => 'keilmuan-edukasi']) }}" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold">
-                        Jelajahi Keilmuan
+                    <h3 class="text-base font-normal text-ink font-serif">Belum Ada Buku Fisik Terbaru</h3>
+                    <p class="text-xs text-text-muted mt-1 mb-4 font-sans">Koleksi buku fisik terbaru akan segera hadir di perpustakaan.</p>
+                    <a href="{{ route('catalog.index', ['collection_type' => 'physical']) }}" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold font-sans">
+                        Jelajahi Buku Fisik
                     </a>
                 </div>
             @else
                 <div class="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 lg:grid-cols-5 sm:gap-x-5">
-                    @foreach ($ebooks as $book)
-                        @if ($book->collection_type === 'e-book')
-                            <x-book-card-ebook :book="$book" :href="route('books.show', $book)" class="mx-auto w-full max-w-64" />
-                        @else
+                    @foreach ($physicalBooks as $book)
                         <a
                             href="{{ route('books.show', $book) }}"
-                            class="group card-interactive p-5 sm:p-6 rounded-2xl bg-surface-soft hover:bg-surface border border-line hover:border-brand-600 dark:hover:border-brand-400 flex flex-col justify-between cursor-pointer focus:outline-none"
+                            class="group/card flex flex-col h-full rounded-2xl bg-surface border border-line hover:border-brand-600 dark:hover:border-brand-400 p-3.5 sm:p-4 transition-all duration-200 hover:shadow-md hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus cursor-pointer"
                             title="{{ $book->title }}"
                         >
-                            <div>
-                                <!-- Top Tag: Classification Icon & Category Name + ISBN -->
-                                <div class="flex items-center justify-between gap-2">
-                                    <div class="inline-flex items-center gap-1.5 text-brand-600 dark:text-brand-400">
-                                        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"/>
-                                        </svg>
-                                        <span class="text-[11px] font-bold uppercase tracking-wider font-sans">
-                                            {{ $book->category?->name ?? 'UMUM' }}
-                                        </span>
+                            <!-- Cover Book (Aspect 3/4) -->
+                            <div class="group/cover relative aspect-[3/4] w-full overflow-hidden rounded-xl bg-surface-soft border border-line/60 shadow-2xs mb-3">
+                                @if (filled($book->cover_path))
+                                    <img
+                                        src="{{ asset('storage/' . $book->cover_path) }}"
+                                        alt="Sampul buku {{ $book->title }}"
+                                        loading="lazy"
+                                        decoding="async"
+                                        class="h-full w-full object-contain transition-transform duration-300 motion-safe:group-hover/card:scale-105"
+                                    >
+                                @else
+                                    <div class="book-cover-fallback relative flex h-full w-full items-center justify-center overflow-hidden text-white" role="img" aria-label="Sampul buku tidak tersedia untuk {{ $book->title }}">
+                                        <span class="font-serif text-4xl sm:text-5xl font-bold tracking-wide text-white" aria-hidden="true">LT</span>
                                     </div>
-                                    @if ($book->isbn)
-                                        <span class="text-[10px] font-mono text-text-muted tracking-tight">
-                                            ISBN {{ $book->isbn }}
+                                @endif
+                            </div>
+
+                            <!-- Card Content -->
+                            <div class="flex flex-col flex-1 min-w-0">
+                                <!-- Category Badge -->
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 truncate font-sans">
+                                    {{ $book->category?->name ?? 'UMUM' }}
+                                </span>
+
+                                <!-- Title -->
+                                <h3 class="font-bold text-sm text-ink group-hover/card:text-brand-600 dark:group-hover/card:text-brand-400 transition-colors line-clamp-2 leading-snug mt-1 font-sans" title="{{ $book->title }}">
+                                    {{ $book->title }}
+                                </h3>
+
+                                <!-- Author & Year -->
+                                <div class="flex items-center gap-1.5 text-xs text-text-muted mt-1.5 font-sans truncate">
+                                    <span class="truncate font-medium">{{ $book->author ?: 'Litera' }}</span>
+                                    @if ($book->publication_year)
+                                        <span>·</span>
+                                        <span class="font-year font-semibold shrink-0">{{ $book->publication_year }}</span>
+                                    @endif
+                                </div>
+
+                                <!-- Status Stok / Ketersediaan -->
+                                <div class="mt-2.5">
+                                    @if (($book->available_copies ?? $book->stock_available ?? 0) > 0)
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[11px] font-semibold font-sans">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                                            <span class="truncate">Tersedia {{ $book->available_copies ?? $book->stock_available }} eks</span>
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-700 dark:text-rose-400 text-[11px] font-semibold font-sans">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0"></span>
+                                            <span>Sedang Dipinjam</span>
                                         </span>
                                     @endif
                                 </div>
 
-                                <!-- Book Title (Plus Jakarta Sans, Bold, Crisp Leading) -->
-                                <h3 class="text-sm sm:text-base font-bold text-ink font-sans tracking-tight leading-snug line-clamp-2 mt-2.5 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors" title="{{ $book->title }}">
-                                    {{ $book->title }}
-                                </h3>
-
-                                <!-- Metadata Row: Author, Year, Availability -->
-                                <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-text-muted mt-2.5">
-                                    <div class="flex items-center gap-1.5 min-w-0" title="Penulis">
-                                        <svg class="w-3.5 h-3.5 text-text-muted/70 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                        </svg>
-                                        <span class="truncate max-w-[150px] sm:max-w-[180px] font-sans font-medium">{{ $book->author }}</span>
-                                    </div>
-                                    <div class="flex items-center gap-1.5" title="Tahun Terbit">
-                                        <svg class="w-3.5 h-3.5 text-text-muted/70 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                        </svg>
-                                        <span class="font-year font-bold text-ink/90">{{ $book->publication_year }}</span>
-                                    </div>
-                                    <div class="flex items-center gap-1.5" title="Ketersediaan">
-                                        <svg class="w-3.5 h-3.5 text-text-muted/70 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                                        </svg>
-                                        <span class="font-sans font-medium">{{ $book->stock_available > 0 ? 'Tersedia ' . $book->stock_available . ' eks' : 'Sedang Dipinjam' }}</span>
-                                    </div>
-                                </div>
-
-                                <!-- Excerpt / Description Snippet -->
-                                <p class="text-xs text-text-muted line-clamp-2 sm:line-clamp-3 leading-relaxed mt-3 font-sans">
-                                    {{ $book->category?->description ? 'Koleksi terbitan ' . ($book->publisher ?? 'Litera') . '. ' . $book->category->description . ' Disusun untuk menunjang rujukan riset dan studi akademik.' : 'Koleksi buku referensi akademik terbitan ' . ($book->publisher ?? 'Litera') . ' untuk menunjang riset dan pengayaan literasi sivitas akademika.' }}
+                                <!-- Short Description (Max 2-3 lines) -->
+                                <p class="text-[11px] text-text-muted line-clamp-2 leading-relaxed mt-2.5 font-sans">
+                                    {{ $book->synopsis ?: ($book->description ?: ($book->category?->description ?: 'Koleksi buku fisik perpustakaan Litera untuk menunjang studi dan pengayaan literasi akademik.')) }}
                                 </p>
                             </div>
                         </a>
-                        @endif
                     @endforeach
                 </div>
 
-                <!-- Footer Link to Full Catalog with Animated Arrow on Hover -->
-                <div class="mt-6 sm:mt-8 text-center">
-                    <a href="{{ route('catalog.index') }}" class="group inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-surface hover:bg-surface-soft border border-line hover:border-brand-600 dark:hover:border-brand-400 text-xs font-bold text-ink hover:text-brand-600 dark:hover:text-brand-400 shadow-2xs hover:shadow-xs transition-all duration-200 font-sans">
-                        <span>Lihat Seluruh Koleksi</span>
+                <!-- CTA Bawah -->
+                <div class="mt-8 sm:mt-10 text-center">
+                    <a href="{{ route('catalog.index', ['collection_type' => 'physical']) }}" class="group inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-surface hover:bg-surface-soft border border-line hover:border-brand-600 dark:hover:border-brand-400 text-xs font-bold text-ink hover:text-brand-600 dark:hover:text-brand-400 shadow-2xs hover:shadow-xs transition-all duration-200 font-sans">
+                        <span>Jelajahi Buku Fisik</span>
                         <svg class="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform duration-200 ease-out text-brand-600 dark:text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                         </svg>
@@ -482,48 +486,106 @@
         </div>
     </section>
 
-    <section id="novel-terbaru" class="py-10 sm:py-14 bg-surface">
+    <!-- Section 2: E-Book Terbaru -->
+    <section id="koleksi-ebook" class="py-12 sm:py-16 bg-surface">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="mb-6 sm:mb-8">
+            
+            <!-- Section Header -->
+            <div class="mb-8 sm:mb-10">
                 <div class="inline-flex items-center gap-2.5">
                     <span class="w-8 h-0.5 bg-brand-600 dark:bg-brand-400 rounded-full"></span>
-                    <span class="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 font-sans">Koleksi Novel</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 font-sans">Pustaka Digital</span>
                 </div>
-                <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-ink font-serif tracking-tight mt-1">Novel Terbaru Litera</h2>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-ink font-serif tracking-tight mt-1.5">E-Book Terbaru</h2>
                 <p class="text-xs sm:text-sm text-text-muted mt-2 max-w-2xl leading-relaxed font-sans">
-                    Novel terbaru dari koleksi Litera, ditampilkan dengan format kartu yang sama agar mudah dijelajahi.
+                    Koleksi buku digital yang bisa dibaca secara online atau diakses langsung secara digital kapan pun dan di mana pun.
                 </p>
             </div>
 
-            @if ($novels->isEmpty())
+            @if (($ebooks ?? collect())->isEmpty())
                 <div class="p-12 text-center rounded-3xl border border-line bg-surface-soft max-w-md mx-auto">
-                    <h3 class="text-base font-normal text-ink font-serif">Belum Ada Novel Terbaru</h3>
-                    <p class="text-xs text-text-muted mt-1 mb-4 font-sans">Novel terbaru akan tampil di sini setelah tersedia di katalog.</p>
-                    <a href="{{ route('catalog.index', ['genre' => 'novel-fiksi']) }}" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold">
-                        Jelajahi Novel
+                    <h3 class="text-base font-normal text-ink font-serif">Belum Ada E-Book Terbaru</h3>
+                    <p class="text-xs text-text-muted mt-1 mb-4 font-sans">Koleksi e-book digital terbaru akan tampil di sini.</p>
+                    <a href="{{ route('catalog.index', ['collection_type' => 'ebook']) }}" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold font-sans">
+                        Jelajahi E-Book
                     </a>
                 </div>
             @else
                 <div class="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 lg:grid-cols-5 sm:gap-x-5">
-                    @foreach ($novels as $book)
-                        <x-book-card-ebook
-                            :book="$book"
-                            :href="route('books.show', $book)"
-                            cover-label="novel"
-                            class="mx-auto w-full max-w-64"
-                        />
+                    @foreach ($ebooks as $book)
+                        <a
+                            href="{{ route('books.show', $book) }}"
+                            class="group/card flex flex-col h-full rounded-2xl bg-surface border border-line hover:border-brand-600 dark:hover:border-brand-400 p-3.5 sm:p-4 transition-all duration-200 hover:shadow-md hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus cursor-pointer"
+                            title="{{ $book->title }}"
+                        >
+                            <!-- Cover Book (Aspect 3/4) -->
+                            <div class="group/cover relative aspect-[3/4] w-full overflow-hidden rounded-xl bg-surface-soft border border-line/60 shadow-2xs mb-3">
+                                @if (filled($book->cover_path))
+                                    <img
+                                        src="{{ asset('storage/' . $book->cover_path) }}"
+                                        alt="Sampul {{ $book->collection_type === 'novel' ? 'novel' : 'e-book' }} {{ $book->title }}"
+                                        loading="lazy"
+                                        decoding="async"
+                                        class="h-full w-full object-contain transition-transform duration-300 motion-safe:group-hover/card:scale-105"
+                                    >
+                                @else
+                                    <div class="book-cover-fallback relative flex h-full w-full items-center justify-center overflow-hidden text-white" role="img" aria-label="Sampul {{ $book->collection_type === 'novel' ? 'novel' : 'e-book' }} tidak tersedia untuk {{ $book->title }}">
+                                        <span class="font-serif text-4xl sm:text-5xl font-bold tracking-wide text-white" aria-hidden="true">LT</span>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <!-- Card Content -->
+                            <div class="flex flex-col flex-1 min-w-0">
+                                <!-- Category Badge -->
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 truncate font-sans">
+                                    {{ $book->category?->name ?? 'UMUM' }}
+                                </span>
+
+                                <!-- Title -->
+                                <h3 class="font-bold text-sm text-ink group-hover/card:text-brand-600 dark:group-hover/card:text-brand-400 transition-colors line-clamp-2 leading-snug mt-1 font-sans" title="{{ $book->title }}">
+                                    {{ $book->title }}
+                                </h3>
+
+                                <!-- Author & Year -->
+                                <div class="flex items-center gap-1.5 text-xs text-text-muted mt-1.5 font-sans truncate">
+                                    <span class="truncate font-medium">{{ $book->author ?: 'Litera' }}</span>
+                                    @if ($book->publication_year)
+                                        <span>·</span>
+                                        <span class="font-year font-semibold shrink-0">{{ $book->publication_year }}</span>
+                                    @endif
+                                </div>
+
+                                <!-- Jenis Akses Singkat -->
+                                <div class="mt-2.5">
+                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-brand-500/10 text-brand-700 dark:text-brand-300 text-[11px] font-semibold font-sans">
+                                        <svg class="w-3 h-3 text-brand-600 dark:text-brand-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                        </svg>
+                                        <span>{{ filled($book->read_url) || filled($book->digital_file_path) ? 'Baca Online' : 'Akses Digital' }}</span>
+                                    </span>
+                                </div>
+
+                                <!-- Short Description (Max 2-3 lines) -->
+                                <p class="text-[11px] text-text-muted line-clamp-2 leading-relaxed mt-2.5 font-sans">
+                                    {{ $book->synopsis ?: ($book->description ?: ($book->category?->description ?: 'Koleksi e-book digital pilihan Litera untuk menunjang pembelajaran dan literasi sivitas akademika.')) }}
+                                </p>
+                            </div>
+                        </a>
                     @endforeach
                 </div>
 
-                <div class="mt-6 text-center sm:mt-8">
-                    <a href="{{ route('catalog.index', ['genre' => 'novel-fiksi']) }}" class="group inline-flex items-center gap-2 rounded-full border border-line bg-surface px-6 py-2.5 font-sans text-xs font-bold text-ink shadow-2xs transition-all duration-200 hover:border-brand-600 hover:bg-surface-soft hover:text-brand-600 hover:shadow-xs dark:hover:border-brand-400 dark:hover:text-brand-400">
-                        <span>Lihat Seluruh Koleksi</span>
-                        <svg class="h-4 w-4 transform text-brand-600 transition-transform duration-200 ease-out group-hover:translate-x-1.5 dark:text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <!-- CTA Bawah -->
+                <div class="mt-8 sm:mt-10 text-center">
+                    <a href="{{ route('catalog.index', ['collection_type' => 'ebook']) }}" class="group inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-surface hover:bg-surface-soft border border-line hover:border-brand-600 dark:hover:border-brand-400 text-xs font-bold text-ink hover:text-brand-600 dark:hover:text-brand-400 shadow-2xs hover:shadow-xs transition-all duration-200 font-sans">
+                        <span>Lihat Semua E-Book</span>
+                        <svg class="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform duration-200 ease-out text-brand-600 dark:text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                         </svg>
                     </a>
                 </div>
             @endif
+
         </div>
     </section>
 

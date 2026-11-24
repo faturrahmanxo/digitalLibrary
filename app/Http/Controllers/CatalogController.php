@@ -285,6 +285,7 @@ class CatalogController extends Controller
 
         $readLink = ! $isPhysical ? $book->getReadLink() : null;
         $downloadLink = ! $isPhysical ? $book->getDownloadLink() : null;
+        $relatedSeriesBooks = ! $isPhysical ? $book->getRelatedSeriesBooks() : collect();
 
         return view('books.detail', [
             'book' => $book,
@@ -293,6 +294,7 @@ class CatalogController extends Controller
             'isFavorited' => $isFavorited,
             'userBorrowing' => $userBorrowing,
             'volumes' => $volumes,
+            'relatedSeriesBooks' => $relatedSeriesBooks,
             'readLink' => $readLink,
             'downloadLink' => $downloadLink,
             'description' => $book->synopsis ?: $book->description,

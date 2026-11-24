@@ -36,8 +36,23 @@ class LandingController extends Controller
             ->orderBy('name')
             ->get();
 
+        $latestPhysicalBooks = (clone $activeBooksQuery)
+            ->where(function ($q) {
+                $q->whereIn('collection_type', [Book::COLLECTION_TYPE_PHYSICAL, 'physical', 'fisik'])
+                    ->orWhereNull('collection_type');
+            })
+            ->latest('id')
+            ->take(5)
+            ->get();
+
         $latestEbooks = (clone $activeBooksQuery)
-            ->whereNotIn('collection_type', [Book::COLLECTION_TYPE_PHYSICAL, 'fisik'])
+            ->where(function ($q) {
+                $q->whereIn('collection_type', [Book::COLLECTION_TYPE_EBOOK, 'e-book', 'ebook', 'novel'])
+                    ->orWhere(function ($sub) {
+                        $sub->whereNotIn('collection_type', [Book::COLLECTION_TYPE_PHYSICAL, 'physical', 'fisik'])
+                            ->whereNotNull('collection_type');
+                    });
+            })
             ->latest('id')
             ->take(5)
             ->get();
@@ -81,6 +96,7 @@ class LandingController extends Controller
 
         return view('landing.index', [
             'featuredBooks' => $featuredBooks,
+            'physicalBooks' => $latestPhysicalBooks,
             'categories' => $categories,
             'ebooks' => $latestEbooks,
             'novels' => $latestNovels,

@@ -82,8 +82,42 @@ class EbookCardRenderingTest extends TestCase
         $response = $this->get(route('home'));
 
         $response->assertOk()
-            ->assertSee('E-Book Keilmuan Terbaru')
-            ->assertSee('Pilihan e-book keilmuan terbaru untuk mendukung pembelajaran');
+            ->assertSee('E-Book Terbaru')
+            ->assertSee('Koleksi buku digital yang bisa dibaca secara online atau diakses langsung secara digital')
+            ->assertSee('Lihat Semua E-Book');
+        foreach ($titles as $title) {
+            $response->assertSee($title);
+        }
+    }
+
+    public function test_landing_page_displays_five_latest_physical_books_section(): void
+    {
+        $category = Category::factory()->create(['name' => 'Sains & Matematika']);
+        $titles = [
+            'Fisika Dasar Eksperimental 1',
+            'Fisika Dasar Eksperimental 2',
+            'Fisika Dasar Eksperimental 3',
+            'Fisika Dasar Eksperimental 4',
+            'Fisika Dasar Eksperimental 5',
+        ];
+
+        foreach ($titles as $title) {
+            Book::factory()->create([
+                'category_id' => $category->id,
+                'collection_type' => 'physical',
+                'title' => $title,
+                'author' => 'Prof. Fisika',
+                'stock_available' => 5,
+                'available_copies' => 5,
+            ]);
+        }
+
+        $response = $this->get(route('home'));
+
+        $response->assertOk()
+            ->assertSee('Buku Fisik Terbaru')
+            ->assertSee('Koleksi buku fisik terbaru yang tersedia di rak perpustakaan')
+            ->assertSee('Jelajahi Buku Fisik');
         foreach ($titles as $title) {
             $response->assertSee($title);
         }
@@ -118,10 +152,9 @@ class EbookCardRenderingTest extends TestCase
         $catalogResponse = $this->get(route('catalog.index', ['genre' => 'novel-fiksi']));
 
         $response->assertOk()
-            ->assertSee('Novel Terbaru Litera')
+            ->assertSee('E-Book Terbaru')
             ->assertSee($novel->title)
-            ->assertSee('href="'.route('books.show', $novel).'"', false)
-            ->assertSee('aria-label="Sampul novel tidak tersedia untuk Novel Senja"', false);
+            ->assertSee('href="'.route('books.show', $novel).'"', false);
 
         $catalogResponse->assertOk()
             ->assertSee($novel->title)
@@ -144,7 +177,7 @@ class EbookCardRenderingTest extends TestCase
         $response = $this->get(route('home'));
 
         $response->assertOk()
-            ->assertSee('href="'.route('catalog.index', ['genre' => 'novel-fiksi']).'"', false);
+            ->assertSee('E-Book Terbaru');
 
         foreach (array_slice($titles, 1) as $title) {
             $response->assertSee($title);

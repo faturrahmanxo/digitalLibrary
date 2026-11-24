@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\BookFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,6 +30,9 @@ class Book extends Model
         'category_id',
         'shelf_id',
         'publisher_id',
+        'series_id',
+        'series_title',
+        'volume_label',
         'title',
         'author',
         'collection_type',
@@ -126,6 +130,81 @@ class Book extends Model
     public function novelVolumes(): HasMany
     {
         return $this->hasMany(NovelVolume::class);
+    }
+
+    public function seriesParent(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'series_id');
+    }
+
+    public function seriesBooks(): HasMany
+    {
+        return $this->hasMany(self::class, 'series_id');
+    }
+
+    /**
+     * Retrieve related books in the same series, volume group, or same base title.
+     *
+     * @return Collection<int, Book>
+     */
+    public function getRelatedSeriesBooks(): Collection
+    {
+        $query = static::query()
+            ->with(['category', 'shelf', 'publisher'])
+            ->where('id', '!=', $this->id)
+            ->where(function ($q) {
+                $q->where('status', self::STATUS_ACTIVE)->orWhereNull('status');
+            });
+
+        $hasExplicitSeries = false;
+
+        if ($this->series_id) {
+            $parentOrSiblingId = $this->series_id;
+            $query->where(function ($q) use ($parentOrSiblingId) {
+                $q->where('id', $parentOrSiblingId)
+                    ->orWhere('series_id', $parentOrSiblingId);
+            });
+            $hasExplicitSeries = true;
+        } elseif (filled($this->series_title)) {
+            $query->where('series_title', $this->series_title);
+            $hasExplicitSeries = true;
+        } else {
+            $childrenCount = static::where('series_id', $this->id)->count();
+            if ($childrenCount > 0) {
+                $query->where('series_id', $this->id);
+                $hasExplicitSeries = true;
+            }
+        }
+
+        if ($hasExplicitSeries) {
+            return $query->orderBy('volume_label')->orderBy('id')->get();
+        }
+
+        // Smart fallback: same author and similar series base title
+        if (filled($this->title) && filled($this->author)) {
+            $baseTitle = preg_replace('/(\s*[-:–]?\s*(Vol(\.|ume)?|Bagian|Buku|Part|Edisi)\s*\d+.*)$/i', '', $this->title);
+            $baseTitle = trim((string) $baseTitle);
+
+            if (mb_strlen($baseTitle) >= 4 && $baseTitle !== $this->title) {
+                $related = static::query()
+                    ->with(['category', 'shelf', 'publisher'])
+                    ->where('id', '!=', $this->id)
+                    ->where('author', $this->author)
+                    ->where(function ($q) {
+                        $q->where('status', self::STATUS_ACTIVE)->orWhereNull('status');
+                    })
+                    ->where('title', 'like', $baseTitle.'%')
+                    ->orderBy('title')
+                    ->take(8)
+                    ->get();
+
+                if ($related->isNotEmpty()) {
+                    return $related;
+                }
+            }
+        }
+
+        return new Collection;
     }
 
     public function activeBorrowingItems(): HasMany

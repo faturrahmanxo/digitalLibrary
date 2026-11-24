@@ -177,4 +177,48 @@ class BookDetailPageTest extends TestCase
         $this->get(route('books.manage', $book))
             ->assertRedirect(route('login'));
     }
+
+    public function test_ebook_detail_displays_related_series_and_volumes_section(): void
+    {
+        $category = Category::factory()->create(['name' => 'Sastra & Fiksi']);
+        $book1 = Book::factory()->create([
+            'category_id' => $category->id,
+            'collection_type' => 'novel',
+            'title' => 'Hikayat Samudra - Bagian 1',
+            'author' => 'Pramudya',
+            'series_title' => 'Hikayat Samudra',
+            'volume_label' => 'Volume 1',
+            'publication_year' => 2023,
+        ]);
+
+        $book2 = Book::factory()->create([
+            'category_id' => $category->id,
+            'collection_type' => 'novel',
+            'title' => 'Hikayat Samudra - Bagian 2',
+            'author' => 'Pramudya',
+            'series_id' => $book1->id,
+            'series_title' => 'Hikayat Samudra',
+            'volume_label' => 'Volume 2',
+            'publication_year' => 2024,
+        ]);
+
+        $response = $this->get(route('books.show', $book1));
+
+        $response->assertOk()
+            ->assertSee('Bagian Seri Ini')
+            ->assertSee('Hikayat Samudra - Bagian 2')
+            ->assertSee('Volume 2')
+            ->assertSee('Tahun 2024')
+            ->assertSee('href="'.route('books.show', $book2).'"', false)
+            ->assertSee('Buka Detail');
+
+        // And from book 2 detail, book 1 is shown
+        $response2 = $this->get(route('books.show', $book2));
+        $response2->assertOk()
+            ->assertSee('Bagian Seri Ini')
+            ->assertSee('Hikayat Samudra - Bagian 1')
+            ->assertSee('Volume 1')
+            ->assertSee('Tahun 2023')
+            ->assertSee('href="'.route('books.show', $book1).'"', false);
+    }
 }
