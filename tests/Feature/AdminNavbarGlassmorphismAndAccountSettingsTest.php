@@ -63,7 +63,12 @@ class AdminNavbarGlassmorphismAndAccountSettingsTest extends TestCase
         $response->assertOk();
         // Redesigned modern hero banner with legible text
         $response->assertSee('Halo, '.$admin->name.'! 👋');
+        $response->assertSee('Admin Dashboard — Sistem Sirkulasi Lengkap');
         $response->assertSee('href="#pengaturan-akun"', false);
+
+        // Sidebar Account Settings link present
+        $response->assertSee('id="sidebar-account-settings-link"', false);
+        $response->assertSee('sidebar-account-settings-link', false);
 
         // Pengaturan Akun section present
         $response->assertSee('id="pengaturan-akun"', false);
@@ -90,5 +95,16 @@ class AdminNavbarGlassmorphismAndAccountSettingsTest extends TestCase
         $response->assertSee('Mode Gelap');
         $response->assertSee('Ikuti Sistem');
         $response->assertSee('setThemeDashboard', false);
+    }
+
+    public function test_form_does_not_contain_tanda_bintang_wajib_diisi(): void
+    {
+        $admin = User::where('role', User::ROLE_ADMIN)->firstOrFail();
+
+        $response = $this->actingAs($admin)->get(route('books.create'));
+
+        $response->assertOk();
+        $response->assertDontSee('Tanda * wajib diisi');
+        $response->assertDontSee('wajib diisi</span>', false);
     }
 }

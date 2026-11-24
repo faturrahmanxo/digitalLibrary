@@ -116,7 +116,7 @@
                                     <span class="{{ $item['active'] ? 'text-brand-700 dark:text-ink font-semibold' : '' }}">{{ $item['label'] }}</span>
                                 </div>
                                 @if($item['active'])
-                                    <span class="w-2 h-2 rounded-full bg-brand-600 dark:bg-brand-400 animate-pulse"></span>
+                                    <svg class="w-2.5 h-2.5 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                                 @endif
                             </a>
                         @endif
@@ -137,7 +137,7 @@
                             <span class="{{ $isDashboardActive ? 'text-brand-700 dark:text-ink font-semibold' : '' }}">Dashboard</span>
                         </div>
                         @if($isDashboardActive)
-                            <span class="w-2 h-2 rounded-full bg-brand-600 dark:bg-brand-400 animate-pulse"></span>
+                            <svg class="w-2.5 h-2.5 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                         @endif
                     </a>
 
@@ -169,35 +169,35 @@
                                        class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium transition-colors {{ $isBooksActive ? 'bg-sidebar-active text-ink font-semibold shadow-xs' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
                                         <span>Data Buku</span>
                                         @if($isBooksActive)
-                                            <span class="w-1.5 h-1.5 rounded-full bg-brand-600 dark:bg-brand-400"></span>
+                                            <svg class="w-2 h-2 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                                         @endif
                                     </a>
                                     <a href="{{ route('categories.index') }}"
                                        class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium transition-colors {{ $isCategoriesActive ? 'bg-sidebar-active text-ink font-semibold shadow-xs' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
                                         <span>Kategori Buku</span>
                                         @if($isCategoriesActive)
-                                            <span class="w-1.5 h-1.5 rounded-full bg-brand-600 dark:bg-brand-400"></span>
+                                            <svg class="w-2 h-2 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                                         @endif
                                     </a>
                                     <a href="{{ Route::has('shelves.index') ? route('shelves.index') : url('/shelves') }}"
                                        class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium transition-colors {{ $isShelvesActive ? 'bg-sidebar-active text-ink font-semibold shadow-xs' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
                                         <span>Rak Buku</span>
                                         @if($isShelvesActive)
-                                            <span class="w-1.5 h-1.5 rounded-full bg-brand-600 dark:bg-brand-400"></span>
+                                            <svg class="w-2 h-2 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                                         @endif
                                     </a>
                                     <a href="{{ route('borrowings.index') }}"
                                        class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium transition-colors {{ $isBorrowingsActive ? 'bg-sidebar-active text-ink font-semibold shadow-xs' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
                                         <span>Peminjaman Buku</span>
                                         @if($isBorrowingsActive)
-                                            <span class="w-1.5 h-1.5 rounded-full bg-brand-600 dark:bg-brand-400"></span>
+                                            <svg class="w-2 h-2 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                                         @endif
                                     </a>
                                     <a href="{{ Route::has('publishers.index') ? route('publishers.index') : url('/publishers') }}"
                                        class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium transition-colors {{ $isPublishersActive ? 'bg-sidebar-active text-ink font-semibold shadow-xs' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
                                         <span>Penerbit</span>
                                         @if($isPublishersActive)
-                                            <span class="w-1.5 h-1.5 rounded-full bg-brand-600 dark:bg-brand-400"></span>
+                                            <svg class="w-2 h-2 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                                         @endif
                                     </a>
                                 </div>
@@ -231,7 +231,7 @@
                                        class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium transition-colors {{ $isMembersActive ? 'bg-sidebar-active text-ink font-semibold shadow-xs' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
                                         <span>Anggota</span>
                                         @if($isMembersActive)
-                                            <span class="w-1.5 h-1.5 rounded-full bg-brand-600 dark:bg-brand-400"></span>
+                                            <svg class="w-2 h-2 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                                         @endif
                                     </a>
                                     @if ($canManageUsers)
@@ -239,7 +239,7 @@
                                            class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium transition-colors {{ $isUsersActive ? 'bg-sidebar-active text-ink font-semibold shadow-xs' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
                                             <span>Admin &amp; Petugas</span>
                                             @if($isUsersActive)
-                                                <span class="w-1.5 h-1.5 rounded-full bg-brand-600 dark:bg-brand-400"></span>
+                                                <svg class="w-2 h-2 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                                             @endif
                                         </a>
                                     @endif
@@ -247,6 +247,25 @@
                             </div>
                         </div>
                     </details>
+
+                    {{-- 4. Pengaturan Akun (Profil, Keamanan, Tampilan) --}}
+                    @php
+                        $isSettingsActive = request()->is('profile*');
+                    @endphp
+                    <a href="{{ route('dashboard') }}#pengaturan-akun"
+                       id="sidebar-account-settings-link"
+                       class="group flex items-center justify-between px-3.5 py-2.5 rounded-control text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus {{ $isSettingsActive ? 'bg-sidebar-active text-ink font-semibold shadow-xs border-l-4 border-brand-600 dark:border-brand-400 pl-2.5' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5 shrink-0 transition-transform duration-200 group-hover:scale-110 {{ $isSettingsActive ? 'text-brand-600 dark:text-brand-400' : 'text-text-muted group-hover:text-ink' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            <span class="{{ $isSettingsActive ? 'text-brand-700 dark:text-ink font-semibold' : '' }}">Pengaturan Akun</span>
+                        </div>
+                        @if($isSettingsActive)
+                            <svg class="w-2.5 h-2.5 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                        @endif
+                    </a>
                 @endif
             </nav>
 

@@ -153,7 +153,6 @@
                         <h2 class="text-lg font-bold text-ink">Informasi Bibliografi</h2>
                         <p class="text-xs text-text-muted mt-0.5">Lengkapi data buku dengan akurat sesuai format perpustakaan.</p>
                     </div>
-                    <span class="text-xs text-text-muted">Tanda <span class="text-danger-fg font-bold">*</span> wajib diisi</span>
                 </div>
 
                 <!-- Common Field: Judul Buku -->

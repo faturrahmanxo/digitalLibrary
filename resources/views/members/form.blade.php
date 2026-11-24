@@ -24,8 +24,6 @@
                 @method('PUT')
             @endif
 
-            <p class="text-xs text-text-muted">Bidang dengan tanda <span class="text-danger-fg font-semibold">*</span> wajib diisi.</p>
-
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
                     <label for="member_code" class="block text-sm font-semibold text-ink mb-1.5">

@@ -13,7 +13,7 @@
             <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                 <div class="space-y-2 max-w-xl">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-xs font-semibold text-brand-200 dark:text-brand-400 border border-white/20">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <svg class="w-2.5 h-2.5 fill-current text-emerald-300 animate-pulse shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                         <span>Akun Sivitas Akademika Aktif</span>
                     </div>
                     <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
@@ -135,7 +135,7 @@
                 <div>
                     <div class="p-5 border-b border-line flex items-center justify-between gap-2 bg-surface-soft/40">
                         <div class="flex items-center gap-2.5">
-                            <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
+                            <svg class="w-2.5 h-2.5 fill-current text-brand-600 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                             <h2 id="active-loans-heading" class="text-base font-bold text-ink">Buku yang Sedang Anda Pinjam</h2>
                         </div>
                         <a href="{{ route('collection.index') }}" class="text-xs font-semibold text-brand-600 hover:text-brand-700 hover:underline flex items-center gap-1">
@@ -225,7 +225,7 @@
                 <div>
                     <div class="flex items-center justify-between pb-3 border-b border-line mb-4">
                         <div class="flex items-center gap-2">
-                            <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                            <svg class="w-2.5 h-2.5 fill-current text-rose-500 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                             <h2 id="favorite-books-heading" class="text-sm font-bold text-ink">Daftar Bacaan Favorit</h2>
                         </div>
                         <a href="{{ route('favorites.index') }}" class="text-xs font-semibold text-brand-600 hover:underline">Semua</a>
@@ -265,13 +265,12 @@
         <!-- ============================================================== -->
 
         <!-- Modern Glassmorphism Welcome Hero Banner (Litera Forest Green & Ivory) -->
-        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1b4332] via-[#21503c] to-[#122e22] dark:from-[#133023] dark:via-[#193d2c] dark:to-[#0c1f16] border border-emerald-400/30 dark:border-emerald-500/20 p-6 sm:p-8 text-white shadow-xl shadow-emerald-950/20 mb-8 backdrop-blur-xl">
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1b4332] via-[#21503c] to-[#122e22] dark:from-[#133023] dark:via-[#193d2c] dark:to-[#0c1f16] border border-emerald-400/30 dark:border-emerald-500/20 p-5 sm:p-7 text-white shadow-xl shadow-emerald-950/20 mb-6 backdrop-blur-xl">
             <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                <div class="space-y-2 max-w-xl">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 dark:bg-white/10 backdrop-blur-md text-xs font-semibold text-emerald-200 dark:text-emerald-300 border border-white/25 shadow-xs">
-                        <span class="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span>
-                        <span>{{ $isAdmin ? 'Admin Dashboard — Sistem Sirkulasi Lengkap' : 'Dashboard Petugas — Operasional Sirkulasi' }}</span>
-                    </div>
+                <div class="space-y-1.5 max-w-xl">
+                    <p class="text-xs sm:text-sm font-semibold tracking-wider text-emerald-200/90 dark:text-emerald-300/90 uppercase font-sans">
+                        {{ $isAdmin ? 'Admin Dashboard — Sistem Sirkulasi Lengkap' : 'Dashboard Petugas — Operasional Sirkulasi' }}
+                    </p>
                     <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight font-sans drop-shadow-xs">
                         Halo, {{ auth()->user()->name }}! 👋
                     </h1>
@@ -307,12 +306,119 @@
         </div>
 
         <!-- ============================================================== -->
+        <!-- SECTION A: MAIN SUMMARY (6 Authoritative KPIs - TOP PLACEMENT)  -->
+        <!-- ============================================================== -->
+        <section aria-label="Indikator Kinerja Utama Perpustakaan" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-6 gap-3.5 sm:gap-4 mb-6">
+            <!-- 1. Total Judul Buku -->
+            <div class="group card-interactive bg-surface rounded-2xl border border-line p-4.5 sm:p-5 shadow-xs hover:border-brand-400 flex flex-col justify-between" data-testid="kpi-book-titles">
+                <div>
+                    <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-brand-700 bg-brand-50 dark:bg-brand-900/40 dark:text-brand-300 px-2 py-0.5 rounded-md mb-2">
+                        Katalog
+                    </span>
+                    <p class="text-xs font-semibold text-text-muted">Total Judul Buku</p>
+                    <p class="mt-1 text-2xl sm:text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
+                        {{ number_format($totalBookTitles, 0, ',', '.') }}
+                    </p>
+                </div>
+                <p class="mt-3 text-[11px] text-text-muted border-t border-line/60 pt-2 flex items-center justify-between">
+                    <span>Semua jenis judul</span>
+                    <a href="{{ route('books.index') }}" class="text-brand-600 font-semibold hover:underline">Kelola &rarr;</a>
+                </p>
+            </div>
+
+            <!-- 2. Total Buku Fisik -->
+            <div class="group card-interactive bg-surface rounded-2xl border border-line p-4.5 sm:p-5 shadow-xs hover:border-brand-400 flex flex-col justify-between">
+                <div>
+                    <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 dark:bg-emerald-900/40 dark:text-emerald-300 px-2 py-0.5 rounded-md mb-2">
+                        Fisik
+                    </span>
+                    <p class="text-xs font-semibold text-text-muted">Total Buku Fisik</p>
+                    <p class="mt-1 text-2xl sm:text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
+                        {{ number_format($totalPhysicalTitles, 0, ',', '.') }}
+                    </p>
+                </div>
+                <p class="mt-3 text-[11px] text-text-muted border-t border-line/60 pt-2 flex items-center justify-between">
+                    <span>Judul di rak fisik</span>
+                    <a href="{{ route('books.index', ['collection_type' => 'physical']) }}" class="text-brand-600 font-semibold hover:underline">Filter &rarr;</a>
+                </p>
+            </div>
+
+            <!-- 3. Total E-book -->
+            <div class="group card-interactive bg-surface rounded-2xl border border-line p-4.5 sm:p-5 shadow-xs hover:border-brand-400 flex flex-col justify-between">
+                <div>
+                    <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 dark:bg-indigo-900/40 dark:text-indigo-300 px-2 py-0.5 rounded-md mb-2">
+                        Digital
+                    </span>
+                    <p class="text-xs font-semibold text-text-muted">Total E-book</p>
+                    <p class="mt-1 text-2xl sm:text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
+                        {{ number_format($totalEbookTitles, 0, ',', '.') }}
+                    </p>
+                </div>
+                <p class="mt-3 text-[11px] text-text-muted border-t border-line/60 pt-2 flex items-center justify-between">
+                    <span>Baca daring &amp; unduh</span>
+                    <a href="{{ route('books.index', ['collection_type' => 'e-book']) }}" class="text-brand-600 font-semibold hover:underline">Filter &rarr;</a>
+                </p>
+            </div>
+
+            <!-- 4. Total Anggota -->
+            <div class="group card-interactive bg-surface rounded-2xl border border-line p-4.5 sm:p-5 shadow-xs hover:border-brand-400 flex flex-col justify-between" data-testid="kpi-active-members">
+                <div>
+                    <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 dark:bg-amber-900/40 dark:text-amber-300 px-2 py-0.5 rounded-md mb-2">
+                        Peminjam
+                    </span>
+                    <p class="text-xs font-semibold text-text-muted">Total Anggota</p>
+                    <p class="mt-1 text-2xl sm:text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
+                        {{ number_format($totalActiveMembers, 0, ',', '.') }}
+                    </p>
+                </div>
+                <p class="mt-3 text-[11px] text-text-muted border-t border-line/60 pt-2 flex items-center justify-between">
+                    <span>Sivitas terdaftar</span>
+                    <a href="{{ route('members.index') }}" class="text-brand-600 font-semibold hover:underline">Kelola &rarr;</a>
+                </p>
+            </div>
+
+            <!-- 5. Peminjaman Aktif -->
+            <div class="group card-interactive bg-surface rounded-2xl border border-line p-4.5 sm:p-5 shadow-xs hover:border-brand-400 flex flex-col justify-between" data-testid="kpi-borrowed-copies">
+                <div>
+                    <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-cyan-700 bg-cyan-50 dark:bg-cyan-900/40 dark:text-cyan-300 px-2 py-0.5 rounded-md mb-2">
+                        Sirkulasi
+                    </span>
+                    <p class="text-xs font-semibold text-text-muted">Peminjaman Aktif</p>
+                    <p class="mt-1 text-2xl sm:text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
+                        {{ number_format($activeLoansCount, 0, ',', '.') }}
+                    </p>
+                </div>
+                <p class="mt-3 text-[11px] text-text-muted border-t border-line/60 pt-2 flex items-center justify-between">
+                    <span>{{ $totalBorrowedCopies }} eks dipinjam</span>
+                    <a href="{{ route('borrowings.index', ['status' => 'borrowed']) }}" class="text-brand-600 font-semibold hover:underline">Pantau &rarr;</a>
+                </p>
+            </div>
+
+            <!-- 6. Peminjaman Terlambat -->
+            <div class="group card-interactive bg-surface rounded-2xl border border-line p-4.5 sm:p-5 shadow-xs hover:border-rose-400 flex flex-col justify-between">
+                <div>
+                    <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider {{ $overdueLoansCount > 0 ? 'text-rose-700 bg-rose-50 dark:bg-rose-900/40 dark:text-rose-300' : 'text-slate-600 bg-slate-100 dark:bg-slate-800' }} px-2 py-0.5 rounded-md mb-2">
+                        Jatuh Tempo
+                    </span>
+                    <p class="text-xs font-semibold text-text-muted">Peminjaman Terlambat</p>
+                    <p class="mt-1 text-2xl sm:text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana {{ $overdueLoansCount > 0 ? 'text-rose-600' : '' }}">
+                        {{ number_format($overdueLoansCount, 0, ',', '.') }}
+                    </p>
+                </div>
+                <p class="mt-3 text-[11px] text-text-muted border-t border-line/60 pt-2 flex items-center justify-between">
+                    <span>Lewat batas waktu</span>
+                    <a href="{{ route('borrowings.index', ['status' => 'overdue']) }}" class="text-rose-600 font-semibold hover:underline">Tindak &rarr;</a>
+                </p>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
         <!-- SECTION I & SECTION 26: ATTENTION REQUIRED / PERHATIAN OPERASIONAL -->
         <!-- ============================================================== -->
-        <section aria-label="Informasi Perhatian Operasional" class="mb-8">
+        <section aria-label="Informasi Perhatian Operasional" class="mb-6">
             <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full {{ $attentionRequired['has_attention'] ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500' }}"></span>
+                    <svg class="w-2.5 h-2.5 fill-current {{ $attentionRequired['has_attention'] ? 'text-amber-500 animate-pulse' : 'text-emerald-500' }} shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                     <h2 class="text-sm font-bold text-ink uppercase tracking-wider font-sans">
                         {{ $isPetugas ? 'Fokus Operasional Petugas' : 'Perhatian Operasional & Tindakan' }}
                     </h2>
@@ -413,120 +519,13 @@
         </section>
 
         <!-- ============================================================== -->
-        <!-- SECTION A: MAIN SUMMARY (6 Authoritative KPIs)                 -->
-        <!-- ============================================================== -->
-        <section aria-label="Indikator Kinerja Utama Perpustakaan" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-6 gap-4 mb-8">
-            <!-- 1. Total Judul Buku -->
-            <div class="group card-interactive bg-surface rounded-2xl border border-line p-5 shadow-xs hover:border-brand-400 flex flex-col justify-between" data-testid="kpi-book-titles">
-                <div>
-                    <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-brand-700 bg-brand-50 dark:bg-brand-900/40 dark:text-brand-300 px-2 py-0.5 rounded-md mb-2">
-                        Katalog
-                    </span>
-                    <p class="text-xs font-semibold text-text-muted">Total Judul Buku</p>
-                    <p class="mt-1 text-2xl sm:text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
-                        {{ number_format($totalBookTitles, 0, ',', '.') }}
-                    </p>
-                </div>
-                <p class="mt-3 text-[11px] text-text-muted border-t border-line/60 pt-2 flex items-center justify-between">
-                    <span>Semua jenis judul</span>
-                    <a href="{{ route('books.index') }}" class="text-brand-600 font-semibold hover:underline">Kelola &rarr;</a>
-                </p>
-            </div>
-
-            <!-- 2. Total Buku Fisik -->
-            <div class="group card-interactive bg-surface rounded-2xl border border-line p-5 shadow-xs hover:border-brand-400 flex flex-col justify-between">
-                <div>
-                    <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 dark:bg-emerald-900/40 dark:text-emerald-300 px-2 py-0.5 rounded-md mb-2">
-                        Fisik
-                    </span>
-                    <p class="text-xs font-semibold text-text-muted">Total Buku Fisik</p>
-                    <p class="mt-1 text-2xl sm:text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
-                        {{ number_format($totalPhysicalTitles, 0, ',', '.') }}
-                    </p>
-                </div>
-                <p class="mt-3 text-[11px] text-text-muted border-t border-line/60 pt-2 flex items-center justify-between">
-                    <span>Judul di rak fisik</span>
-                    <a href="{{ route('books.index', ['collection_type' => 'physical']) }}" class="text-brand-600 font-semibold hover:underline">Filter &rarr;</a>
-                </p>
-            </div>
-
-            <!-- 3. Total E-book -->
-            <div class="group card-interactive bg-surface rounded-2xl border border-line p-5 shadow-xs hover:border-brand-400 flex flex-col justify-between">
-                <div>
-                    <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 dark:bg-indigo-900/40 dark:text-indigo-300 px-2 py-0.5 rounded-md mb-2">
-                        Digital
-                    </span>
-                    <p class="text-xs font-semibold text-text-muted">Total E-book</p>
-                    <p class="mt-1 text-2xl sm:text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
-                        {{ number_format($totalEbookTitles, 0, ',', '.') }}
-                    </p>
-                </div>
-                <p class="mt-3 text-[11px] text-text-muted border-t border-line/60 pt-2 flex items-center justify-between">
-                    <span>Baca daring &amp; unduh</span>
-                    <a href="{{ route('books.index', ['collection_type' => 'e-book']) }}" class="text-brand-600 font-semibold hover:underline">Filter &rarr;</a>
-                </p>
-            </div>
-
-            <!-- 4. Total Anggota -->
-            <div class="group card-interactive bg-surface rounded-2xl border border-line p-5 shadow-xs hover:border-brand-400 flex flex-col justify-between" data-testid="kpi-active-members">
-                <div>
-                    <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 dark:bg-amber-900/40 dark:text-amber-300 px-2 py-0.5 rounded-md mb-2">
-                        Peminjam
-                    </span>
-                    <p class="text-xs font-semibold text-text-muted">Total Anggota</p>
-                    <p class="mt-1 text-2xl sm:text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
-                        {{ number_format($totalActiveMembers, 0, ',', '.') }}
-                    </p>
-                </div>
-                <p class="mt-3 text-[11px] text-text-muted border-t border-line/60 pt-2 flex items-center justify-between">
-                    <span>Sivitas terdaftar</span>
-                    <a href="{{ route('members.index') }}" class="text-brand-600 font-semibold hover:underline">Kelola &rarr;</a>
-                </p>
-            </div>
-
-            <!-- 5. Peminjaman Aktif -->
-            <div class="group card-interactive bg-surface rounded-2xl border border-line p-5 shadow-xs hover:border-brand-400 flex flex-col justify-between" data-testid="kpi-borrowed-copies">
-                <div>
-                    <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-cyan-700 bg-cyan-50 dark:bg-cyan-900/40 dark:text-cyan-300 px-2 py-0.5 rounded-md mb-2">
-                        Sirkulasi
-                    </span>
-                    <p class="text-xs font-semibold text-text-muted">Peminjaman Aktif</p>
-                    <p class="mt-1 text-2xl sm:text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
-                        {{ number_format($activeLoansCount, 0, ',', '.') }}
-                    </p>
-                </div>
-                <p class="mt-3 text-[11px] text-text-muted border-t border-line/60 pt-2 flex items-center justify-between">
-                    <span>{{ $totalBorrowedCopies }} eks dipinjam</span>
-                    <a href="{{ route('borrowings.index', ['status' => 'borrowed']) }}" class="text-brand-600 font-semibold hover:underline">Pantau &rarr;</a>
-                </p>
-            </div>
-
-            <!-- 6. Peminjaman Terlambat -->
-            <div class="group card-interactive bg-surface rounded-2xl border border-line p-5 shadow-xs hover:border-rose-400 flex flex-col justify-between">
-                <div>
-                    <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider {{ $overdueLoansCount > 0 ? 'text-rose-700 bg-rose-50 dark:bg-rose-900/40 dark:text-rose-300' : 'text-slate-600 bg-slate-100 dark:bg-slate-800' }} px-2 py-0.5 rounded-md mb-2">
-                        Jatuh Tempo
-                    </span>
-                    <p class="text-xs font-semibold text-text-muted">Peminjaman Terlambat</p>
-                    <p class="mt-1 text-2xl sm:text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana {{ $overdueLoansCount > 0 ? 'text-rose-600' : '' }}">
-                        {{ number_format($overdueLoansCount, 0, ',', '.') }}
-                    </p>
-                </div>
-                <p class="mt-3 text-[11px] text-text-muted border-t border-line/60 pt-2 flex items-center justify-between">
-                    <span>Lewat batas waktu</span>
-                    <a href="{{ route('borrowings.index', ['status' => 'overdue']) }}" class="text-rose-600 font-semibold hover:underline">Tindak &rarr;</a>
-                </p>
-            </div>
-        </section>
-
-        <!-- ============================================================== -->
         <!-- SECTION B: INVENTORY SUMMARY (Physical Books Only)             -->
         <!-- ============================================================== -->
-        <section aria-label="Ringkasan Inventaris Eksemplar Fisik" class="mb-8 bg-surface rounded-2xl border border-line p-5 sm:p-6 shadow-xs">
+        <section aria-label="Ringkasan Inventaris Eksemplar Fisik" class="mb-6 bg-surface rounded-2xl border border-line p-4.5 sm:p-5.5 shadow-xs">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-4 border-b border-line mb-5">
                 <div>
                     <div class="flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
+                        <svg class="w-2.5 h-2.5 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                         <h2 class="text-base font-bold text-ink font-sans">Ringkasan Inventaris Eksemplar Fisik</h2>
                     </div>
                     <p class="text-xs text-text-muted mt-0.5 font-sans">
@@ -600,14 +599,14 @@
         <!-- ============================================================== -->
         <!-- SECTION C & SECTION D: BORROWING TREND & COLLECTION CHARTS    -->
         <!-- ============================================================== -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 mb-6">
             <!-- SECTION C: BORROWING TREND CHART (Col 8) -->
             <section aria-labelledby="chart-trend-heading" class="lg:col-span-8 bg-surface rounded-2xl border border-line p-5 sm:p-6 shadow-xs flex flex-col justify-between">
                 <div>
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4 border-b border-line mb-4">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
+                                <svg class="w-2.5 h-2.5 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                                 <h2 id="chart-trend-heading" class="text-base font-bold text-ink">Grafik Tren Peminjaman &amp; Pengembalian</h2>
                             </div>
                             <p class="text-xs text-text-muted mt-0.5">
@@ -640,11 +639,11 @@
                 <div class="flex items-center justify-between pt-4 border-t border-line text-xs text-text-muted mt-4">
                     <div class="flex items-center gap-4">
                         <div class="flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-brand-600"></span>
+                            <svg class="w-2.5 h-2.5 fill-current text-brand-600 shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                             <span class="font-medium text-ink">Peminjaman Aktual</span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                            <svg class="w-2.5 h-2.5 fill-current text-emerald-500 shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                             <span class="font-medium text-ink">Pengembalian Selesai</span>
                         </div>
                     </div>
@@ -657,7 +656,7 @@
                 <div>
                     <div class="flex items-center justify-between pb-4 border-b border-line mb-4">
                         <div class="flex items-center gap-2">
-                            <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
+                            <svg class="w-2.5 h-2.5 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                             <h2 id="chart-collection-heading" class="text-base font-bold text-ink">Distribusi Koleksi</h2>
                         </div>
                         <span class="text-xs text-text-muted">{{ number_format($totalBookTitles, 0, ',', '.') }} Judul</span>
@@ -670,7 +669,7 @@
                     <div class="mt-4 space-y-3 pt-4 border-t border-line">
                         <div class="flex items-center justify-between text-xs">
                             <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 rounded-full bg-brand-700"></span>
+                                <svg class="w-2.5 h-2.5 fill-current text-brand-700 dark:text-brand-400 shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                 <span class="font-semibold text-ink">Buku Fisik</span>
                             </div>
                             <div class="text-right">
@@ -681,7 +680,7 @@
 
                         <div class="flex items-center justify-between text-xs">
                             <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+                                <svg class="w-2.5 h-2.5 fill-current text-emerald-400 shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                 <span class="font-semibold text-ink">E-book Digital</span>
                             </div>
                             <div class="text-right">
@@ -703,13 +702,13 @@
         <!-- ============================================================== -->
         <!-- SECTION E & SECTION F: CATEGORY & STATUS BREAKDOWN             -->
         <!-- ============================================================== -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 mb-6">
             <!-- SECTION E: CATEGORY DISTRIBUTION (Col 6) -->
             <section aria-labelledby="category-distribution-heading" class="lg:col-span-6 bg-surface rounded-2xl border border-line p-5 sm:p-6 shadow-xs flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between pb-4 border-b border-line mb-4">
                         <div class="flex items-center gap-2">
-                            <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
+                            <svg class="w-2.5 h-2.5 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                             <h2 id="category-distribution-heading" class="text-base font-bold text-ink">Distribusi Kategori Buku</h2>
                         </div>
                         <a href="{{ route('categories.index') }}" class="text-xs font-semibold text-brand-600 hover:underline">
@@ -728,7 +727,7 @@
                                     <div class="flex items-center justify-between text-xs mb-1.5">
                                         <span class="font-semibold text-ink">{{ $cat['name'] }}</span>
                                         <span class="text-text-muted tabular-nums">
-                                            <strong>{{ $cat['count'] }}</strong> judul ({{ $cat['percent'] }}%)
+                                             <strong>{{ $cat['count'] }}</strong> judul ({{ $cat['percent'] }}%)
                                         </span>
                                     </div>
                                     <div class="w-full h-2 rounded-full bg-surface-soft overflow-hidden">
@@ -751,7 +750,7 @@
                 <div>
                     <div class="flex items-center justify-between pb-4 border-b border-line mb-4">
                         <div class="flex items-center gap-2">
-                            <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
+                            <svg class="w-2.5 h-2.5 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                             <h2 id="status-breakdown-heading" class="text-base font-bold text-ink">Ringkasan Status Transaksi Sirkulasi</h2>
                         </div>
                         <a href="{{ route('borrowings.index') }}" class="text-xs font-semibold text-brand-600 hover:underline">
@@ -825,10 +824,10 @@
         <!-- ============================================================== -->
         <!-- SECTION G: POPULAR BOOKS (TOP 5 MOST BORROWED PHYSICAL)        -->
         <!-- ============================================================== -->
-        <section aria-labelledby="popular-books-heading" class="bg-surface rounded-2xl border border-line overflow-hidden shadow-xs mb-8">
+        <section aria-labelledby="popular-books-heading" class="bg-surface rounded-2xl border border-line overflow-hidden shadow-xs mb-6">
             <div class="p-5 border-b border-line flex items-center justify-between gap-2 bg-surface-soft/40">
                 <div class="flex items-center gap-2.5">
-                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                    <svg class="w-2.5 h-2.5 fill-current text-amber-500 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                     <h2 id="popular-books-heading" class="text-base font-bold text-ink">Buku Fisik Paling Sering Dipinjam (Top 5)</h2>
                 </div>
                 <span class="text-xs text-text-muted">Dihitung dari transaksi peminjaman riil</span>
@@ -905,10 +904,10 @@
         <!-- ============================================================== -->
         <!-- SECTION H: RECENT TRANSACTIONS (5–10 LATEST)                   -->
         <!-- ============================================================== -->
-        <section aria-labelledby="recent-borrowings-heading" class="w-full bg-surface rounded-2xl border border-line overflow-hidden shadow-xs mb-8">
+        <section aria-labelledby="recent-borrowings-heading" class="w-full bg-surface rounded-2xl border border-line overflow-hidden shadow-xs mb-6">
             <div class="p-5 border-b border-line flex items-center justify-between gap-2 bg-surface-soft/40">
                 <div class="flex items-center gap-2.5">
-                    <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
+                    <svg class="w-2.5 h-2.5 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                     <h2 id="recent-borrowings-heading" class="text-base font-bold text-ink">Aktivitas Transaksi Sirkulasi Terbaru</h2>
                 </div>
                 <a href="{{ route('borrowings.index') }}" class="text-xs font-semibold text-brand-600 hover:text-brand-700 hover:underline flex items-center gap-1">
@@ -1029,11 +1028,11 @@
         <!-- ============================================================== -->
         <!-- PENGATURAN AKUN DASHBOARD (Profil, Keamanan, dan Tampilan)     -->
         <!-- ============================================================== -->
-        <section id="pengaturan-akun" aria-labelledby="account-settings-heading" class="w-full bg-surface rounded-2xl border border-line overflow-hidden shadow-xs mb-8 transition-colors">
+        <section id="pengaturan-akun" aria-labelledby="account-settings-heading" class="w-full bg-surface rounded-2xl border border-line overflow-hidden shadow-xs mb-6 transition-colors">
             <div class="p-5 sm:p-6 border-b border-line bg-surface-soft/40 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                     <div class="flex items-center gap-2.5">
-                        <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
+                        <svg class="w-2.5 h-2.5 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                         <h2 id="account-settings-heading" class="text-lg font-bold text-ink">Pengaturan Akun</h2>
                     </div>
                     <p class="text-xs text-text-muted mt-1">Kelola informasi profil pengelola, keamanan autentikasi kata sandi, dan preferensi tampilan antarmuka.</p>

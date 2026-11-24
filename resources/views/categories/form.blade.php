@@ -24,8 +24,6 @@
                 @method('PUT')
             @endif
 
-            <p class="text-xs text-text-muted">Bidang dengan tanda <span class="text-danger-fg font-semibold">*</span> wajib diisi.</p>
-
             <div>
                 <label for="name" class="block text-sm font-semibold text-ink mb-1.5">
                     Nama Kategori <span class="text-danger-fg" aria-hidden="true">*</span>
