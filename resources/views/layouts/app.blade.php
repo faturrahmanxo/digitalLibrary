@@ -250,7 +250,10 @@
 
                     {{-- 4. Pengaturan Akun (Profil, Keamanan, Tampilan) - Dropdown Accordion --}}
                     @php
-                        $isSettingsGroupActive = request()->is('profile*');
+                        $isSettingsProfileActive = request()->routeIs('settings.profile') || request()->is('pengaturan/profil*');
+                        $isSettingsSecurityActive = request()->routeIs('settings.security') || request()->is('pengaturan/keamanan*');
+                        $isSettingsAppearanceActive = request()->routeIs('settings.appearance') || request()->is('pengaturan/tampilan*');
+                        $isSettingsGroupActive = request()->routeIs('settings.*') || request()->is('pengaturan*');
                     @endphp
                     <details id="sidebar-account-settings" class="group/settings-mgr" @if ($isSettingsGroupActive) open @endif>
                         <summary id="sidebar-account-settings-summary" class="list-none group cursor-pointer flex items-center justify-between px-3.5 py-2.5 rounded-control text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 hover:bg-surface-soft hover:text-ink {{ $isSettingsGroupActive ? 'bg-sidebar-active/70 text-ink font-semibold' : 'text-text-muted' }}">
@@ -268,24 +271,27 @@
                         <div class="grid transition-[grid-template-rows] duration-300 ease-out" style="grid-template-rows: 1fr">
                             <div class="overflow-hidden">
                                 <div class="ml-8 mt-1 space-y-1 border-l border-line pl-3">
-                                    <a href="{{ route('dashboard') }}#panel-profil"
+                                    <a href="{{ route('settings.profile') }}"
                                        id="sidebar-account-settings-link"
-                                       onclick="if (typeof switchAccountTab === 'function') { switchAccountTab('profil'); document.getElementById('pengaturan-akun')?.scrollIntoView({behavior: 'smooth'}); }"
-                                       class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium text-text-muted hover:bg-surface-soft hover:text-ink transition-colors group">
+                                       class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium transition-colors {{ $isSettingsProfileActive ? 'bg-sidebar-active text-ink font-semibold shadow-xs' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
                                         <span>Profil</span>
-                                        <svg class="w-2 h-2 fill-current text-brand-600 dark:text-brand-400 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                                        @if($isSettingsProfileActive)
+                                            <svg class="w-2 h-2 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                                        @endif
                                     </a>
-                                    <a href="{{ route('dashboard') }}#panel-keamanan"
-                                       onclick="if (typeof switchAccountTab === 'function') { switchAccountTab('keamanan'); document.getElementById('pengaturan-akun')?.scrollIntoView({behavior: 'smooth'}); }"
-                                       class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium text-text-muted hover:bg-surface-soft hover:text-ink transition-colors group">
+                                    <a href="{{ route('settings.security') }}"
+                                       class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium transition-colors {{ $isSettingsSecurityActive ? 'bg-sidebar-active text-ink font-semibold shadow-xs' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
                                         <span>Keamanan</span>
-                                        <svg class="w-2 h-2 fill-current text-brand-600 dark:text-brand-400 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                                        @if($isSettingsSecurityActive)
+                                            <svg class="w-2 h-2 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                                        @endif
                                     </a>
-                                    <a href="{{ route('dashboard') }}#panel-tampilan"
-                                       onclick="if (typeof switchAccountTab === 'function') { switchAccountTab('tampilan'); document.getElementById('pengaturan-akun')?.scrollIntoView({behavior: 'smooth'}); }"
-                                       class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium text-text-muted hover:bg-surface-soft hover:text-ink transition-colors group">
+                                    <a href="{{ route('settings.appearance') }}"
+                                       class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium transition-colors {{ $isSettingsAppearanceActive ? 'bg-sidebar-active text-ink font-semibold shadow-xs' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
                                         <span>Tampilan</span>
-                                        <svg class="w-2 h-2 fill-current text-brand-600 dark:text-brand-400 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                                        @if($isSettingsAppearanceActive)
+                                            <svg class="w-2 h-2 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                                        @endif
                                     </a>
                                 </div>
                             </div>
@@ -296,7 +302,7 @@
 
             <!-- Sidebar User Profile Card (Refined & Clean Aligned) -->
             <div class="p-3.5 border-t border-line bg-surface-soft/40 shrink-0">
-                <a href="{{ route('dashboard') }}#pengaturan-akun" class="flex items-center gap-3 p-1.5 rounded-xl hover:bg-surface-soft transition-colors group" title="Buka Pengaturan Akun">
+                <a href="{{ route('settings.profile') }}" class="flex items-center gap-3 p-1.5 rounded-xl hover:bg-surface-soft transition-colors group" title="Buka Pengaturan Akun">
                     <div class="w-9 h-9 rounded-full bg-brand-600/15 dark:bg-brand-400/20 border border-brand-500/30 text-brand-700 dark:text-brand-400 font-bold text-xs flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-2xs">
                         {{ strtoupper(substr($authUser?->name ?? 'U', 0, 2)) }}
                     </div>
@@ -351,7 +357,7 @@
                     </button>
 
                     <!-- Topbar User Profile Card (Refined & Balanced) -->
-                    <a href="{{ route('dashboard') }}#pengaturan-akun" class="hidden sm:flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl border border-line/70 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md hover:bg-surface-soft hover:border-brand-300 dark:hover:border-brand-500/30 transition-all text-left group shadow-2xs" title="Buka Pengaturan Akun di Dashboard">
+                    <a href="{{ route('settings.profile') }}" class="hidden sm:flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl border border-line/70 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md hover:bg-surface-soft hover:border-brand-300 dark:hover:border-brand-500/30 transition-all text-left group shadow-2xs" title="Buka Pengaturan Akun">
                         <div class="w-8 h-8 rounded-full bg-brand-600/10 dark:bg-brand-400/15 border border-brand-500/25 text-brand-700 dark:text-brand-300 font-bold text-xs flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                             {{ strtoupper(substr($authUser?->name ?? 'U', 0, 2)) }}
                         </div>

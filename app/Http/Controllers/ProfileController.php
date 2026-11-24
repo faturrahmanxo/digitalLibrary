@@ -56,8 +56,7 @@ class ProfileController extends Controller
             throw new RuntimeException('Informasi profil gagal disimpan.');
         }
 
-        return redirect()
-            ->route('profile.edit')
+        return back(fallback: route('profile.edit'))
             ->with('success', 'Informasi akun berhasil diperbarui.');
     }
 
@@ -98,8 +97,7 @@ class ProfileController extends Controller
 
         $this->deleteProfilePhotoFile($previousPath, $user->id);
 
-        return redirect()
-            ->route('profile.edit')
+        return back(fallback: route('profile.edit'))
             ->with('success', 'Foto profil berhasil diperbarui.');
     }
 
@@ -116,8 +114,7 @@ class ProfileController extends Controller
 
         $this->deleteProfilePhotoFile($previousPath, $user->id);
 
-        return redirect()
-            ->route('profile.edit')
+        return back(fallback: route('profile.edit'))
             ->with('success', 'Foto profil berhasil dihapus.');
     }
 
@@ -142,8 +139,7 @@ class ProfileController extends Controller
             throw new RuntimeException('Kata sandi gagal diperbarui.');
         }
 
-        return redirect()
-            ->route('profile.edit')
+        return back(fallback: route('profile.edit'))
             ->with('success', 'Kata sandi berhasil diperbarui.');
     }
 

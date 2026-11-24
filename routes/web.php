@@ -15,6 +15,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\NovelVolumeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublisherController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ShelfController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureActiveInternalUser;
@@ -60,6 +61,12 @@ Route::middleware(['auth', EnsureActiveInternalUser::class])->group(function () 
     Route::put('/akun/profil/password', [ProfileController::class, 'updatePassword'])
         ->middleware('throttle:5,1')
         ->name('profile.password.update');
+
+    // Dedicated Account Settings Pages (Profil, Keamanan, Tampilan)
+    Route::get('/pengaturan', fn () => redirect()->route('settings.profile'))->name('settings.index');
+    Route::get('/pengaturan/profil', [SettingsController::class, 'profile'])->name('settings.profile');
+    Route::get('/pengaturan/keamanan', [SettingsController::class, 'security'])->name('settings.security');
+    Route::get('/pengaturan/tampilan', [SettingsController::class, 'appearance'])->name('settings.appearance');
     Route::post('/books/{book}/borrow', [BorrowingController::class, 'borrowBook'])->name('books.borrow');
     Route::post('/books/{book}/digital-borrowing', [DigitalBorrowingController::class, 'borrowBook'])->name('books.digital.borrow');
     Route::post('/novel-volumes/{volume}/digital-borrowing', [DigitalBorrowingController::class, 'borrowVolume'])->name('novel-volumes.digital.borrow');

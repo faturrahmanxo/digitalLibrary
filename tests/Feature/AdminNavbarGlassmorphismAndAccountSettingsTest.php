@@ -54,7 +54,7 @@ class AdminNavbarGlassmorphismAndAccountSettingsTest extends TestCase
         $response->assertDontSee('href="'.route('dashboard').'"', false);
     }
 
-    public function test_dashboard_contains_redesigned_hero_banner_and_pengaturan_akun(): void
+    public function test_dashboard_contains_redesigned_hero_banner_and_sidebar_links_to_dedicated_settings_pages(): void
     {
         $admin = User::where('role', User::ROLE_ADMIN)->firstOrFail();
 
@@ -64,40 +64,51 @@ class AdminNavbarGlassmorphismAndAccountSettingsTest extends TestCase
         // Redesigned modern hero banner with legible text
         $response->assertSee('Halo, '.$admin->name.'! 👋');
         $response->assertSee('Admin Dashboard — Sistem Sirkulasi Lengkap');
-        $response->assertSee('href="'.route('dashboard').'#pengaturan-akun"', false);
 
-        // Sidebar Account Settings link present with 3 submenus
+        // Sidebar Account Settings link present with 3 dedicated page submenus
         $response->assertSee('id="sidebar-account-settings-link"', false);
-        $response->assertSee('sidebar-account-settings-link', false);
-        $response->assertSee('href="'.route('dashboard').'#panel-profil"', false);
-        $response->assertSee('href="'.route('dashboard').'#panel-keamanan"', false);
-        $response->assertSee('href="'.route('dashboard').'#panel-tampilan"', false);
+        $response->assertSee('href="'.route('settings.profile').'"', false);
+        $response->assertSee('href="'.route('settings.security').'"', false);
+        $response->assertSee('href="'.route('settings.appearance').'"', false);
 
-        // Pengaturan Akun section present
-        $response->assertSee('id="pengaturan-akun"', false);
-        $response->assertSee('Pengaturan Akun');
+        // Pengaturan Akun section is now on dedicated pages, not embedded on dashboard
+        $response->assertDontSee('id="pengaturan-akun"', false);
+    }
 
-        // Tab 1: Profil
-        $response->assertSee('tab-btn-profil', false);
-        $response->assertSee('panel-profil', false);
-        $response->assertSee($admin->name);
-        $response->assertSee($admin->email);
-        $response->assertSee('action="'.route('profile.update').'"', false);
-        $response->assertSee('action="'.route('profile.photo.store').'"', false);
+    public function test_dedicated_settings_pages_are_accessible_and_render_per_menu(): void
+    {
+        $admin = User::where('role', User::ROLE_ADMIN)->firstOrFail();
 
-        // Tab 2: Keamanan
-        $response->assertSee('tab-btn-keamanan', false);
-        $response->assertSee('panel-keamanan', false);
-        $response->assertSee('action="'.route('profile.password.update').'"', false);
-        $response->assertSee('current_password');
+        // 1. Settings index redirects to profile
+        $this->actingAs($admin)->get(route('settings.index'))
+            ->assertRedirect(route('settings.profile'));
 
-        // Tab 3: Tampilan
-        $response->assertSee('tab-btn-tampilan', false);
-        $response->assertSee('panel-tampilan', false);
-        $response->assertSee('Mode Terang');
-        $response->assertSee('Mode Gelap');
-        $response->assertSee('Ikuti Sistem');
-        $response->assertSee('setThemeDashboard', false);
+        // 2. Profile Page
+        $profileResponse = $this->actingAs($admin)->get(route('settings.profile'));
+        $profileResponse->assertOk();
+        $profileResponse->assertSee('tab-btn-profil', false);
+        $profileResponse->assertSee('panel-profil', false);
+        $profileResponse->assertSee($admin->name);
+        $profileResponse->assertSee($admin->email);
+        $profileResponse->assertSee('action="'.route('profile.update').'"', false);
+        $profileResponse->assertSee('action="'.route('profile.photo.store').'"', false);
+
+        // 3. Security Page
+        $securityResponse = $this->actingAs($admin)->get(route('settings.security'));
+        $securityResponse->assertOk();
+        $securityResponse->assertSee('tab-btn-keamanan', false);
+        $securityResponse->assertSee('panel-keamanan', false);
+        $securityResponse->assertSee('action="'.route('profile.password.update').'"', false);
+        $securityResponse->assertSee('current_password');
+
+        // 4. Appearance Page
+        $appearanceResponse = $this->actingAs($admin)->get(route('settings.appearance'));
+        $appearanceResponse->assertOk();
+        $appearanceResponse->assertSee('tab-btn-tampilan', false);
+        $appearanceResponse->assertSee('panel-tampilan', false);
+        $appearanceResponse->assertSee('Mode Terang');
+        $appearanceResponse->assertSee('Mode Gelap');
+        $appearanceResponse->assertSee('Ikuti Sistem');
     }
 
     public function test_form_does_not_contain_tanda_bintang_wajib_diisi(): void
