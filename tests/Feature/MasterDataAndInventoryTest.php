@@ -38,7 +38,7 @@ class MasterDataAndInventoryTest extends TestCase
         ]);
 
         $book = Book::where('title', 'Sejarah Maritim Nusantara')->firstOrFail();
-        $response->assertRedirect(route('books.manage', $book));
+        $response->assertRedirect(route('books.index'));
 
         // Initial stock_available equals stock_total
         $this->assertSame(7, $book->stock_total);
@@ -239,7 +239,7 @@ class MasterDataAndInventoryTest extends TestCase
             'category_id' => $category->id,
             'stock_total' => 8,
             'stock_available' => 999, // Must be ignored; server computes 5
-        ])->assertRedirect(route('books.manage', $book));
+        ])->assertRedirect(route('books.index'));
 
         $this->assertSame(8, $book->fresh()->stock_total);
         $this->assertSame(5, $book->fresh()->stock_available);
@@ -250,7 +250,7 @@ class MasterDataAndInventoryTest extends TestCase
             'author' => 'Penulis Uji',
             'category_id' => $category->id,
             'stock_total' => 3,
-        ])->assertRedirect(route('books.manage', $book));
+        ])->assertRedirect(route('books.index'));
 
         $this->assertSame(3, $book->fresh()->stock_total);
         $this->assertSame(0, $book->fresh()->stock_available);

@@ -300,21 +300,31 @@
                 @endif
             </nav>
 
-            <!-- Sidebar User Profile Card (Refined & Clean Aligned) -->
-            <div class="p-3.5 border-t border-line bg-surface-soft/40 shrink-0">
-                <a href="{{ route('settings.profile') }}" class="flex items-center gap-3 p-1.5 rounded-xl hover:bg-surface-soft transition-colors group" title="Buka Pengaturan Akun">
-                    <div class="w-9 h-9 rounded-full bg-brand-600/15 dark:bg-brand-400/20 border border-brand-500/30 text-brand-700 dark:text-brand-400 font-bold text-xs flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-2xs">
+            <!-- Sidebar User Profile Card (Refined & Clean Aligned with Logout Button on Right) -->
+            <div class="p-3 border-t border-line bg-surface-soft/40 shrink-0 flex items-center justify-between gap-1.5">
+                <a href="{{ route('settings.profile') }}" class="flex items-center gap-2.5 p-1 rounded-xl hover:bg-surface-soft transition-colors group flex-1 min-w-0" title="Buka Pengaturan Akun">
+                    <div class="w-8 h-8 rounded-full bg-brand-600/15 dark:bg-brand-400/20 border border-brand-500/30 text-brand-700 dark:text-brand-400 font-bold text-xs flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-2xs">
                         {{ strtoupper(substr($authUser?->name ?? 'U', 0, 2)) }}
                     </div>
                     <div class="min-w-0 flex-1">
-                        <p class="text-sm font-bold text-ink truncate leading-tight">{{ $authUser?->name }}</p>
-                        <div class="flex items-center gap-1.5 mt-0.5">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase {{ $authUser?->isAdmin() ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30' : ($authUser?->isPetugas() ? 'bg-surface border border-line text-text-muted' : 'bg-success-bg text-success-fg border border-success-fg/20') }}">
+                        <p class="text-xs font-bold text-ink truncate leading-tight">{{ $authUser?->name }}</p>
+                        <div class="flex items-center gap-1 mt-0.5">
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-semibold tracking-wide uppercase {{ $authUser?->isAdmin() ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30' : ($authUser?->isPetugas() ? 'bg-surface border border-line text-text-muted' : 'bg-success-bg text-success-fg border border-success-fg/20') }}">
                                 {{ $authUser?->role_label }}
                             </span>
                         </div>
                     </div>
                 </a>
+
+                <!-- Single Authoritative Logout Icon Button on Bottom Right of Sidebar -->
+                <form method="POST" action="{{ route('logout') }}" class="shrink-0">
+                    @csrf
+                    <button type="submit" class="p-2 rounded-xl text-text-muted hover:text-danger-fg hover:bg-danger-bg/50 active:scale-95 transition-all cursor-pointer shadow-2xs" title="Keluar dari akun" aria-label="Keluar dari akun">
+                        <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                    </button>
+                </form>
             </div>
         </aside>
 
@@ -356,27 +366,15 @@
                         </div>
                     </button>
 
-                    <!-- Topbar User Profile Card (Refined & Balanced) -->
-                    <a href="{{ route('settings.profile') }}" class="hidden sm:flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl border border-line/70 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md hover:bg-surface-soft hover:border-brand-300 dark:hover:border-brand-500/30 transition-all text-left group shadow-2xs" title="Buka Pengaturan Akun">
-                        <div class="w-8 h-8 rounded-full bg-brand-600/10 dark:bg-brand-400/15 border border-brand-500/25 text-brand-700 dark:text-brand-300 font-bold text-xs flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <!-- Topbar User Profile Card (Concise Admin / Petugas Label) -->
+                    <a href="{{ route('settings.profile') }}" class="hidden sm:flex items-center gap-2 px-2.5 py-1.5 rounded-xl border border-line/70 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md hover:bg-surface-soft hover:border-brand-300 dark:hover:border-brand-500/30 transition-all text-left group shadow-2xs" title="Buka Pengaturan Akun">
+                        <div class="w-7 h-7 rounded-full bg-brand-600/10 dark:bg-brand-400/15 border border-brand-500/25 text-brand-700 dark:text-brand-300 font-bold text-xs flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                             {{ strtoupper(substr($authUser?->name ?? 'U', 0, 2)) }}
                         </div>
-                        <div class="flex flex-col justify-center min-w-0">
-                            <span class="font-bold text-xs text-ink leading-tight truncate max-w-[120px]">{{ $authUser?->name }}</span>
-                            <span class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 tracking-wide uppercase leading-none mt-1">{{ $authUser?->role_label }}</span>
-                        </div>
+                        <span class="text-xs font-bold text-ink pr-1">
+                            {{ $authUser?->isAdmin() ? 'Admin' : ($authUser?->isPetugas() ? 'Petugas' : $authUser?->role_label) }}
+                        </span>
                     </a>
-
-                    <!-- Single Authoritative Logout Button (Icon only on tablet and below) -->
-                    <form method="POST" action="{{ route('logout') }}" class="inline-flex">
-                        @csrf
-                        <button type="submit" class="min-h-9 p-2 lg:px-3.5 lg:py-1.5 rounded-control border border-line/70 dark:border-white/10 bg-white/50 dark:bg-white/5 backdrop-blur-md text-xs font-semibold text-ink hover:bg-surface-soft hover:border-danger-fg/40 hover:text-danger-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus transition-colors cursor-pointer shadow-2xs inline-flex items-center justify-center gap-1.5" title="Keluar dari akun" aria-label="Keluar dari akun">
-                            <svg class="w-4 h-4 text-danger-fg shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                            </svg>
-                            <span class="hidden lg:inline">Keluar</span>
-                        </button>
-                    </form>
                 </div>
             </header>
 

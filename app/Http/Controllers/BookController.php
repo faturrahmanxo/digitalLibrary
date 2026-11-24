@@ -166,7 +166,7 @@ class BookController extends Controller
         }
 
         return redirect()
-            ->route('books.manage', $book)
+            ->route('books.index')
             ->with('success', 'Buku berhasil ditambahkan ke katalog.');
     }
 
@@ -332,7 +332,7 @@ class BookController extends Controller
         }
 
         return redirect()
-            ->route('books.manage', $updatedBook)
+            ->route('books.index')
             ->with('success', 'Data buku dan inventaris berhasil diperbarui.');
     }
 

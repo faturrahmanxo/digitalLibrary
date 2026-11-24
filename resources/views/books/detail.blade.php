@@ -394,45 +394,6 @@
                             </section>
                         @endif
                     @endif
-
-                    <!-- Favorite Toggle -->
-                    <div class="mt-4 flex flex-wrap items-center gap-2">
-                        @guest
-                            <a
-                                href="{{ route('login') }}"
-                                class="inline-flex min-h-9 items-center justify-center gap-2 rounded-lg border border-line/70 bg-transparent px-3.5 py-2 text-xs font-semibold text-ink transition-colors hover:border-line/70 hover:bg-surface-soft/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none"
-                            >
-                                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-4-7 4V5z" />
-                                </svg>
-                                Simpan Buku
-                            </a>
-                        @endguest
-
-                        @auth
-                            @if ($isFavorited)
-                                <span class="inline-flex min-h-9 items-center gap-2 px-1 text-xs font-semibold text-brand-700 dark:text-brand-200">
-                                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    Tersimpan
-                                </span>
-                            @else
-                                <form method="POST" action="{{ route('books.favorite', $book) }}">
-                                    @csrf
-                                    <button
-                                        type="submit"
-                                        class="inline-flex min-h-9 items-center justify-center gap-2 rounded-lg border border-line/70 bg-transparent px-3.5 py-2 text-xs font-semibold text-ink transition-colors hover:border-line/70 hover:bg-surface-soft/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none"
-                                    >
-                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-4-7 4V5z" />
-                                        </svg>
-                                        Simpan Buku
-                                    </button>
-                                </form>
-                            @endif
-                        @endauth
-                    </div>
                 </div>
             </section>
 

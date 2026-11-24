@@ -184,7 +184,7 @@ class CatalogBackendCrudTest extends TestCase
         ]);
 
         $book = Book::where('title', 'Struktur Data & Algoritma')->firstOrFail();
-        $response->assertRedirect(route('books.manage', $book));
+        $response->assertRedirect(route('books.index'));
 
         $this->assertSame(10, $book->stock_total);
         $this->assertSame(10, $book->stock_available);
@@ -251,7 +251,7 @@ class CatalogBackendCrudTest extends TestCase
         ]);
 
         $ebook = Book::where('title', 'Digital Computing Guide')->firstOrFail();
-        $validResponse->assertRedirect(route('books.manage', $ebook));
+        $validResponse->assertRedirect(route('books.index'));
         $this->assertNull($ebook->shelf_id);
         $this->assertSame('https://books.example.com/view/computing', $ebook->read_url);
         $this->assertSame('https://books.example.com/download/computing.pdf', $ebook->download_url);

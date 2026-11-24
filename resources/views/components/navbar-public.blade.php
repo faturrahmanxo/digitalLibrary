@@ -128,12 +128,9 @@
                                     {{ strtoupper(substr($currentUser->name, 0, 2)) }}
                                 </div>
                             @endif
-                            <div class="flex flex-col text-left">
-                                <span class="text-xs font-bold text-ink max-w-[90px] sm:max-w-[120px] truncate group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
-                                    {{ $currentUser->name }}
-                                </span>
-                                <span class="text-[9px] font-bold uppercase tracking-wider text-brand-700 dark:text-brand-400">
-                                    {{ $currentUser->role_label }}
+                            <div class="flex items-center text-left min-w-0 pr-1">
+                                <span class="text-xs font-bold text-ink group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
+                                    {{ $currentUser->isAdmin() ? 'Admin' : ($currentUser->isPetugas() ? 'Petugas' : $currentUser->role_label) }}
                                 </span>
                             </div>
                             <span class="hidden md:inline-flex items-center gap-1 text-[11px] font-semibold text-brand-600 dark:text-brand-400 ml-1 pl-2 border-l border-line/60">

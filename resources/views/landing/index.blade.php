@@ -407,66 +407,49 @@
                     @foreach ($physicalBooks as $book)
                         <a
                             href="{{ route('books.show', $book) }}"
-                            class="group/card flex flex-col h-full rounded-2xl bg-surface border border-line hover:border-brand-600 dark:hover:border-brand-400 p-3.5 sm:p-4 transition-all duration-200 hover:shadow-md hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus cursor-pointer"
+                            class="group card-interactive bg-surface rounded-2xl border border-line p-3.5 sm:p-4 shadow-xs hover:border-brand-400 flex flex-col justify-between transition-all duration-200 hover:shadow-md hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus cursor-pointer"
                             title="{{ $book->title }}"
                         >
-                            <!-- Cover Book (Aspect 3/4) -->
-                            <div class="group/cover relative aspect-[3/4] w-full overflow-hidden rounded-xl bg-surface-soft border border-line/60 shadow-2xs mb-3">
-                                @if (filled($book->cover_path))
-                                    <img
-                                        src="{{ asset('storage/' . $book->cover_path) }}"
-                                        alt="Sampul buku {{ $book->title }}"
-                                        loading="lazy"
-                                        decoding="async"
-                                        class="h-full w-full object-cover transition-transform duration-300 motion-safe:group-hover/card:scale-105"
-                                    >
-                                @else
-                                    <div class="book-cover-fallback relative flex h-full w-full items-center justify-center overflow-hidden text-white" role="img" aria-label="Sampul buku tidak tersedia untuk {{ $book->title }}">
-                                        <span class="font-serif text-4xl sm:text-5xl font-bold tracking-wide text-white" aria-hidden="true">LT</span>
+                            <div>
+                                <!-- Cover Book (Aspect 4/5) -->
+                                <div class="w-full aspect-[4/5] rounded-xl bg-gradient-to-tr from-brand-800 via-brand-600 to-brand-400 text-white p-3.5 sm:p-4 flex flex-col justify-between shadow-xs mb-3.5 relative overflow-hidden group-hover:scale-[1.03] transition-transform duration-300 ease-out" role="img" aria-label="Sampul {{ $book->collection_type === 'novel' ? 'novel' : 'buku' }} tidak tersedia untuk {{ $book->title }}">
+                                    @if (filled($book->cover_path))
+                                        <img src="{{ asset('storage/' . $book->cover_path) }}" alt="Sampul {{ $book->title }}" class="absolute inset-0 w-full h-full object-cover">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                                    @endif
+                                    <span class="relative z-10 text-[10px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md px-2 py-0.5 rounded w-max border border-white/20 truncate max-w-full text-white">
+                                        {{ $book->category?->name ?? 'Koleksi' }}
+                                    </span>
+                                    <div class="relative z-10">
+                                        <p class="text-[11px] uppercase tracking-wider text-white/70 font-semibold mb-0.5">Litera</p>
+                                        <p class="text-xs font-bold leading-snug line-clamp-2 text-white">{{ $book->title }}</p>
                                     </div>
-                                @endif
+                                </div>
+
+                                <!-- Card Content -->
+                                <div class="space-y-1">
+                                    <h3 class="text-sm font-bold text-ink leading-snug line-clamp-1 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
+                                        {{ $book->title }}
+                                    </h3>
+                                    <p class="text-xs text-text-muted line-clamp-1">
+                                        <span>{{ $book->author ?: 'Litera' }}</span>
+                                        @if ($book->publication_year)
+                                            <span>·</span>
+                                            <span class="font-year font-semibold">{{ $book->publication_year }}</span>
+                                        @endif
+                                    </p>
+                                </div>
                             </div>
 
-                            <!-- Card Content -->
-                            <div class="flex flex-col flex-1 min-w-0">
-                                <!-- Category Badge -->
-                                <span class="text-[10px] font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 truncate font-sans">
-                                    {{ $book->category?->name ?? 'UMUM' }}
+                            <!-- Bottom Row: Stock / Availability & Detail Link -->
+                            <div class="pt-3 border-t border-line mt-3 flex items-center justify-between text-xs">
+                                <div>
+                                    <span class="font-bold text-ink tabular-nums">{{ $book->available_copies ?? $book->stock_available ?? 0 }}</span>
+                                    <span class="text-text-muted text-[10px]">tersedia</span>
+                                </div>
+                                <span class="font-semibold text-brand-600 dark:text-brand-400 group-hover:underline">
+                                    Detail &rarr;
                                 </span>
-
-                                <!-- Title -->
-                                <h3 class="font-bold text-sm text-ink group-hover/card:text-brand-600 dark:group-hover/card:text-brand-400 transition-colors line-clamp-2 leading-snug mt-1 font-sans" title="{{ $book->title }}">
-                                    {{ $book->title }}
-                                </h3>
-
-                                <!-- Author & Year -->
-                                <div class="flex items-center gap-1.5 text-xs text-text-muted mt-1.5 font-sans truncate">
-                                    <span class="truncate font-medium">{{ $book->author ?: 'Litera' }}</span>
-                                    @if ($book->publication_year)
-                                        <span>·</span>
-                                        <span class="font-year font-semibold shrink-0">{{ $book->publication_year }}</span>
-                                    @endif
-                                </div>
-
-                                <!-- Status Stok / Ketersediaan -->
-                                <div class="mt-2.5">
-                                    @if (($book->available_copies ?? $book->stock_available ?? 0) > 0)
-                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[11px] font-semibold font-sans">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
-                                            <span class="truncate">Tersedia {{ $book->available_copies ?? $book->stock_available }} eks</span>
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-700 dark:text-rose-400 text-[11px] font-semibold font-sans">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0"></span>
-                                            <span>Sedang Dipinjam</span>
-                                        </span>
-                                    @endif
-                                </div>
-
-                                <!-- Short Description (Max 2-3 lines) -->
-                                <p class="text-[11px] text-text-muted line-clamp-2 leading-relaxed mt-2.5 font-sans">
-                                    {{ $book->synopsis ?: ($book->description ?: ($book->category?->description ?: 'Koleksi buku fisik perpustakaan Litera untuk menunjang studi dan pengayaan literasi akademik.')) }}
-                                </p>
                             </div>
                         </a>
                     @endforeach
@@ -515,61 +498,48 @@
                     @foreach ($ebooks as $book)
                         <a
                             href="{{ route('books.show', $book) }}"
-                            class="group/card flex flex-col h-full rounded-2xl bg-surface border border-line hover:border-brand-600 dark:hover:border-brand-400 p-3.5 sm:p-4 transition-all duration-200 hover:shadow-md hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus cursor-pointer"
+                            class="group card-interactive bg-surface rounded-2xl border border-line p-3.5 sm:p-4 shadow-xs hover:border-brand-400 flex flex-col justify-between transition-all duration-200 hover:shadow-md hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus cursor-pointer"
                             title="{{ $book->title }}"
                         >
-                            <!-- Cover Book (Aspect 3/4) -->
-                            <div class="group/cover relative aspect-[3/4] w-full overflow-hidden rounded-xl bg-surface-soft border border-line/60 shadow-2xs mb-3">
-                                @if (filled($book->cover_path))
-                                    <img
-                                        src="{{ asset('storage/' . $book->cover_path) }}"
-                                        alt="Sampul {{ $book->collection_type === 'novel' ? 'novel' : 'e-book' }} {{ $book->title }}"
-                                        loading="lazy"
-                                        decoding="async"
-                                        class="h-full w-full object-cover transition-transform duration-300 motion-safe:group-hover/card:scale-105"
-                                    >
-                                @else
-                                    <div class="book-cover-fallback relative flex h-full w-full items-center justify-center overflow-hidden text-white" role="img" aria-label="Sampul {{ $book->collection_type === 'novel' ? 'novel' : 'e-book' }} tidak tersedia untuk {{ $book->title }}">
-                                        <span class="font-serif text-4xl sm:text-5xl font-bold tracking-wide text-white" aria-hidden="true">LT</span>
+                            <div>
+                                <!-- Cover Book (Aspect 4/5) -->
+                                <div class="w-full aspect-[4/5] rounded-xl bg-gradient-to-tr from-brand-800 via-brand-600 to-brand-400 text-white p-3.5 sm:p-4 flex flex-col justify-between shadow-xs mb-3.5 relative overflow-hidden group-hover:scale-[1.03] transition-transform duration-300 ease-out" role="img" aria-label="Sampul {{ $book->collection_type === 'novel' ? 'novel' : 'e-book' }} tidak tersedia untuk {{ $book->title }}">
+                                    @if (filled($book->cover_path))
+                                        <img src="{{ asset('storage/' . $book->cover_path) }}" alt="Sampul {{ $book->title }}" class="absolute inset-0 w-full h-full object-cover">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                                    @endif
+                                    <span class="relative z-10 text-[10px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md px-2 py-0.5 rounded w-max border border-white/20 truncate max-w-full text-white">
+                                        {{ $book->category?->name ?? 'Literasi Digital' }}
+                                    </span>
+                                    <div class="relative z-10">
+                                        <p class="text-[11px] uppercase tracking-wider text-white/70 font-semibold mb-0.5">Litera</p>
+                                        <p class="text-xs font-bold leading-snug line-clamp-2 text-white">{{ $book->title }}</p>
                                     </div>
-                                @endif
+                                </div>
+
+                                <!-- Card Content -->
+                                <div class="space-y-1">
+                                    <h3 class="text-sm font-bold text-ink leading-snug line-clamp-1 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
+                                        {{ $book->title }}
+                                    </h3>
+                                    <p class="text-xs text-text-muted line-clamp-1">
+                                        <span>{{ $book->author ?: 'Litera' }}</span>
+                                        @if ($book->publication_year)
+                                            <span>·</span>
+                                            <span class="font-year font-semibold">{{ $book->publication_year }}</span>
+                                        @endif
+                                    </p>
+                                </div>
                             </div>
 
-                            <!-- Card Content -->
-                            <div class="flex flex-col flex-1 min-w-0">
-                                <!-- Category Badge -->
-                                <span class="text-[10px] font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 truncate font-sans">
-                                    {{ $book->category?->name ?? 'UMUM' }}
+                            <!-- Bottom Row: Digital Access Badge & Detail Link -->
+                            <div class="pt-3 border-t border-line mt-3 flex items-center justify-between text-xs">
+                                <div>
+                                    <span class="text-[10px] font-semibold text-brand-600 dark:text-brand-400">Digital</span>
+                                </div>
+                                <span class="font-semibold text-brand-600 dark:text-brand-400 group-hover:underline">
+                                    Detail &rarr;
                                 </span>
-
-                                <!-- Title -->
-                                <h3 class="font-bold text-sm text-ink group-hover/card:text-brand-600 dark:group-hover/card:text-brand-400 transition-colors line-clamp-2 leading-snug mt-1 font-sans" title="{{ $book->title }}">
-                                    {{ $book->title }}
-                                </h3>
-
-                                <!-- Author & Year -->
-                                <div class="flex items-center gap-1.5 text-xs text-text-muted mt-1.5 font-sans truncate">
-                                    <span class="truncate font-medium">{{ $book->author ?: 'Litera' }}</span>
-                                    @if ($book->publication_year)
-                                        <span>·</span>
-                                        <span class="font-year font-semibold shrink-0">{{ $book->publication_year }}</span>
-                                    @endif
-                                </div>
-
-                                <!-- Jenis Akses Singkat -->
-                                <div class="mt-2.5">
-                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-brand-500/10 text-brand-700 dark:text-brand-300 text-[11px] font-semibold font-sans">
-                                        <svg class="w-3 h-3 text-brand-600 dark:text-brand-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                                        </svg>
-                                        <span>{{ filled($book->read_url) || filled($book->digital_file_path) ? 'Baca Online' : 'Akses Digital' }}</span>
-                                    </span>
-                                </div>
-
-                                <!-- Short Description (Max 2-3 lines) -->
-                                <p class="text-[11px] text-text-muted line-clamp-2 leading-relaxed mt-2.5 font-sans">
-                                    {{ $book->synopsis ?: ($book->description ?: ($book->category?->description ?: 'Koleksi e-book digital pilihan Litera untuk menunjang pembelajaran dan literasi sivitas akademika.')) }}
-                                </p>
                             </div>
                         </a>
                     @endforeach

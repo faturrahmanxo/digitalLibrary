@@ -121,4 +121,19 @@ class AdminNavbarGlassmorphismAndAccountSettingsTest extends TestCase
         $response->assertDontSee('Tanda * wajib diisi');
         $response->assertDontSee('wajib diisi</span>', false);
     }
+
+    public function test_petugas_has_identical_sidebar_settings_and_topbar_role_badge(): void
+    {
+        $petugas = User::where('role', User::ROLE_PETUGAS)->firstOrFail();
+
+        $response = $this->actingAs($petugas)->get(route('dashboard'));
+
+        $response->assertOk();
+        $response->assertSee('Petugas');
+        $response->assertSee('id="sidebar-account-settings-link"', false);
+        $response->assertSee('href="'.route('settings.profile').'"', false);
+        $response->assertSee('href="'.route('settings.security').'"', false);
+        $response->assertSee('href="'.route('settings.appearance').'"', false);
+        $response->assertSee('action="'.route('logout').'"', false);
+    }
 }

@@ -45,7 +45,7 @@ class BookDetailPageTest extends TestCase
             ->assertSee('Informasi Buku')
             ->assertSee('Deskripsi buku belum tersedia.')
             ->assertSee('Belum ada file digital yang dapat diakses untuk buku ini.')
-            ->assertSee('Simpan Buku')
+            ->assertDontSee('Simpan Buku')
             ->assertSee('detail-year', false)
             ->assertDontSee('Login untuk Mengakses')
             ->assertDontSee('Baca Online')
@@ -96,7 +96,7 @@ class BookDetailPageTest extends TestCase
             ->assertSee('book-cover-fallback', false)
             ->assertSee('LT')
             ->assertSee('Belum ada file digital yang dapat diakses untuk buku ini.')
-            ->assertSee('Simpan Buku')
+            ->assertDontSee('Simpan Buku')
             ->assertDontSee('Baca Online')
             ->assertDontSee('Download Novel')
             ->assertDontSee('Buku referensi komprehensif')
@@ -130,7 +130,7 @@ class BookDetailPageTest extends TestCase
 
         $this->actingAs($user)->get(route('books.show', $book))
             ->assertOk()
-            ->assertSee('Simpan Buku');
+            ->assertDontSee('Simpan Buku');
 
         $this->actingAs($user)
             ->from(route('books.show', $book))
@@ -144,7 +144,6 @@ class BookDetailPageTest extends TestCase
 
         $this->actingAs($user)->get(route('books.show', $book))
             ->assertOk()
-            ->assertSee('Tersimpan')
             ->assertDontSee('Simpan Buku');
 
         $this->actingAs($user)

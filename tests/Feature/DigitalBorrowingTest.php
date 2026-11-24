@@ -320,7 +320,7 @@ class DigitalBorrowingTest extends TestCase
             'category_id' => $category->id,
             'stock_total' => 3,
             'synopsis' => 'Sinopsis diperbarui.',
-        ])->assertRedirect(route('books.manage', $book));
+        ])->assertRedirect(route('books.index'));
 
         $this->assertSame('Sinopsis diperbarui.', $book->fresh()->synopsis);
         $this->assertSame(0, $book->fresh()->digital_license_count);
