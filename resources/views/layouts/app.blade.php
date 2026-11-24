@@ -270,8 +270,8 @@
 
         <!-- Main Column (Offset by fixed sidebar width on desktop) -->
         <div class="flex-1 flex flex-col min-w-0 lg:pl-64">
-            <!-- Topbar -->
-            <header class="h-16 bg-surface/95 backdrop-blur-xs border-b border-line px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 sticky top-0 z-30 shadow-xs">
+            <!-- Topbar with Glassmorphism -->
+            <header class="h-16 bg-white/75 dark:bg-[#121c17]/80 backdrop-blur-xl backdrop-saturate-150 border-b border-line/70 dark:border-white/10 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 sticky top-0 z-30 shadow-xs">
                 <div class="flex items-center gap-3 min-w-0">
                     <button type="button" id="open-drawer-btn" class="lg:hidden p-2 -ml-2 rounded-lg text-text-muted hover:text-ink hover:bg-surface-soft focus-visible:outline-2 focus-visible:outline-focus" aria-label="Buka menu" aria-controls="app-sidebar" aria-expanded="false">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -290,12 +290,12 @@
 
                 <div class="flex items-center gap-2.5 sm:gap-3 shrink-0">
                     <!-- Link to Campus Landing Portal (Kembali ke Beranda via Navbar) -->
-                    <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-control border border-brand-200 dark:border-brand-500/30 bg-brand-50 dark:bg-brand-900/30 text-xs font-semibold text-brand-700 dark:text-brand-400 hover:bg-brand-100 dark:hover:bg-brand-800/40 transition-colors font-sans" title="Kembali ke Beranda Kampus">
+                    <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-control border border-brand-200 dark:border-brand-500/30 bg-brand-50/80 dark:bg-brand-900/30 backdrop-blur-sm text-xs font-semibold text-brand-700 dark:text-brand-400 hover:bg-brand-100 dark:hover:bg-brand-800/40 transition-colors font-sans shadow-2xs" title="Kembali ke Beranda Kampus">
                         <span>Beranda</span>
                     </a>
 
                     <!-- Dark / Light Mode Toggle Button with Smooth Rotational Flipping Animation -->
-                    <button type="button" id="theme-toggle-btn" class="p-2.5 rounded-control border border-line bg-surface text-text-muted hover:text-ink hover:bg-surface-soft active:scale-90 transition-all cursor-pointer overflow-hidden" aria-label="Ganti mode gelap/terang" title="Ganti mode gelap/terang">
+                    <button type="button" id="theme-toggle-btn" class="p-2.5 rounded-control border border-line/70 dark:border-white/10 bg-white/50 dark:bg-white/5 backdrop-blur-md text-text-muted hover:text-ink hover:bg-surface-soft active:scale-90 transition-all cursor-pointer overflow-hidden shadow-2xs" aria-label="Ganti mode gelap/terang" title="Ganti mode gelap/terang">
                         <div class="relative w-4.5 h-4.5 flex items-center justify-center">
                             <svg class="w-4 h-4 text-amber-400 absolute transition-all duration-400 ease-out transform dark:rotate-0 dark:scale-100 dark:opacity-100 -rotate-90 scale-0 opacity-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -306,20 +306,20 @@
                         </div>
                     </button>
 
-                    <div class="hidden sm:flex items-center gap-2.5 text-sm pl-2.5 border-l border-line">
+                    <a href="{{ route('dashboard') }}#pengaturan-akun" class="hidden sm:flex items-center gap-2.5 text-sm pl-2.5 border-l border-line/70 hover:opacity-85 transition-opacity" title="Buka Pengaturan Akun di Dashboard">
                         <div class="w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900/40 border border-brand-200 dark:border-brand-400/30 text-brand-700 dark:text-brand-400 font-bold text-xs flex items-center justify-center shrink-0">
                             {{ strtoupper(substr($authUser?->name ?? 'U', 0, 2)) }}
                         </div>
                         <div>
                             <p class="font-semibold text-xs text-ink leading-tight">{{ $authUser?->name }}</p>
-                            <span class="inline-flex items-center text-[10px] font-medium text-text-muted">{{ $authUser?->role_label }}</span>
+                            <span class="inline-flex items-center text-[10px] font-medium text-brand-600 dark:text-brand-400">{{ $authUser?->role_label }}</span>
                         </div>
-                    </div>
+                    </a>
 
                     <!-- Single Authoritative Logout Button -->
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="min-h-9 px-3.5 py-1.5 rounded-control border border-line bg-surface text-xs font-semibold text-ink hover:bg-surface-soft hover:border-danger-fg/40 hover:text-danger-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus transition-colors cursor-pointer" title="Keluar dari akun">
+                        <button type="submit" class="min-h-9 px-3.5 py-1.5 rounded-control border border-line/70 dark:border-white/10 bg-white/50 dark:bg-white/5 backdrop-blur-md text-xs font-semibold text-ink hover:bg-surface-soft hover:border-danger-fg/40 hover:text-danger-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus transition-colors cursor-pointer shadow-2xs" title="Keluar dari akun">
                             Keluar
                         </button>
                     </form>

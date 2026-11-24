@@ -264,39 +264,46 @@
         <!-- STAFF & ADMIN OPERATIONAL & ANALYTICS DASHBOARD (Sections 25 & 26) -->
         <!-- ============================================================== -->
 
-        <!-- Modern Welcome Hero Banner -->
-        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-brand-800 via-brand-700 to-brand-600 dark:from-brand-900 dark:via-brand-800 dark:to-brand-700 p-6 sm:p-8 text-white shadow-md mb-8 border border-white/20">
+        <!-- Modern Glassmorphism Welcome Hero Banner (Litera Forest Green & Ivory) -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1b4332] via-[#21503c] to-[#122e22] dark:from-[#133023] dark:via-[#193d2c] dark:to-[#0c1f16] border border-emerald-400/30 dark:border-emerald-500/20 p-6 sm:p-8 text-white shadow-xl shadow-emerald-950/20 mb-8 backdrop-blur-xl">
             <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                 <div class="space-y-2 max-w-xl">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-semibold text-white border border-white/30 shadow-xs">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 dark:bg-white/10 backdrop-blur-md text-xs font-semibold text-emerald-200 dark:text-emerald-300 border border-white/25 shadow-xs">
                         <span class="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span>
                         <span>{{ $isAdmin ? 'Admin Dashboard — Sistem Sirkulasi Lengkap' : 'Dashboard Petugas — Operasional Sirkulasi' }}</span>
                     </div>
-                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight font-sans">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight font-sans drop-shadow-xs">
                         Halo, {{ auth()->user()->name }}! 👋
                     </h1>
-                    <p class="text-sm text-brand-50 leading-relaxed font-normal">
+                    <p class="text-sm text-emerald-100/95 dark:text-emerald-100/90 leading-relaxed font-normal">
                         {{ $isAdmin ? 'Pantau metrik perpustakaan, analitik sirkulasi, ketersediaan inventaris, dan aktivitas peminjaman secara menyeluruh.' : 'Kelola sirkulasi operasional, validasi pengajuan buku, konfirmasi pengambilan, dan pantau pengembalian harian.' }}
                     </p>
                 </div>
-                <div class="flex flex-wrap items-center gap-3 shrink-0">
-                    <button type="button" id="btn-open-dashboard-borrow-modal" data-testid="dashboard-create-borrowing" class="min-h-11 inline-flex items-center justify-center rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-brand-700 hover:bg-brand-50 shadow-md transition-all duration-150 cursor-pointer">
-                        <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="flex flex-wrap items-center gap-2.5 sm:gap-3 shrink-0">
+                    <button type="button" id="btn-open-dashboard-borrow-modal" data-testid="dashboard-create-borrowing" class="min-h-11 inline-flex items-center justify-center rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-emerald-950 hover:bg-emerald-50 shadow-md hover:shadow-lg transition-all duration-150 cursor-pointer">
+                        <svg class="w-4 h-4 mr-2 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
                         Catat Peminjaman
                     </button>
-                    <a href="{{ route('borrowings.index') }}" class="min-h-11 inline-flex items-center justify-center rounded-xl bg-white/15 backdrop-blur-md border border-white/30 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/25 transition-all duration-150">
+                    <a href="{{ route('borrowings.index') }}" class="min-h-11 inline-flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 px-4 sm:px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 shadow-xs">
                         Sirkulasi Buku
                     </a>
-                    <a href="{{ route('books.index') }}" class="min-h-11 inline-flex items-center justify-center rounded-xl bg-white/15 backdrop-blur-md border border-white/30 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/25 transition-all duration-150">
+                    <a href="{{ route('books.index') }}" class="min-h-11 inline-flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 px-4 sm:px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 shadow-xs">
                         Katalog Buku
+                    </a>
+                    <a href="#pengaturan-akun" class="min-h-11 inline-flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 px-3.5 sm:px-4 py-2.5 text-sm font-semibold text-emerald-200 hover:text-white transition-all duration-150 shadow-xs gap-1.5" title="Pengaturan Akun (Profil, Keamanan, Tampilan)">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span class="hidden xl:inline">Pengaturan</span>
                     </a>
                 </div>
             </div>
             <!-- Decorative subtle ambient glow -->
-            <div class="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-white/15 blur-3xl pointer-events-none" aria-hidden="true"></div>
-            <div class="absolute -left-16 -bottom-16 w-64 h-64 rounded-full bg-brand-400/20 blur-3xl pointer-events-none" aria-hidden="true"></div>
+            <div class="absolute -right-12 -top-12 w-80 h-80 rounded-full bg-emerald-400/20 dark:bg-emerald-500/15 blur-3xl pointer-events-none" aria-hidden="true"></div>
+            <div class="absolute -left-12 -bottom-12 w-64 h-64 rounded-full bg-amber-400/15 dark:bg-brand-400/10 blur-3xl pointer-events-none" aria-hidden="true"></div>
         </div>
 
         <!-- ============================================================== -->
@@ -1018,6 +1025,493 @@
                 </div>
             @endif
         </section>
+
+        <!-- ============================================================== -->
+        <!-- PENGATURAN AKUN DASHBOARD (Profil, Keamanan, dan Tampilan)     -->
+        <!-- ============================================================== -->
+        <section id="pengaturan-akun" aria-labelledby="account-settings-heading" class="w-full bg-surface rounded-2xl border border-line overflow-hidden shadow-xs mb-8 transition-colors">
+            <div class="p-5 sm:p-6 border-b border-line bg-surface-soft/40 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
+                        <h2 id="account-settings-heading" class="text-lg font-bold text-ink">Pengaturan Akun</h2>
+                    </div>
+                    <p class="text-xs text-text-muted mt-1">Kelola informasi profil pengelola, keamanan autentikasi kata sandi, dan preferensi tampilan antarmuka.</p>
+                </div>
+
+                <!-- 3 Navigation Tabs with Glassmorphic Pills -->
+                <div class="inline-flex items-center p-1 rounded-xl bg-surface-soft border border-line text-xs font-semibold" role="tablist" aria-label="Tab Pengaturan Akun">
+                    <button
+                        type="button"
+                        id="tab-btn-profil"
+                        role="tab"
+                        aria-selected="true"
+                        aria-controls="panel-profil"
+                        onclick="switchAccountTab('profil')"
+                        class="account-tab-btn px-3.5 py-1.5 rounded-lg transition-all duration-150 flex items-center gap-1.5 cursor-pointer bg-surface text-ink font-bold shadow-xs border border-line/60"
+                    >
+                        <svg class="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                        <span>Profil</span>
+                    </button>
+                    <button
+                        type="button"
+                        id="tab-btn-keamanan"
+                        role="tab"
+                        aria-selected="false"
+                        aria-controls="panel-keamanan"
+                        onclick="switchAccountTab('keamanan')"
+                        class="account-tab-btn px-3.5 py-1.5 rounded-lg transition-all duration-150 flex items-center gap-1.5 cursor-pointer text-text-muted hover:text-ink hover:bg-surface/50"
+                    >
+                        <svg class="w-3.5 h-3.5 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                        <span>Keamanan</span>
+                    </button>
+                    <button
+                        type="button"
+                        id="tab-btn-tampilan"
+                        role="tab"
+                        aria-selected="false"
+                        aria-controls="panel-tampilan"
+                        onclick="switchAccountTab('tampilan')"
+                        class="account-tab-btn px-3.5 py-1.5 rounded-lg transition-all duration-150 flex items-center gap-1.5 cursor-pointer text-text-muted hover:text-ink hover:bg-surface/50"
+                    >
+                        <svg class="w-3.5 h-3.5 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+                        </svg>
+                        <span>Tampilan</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 1: PROFIL PENGELOLA -->
+            <div id="panel-profil" role="tabpanel" aria-labelledby="tab-btn-profil" class="p-5 sm:p-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    <!-- Column Left: Foto Profil & Avatar Management -->
+                    <div class="lg:col-span-4 p-5 rounded-2xl border border-line bg-surface-soft/40 flex flex-col items-center text-center">
+                        <div class="relative h-28 w-28 shrink-0 overflow-hidden rounded-full bg-brand-100 text-brand-700 ring-2 ring-brand-500/20 dark:bg-brand-900/40 dark:text-brand-300 shadow-md mb-4">
+                            <img
+                                id="dash-profile-photo-preview"
+                                src="{{ auth()->user()->profile_photo_path ? asset('storage/' . auth()->user()->profile_photo_path) : '' }}"
+                                alt="Foto profil {{ auth()->user()->name }}"
+                                @if (!auth()->user()->profile_photo_path) hidden @endif
+                                class="h-full w-full object-cover"
+                            >
+                            <div
+                                id="dash-profile-avatar-fallback"
+                                @if (auth()->user()->profile_photo_path) hidden @endif
+                                class="flex h-full w-full items-center justify-center text-2xl font-bold font-sans"
+                            >
+                                {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+                            </div>
+                        </div>
+
+                        <p class="font-bold text-ink text-sm">{{ auth()->user()->name }}</p>
+                        <p class="text-xs text-text-muted mt-0.5">{{ auth()->user()->email }}</p>
+                        <span class="inline-block mt-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 dark:bg-brand-900/50 dark:text-brand-300 border border-brand-200/50">
+                            {{ auth()->user()->role_label }}
+                        </span>
+
+                        <div class="w-full border-t border-line mt-4 pt-4">
+                            <form
+                                id="dash-photo-upload-form"
+                                method="POST"
+                                action="{{ route('profile.photo.store') }}"
+                                enctype="multipart/form-data"
+                                class="space-y-2.5"
+                            >
+                                @csrf
+                                <input
+                                    type="file"
+                                    id="dash-photo-input"
+                                    name="photo"
+                                    accept=".jpg,.jpeg,.png,.webp"
+                                    class="hidden"
+                                    onchange="handleDashPhotoSelect(this)"
+                                >
+                                <button
+                                    type="button"
+                                    onclick="document.getElementById('dash-photo-input').click()"
+                                    class="w-full py-2 px-3.5 rounded-xl border border-line bg-surface hover:bg-surface-soft text-xs font-semibold text-ink transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs"
+                                >
+                                    <svg class="w-4 h-4 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    <span>Pilih Foto Baru</span>
+                                </button>
+                                <button
+                                    type="submit"
+                                    id="dash-photo-save-btn"
+                                    class="hidden w-full py-2 px-3.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+                                >
+                                    Simpan Foto
+                                </button>
+                            </form>
+
+                            @if (auth()->user()->profile_photo_path)
+                                <form method="POST" action="{{ route('profile.photo.destroy') }}" class="mt-2">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button
+                                        type="submit"
+                                        class="w-full py-1.5 px-3 rounded-lg text-xs font-medium text-danger-fg hover:bg-danger-bg transition-colors cursor-pointer"
+                                    >
+                                        Hapus Foto
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Column Right: Data Akun Form -->
+                    <div class="lg:col-span-8 space-y-5">
+                        <form method="POST" action="{{ route('profile.update') }}" class="space-y-4">
+                            @csrf
+                            @method('PUT')
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="dash-input-name" class="block text-xs font-semibold text-ink mb-1.5">
+                                        Nama Lengkap <span class="text-rose-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="dash-input-name"
+                                        name="name"
+                                        value="{{ old('name', auth()->user()->name) }}"
+                                        required
+                                        maxlength="100"
+                                        class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-surface text-ink text-sm focus:outline-2 focus:outline-focus"
+                                    >
+                                </div>
+                                <div>
+                                    <label for="dash-input-username" class="block text-xs font-semibold text-ink mb-1.5">
+                                        Username <span class="text-rose-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="dash-input-username"
+                                        name="username"
+                                        value="{{ old('username', auth()->user()->username) }}"
+                                        required
+                                        minlength="3"
+                                        maxlength="30"
+                                        pattern="[a-z0-9._]+"
+                                        class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-surface text-ink text-sm font-mono focus:outline-2 focus:outline-focus"
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="dash-input-email" class="block text-xs font-semibold text-ink mb-1.5">
+                                        Alamat Email Login
+                                    </label>
+                                    <div class="relative">
+                                        <input
+                                            type="email"
+                                            id="dash-input-email"
+                                            value="{{ auth()->user()->email }}"
+                                            disabled
+                                            class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-surface-soft/60 text-text-muted text-sm cursor-not-allowed"
+                                        >
+                                        <span class="absolute right-3 top-2.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-md border border-emerald-200/50">
+                                            Terverifikasi
+                                        </span>
+                                    </div>
+                                    <p class="text-[11px] text-text-muted mt-1">Email digunakan sebagai identitas akun utama.</p>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-ink mb-1.5">
+                                        Peran Sistem
+                                    </label>
+                                    <div class="px-3.5 py-2.5 rounded-xl border border-line bg-surface-soft/60 text-sm flex items-center justify-between">
+                                        <span class="font-medium text-ink">{{ auth()->user()->role_label }}</span>
+                                        <span class="text-[10px] font-bold text-brand-700 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/40 px-2 py-0.5 rounded-md border border-brand-200/50">
+                                            Akses Terproteksi
+                                        </span>
+                                    </div>
+                                    <p class="text-[11px] text-text-muted mt-1">Peran menentukan otorisasi modul administrasi.</p>
+                                </div>
+                            </div>
+
+                            <div class="pt-3 border-t border-line flex items-center justify-end">
+                                <button
+                                    type="submit"
+                                    class="min-h-10 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+                                >
+                                    Simpan Perubahan Profil
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: KEAMANAN & KATA SANDI -->
+            <div id="panel-keamanan" role="tabpanel" aria-labelledby="tab-btn-keamanan" class="hidden p-5 sm:p-8">
+                <div class="max-w-2xl space-y-6">
+                    <div>
+                        <h3 class="text-sm font-bold text-ink">Perbarui Kata Sandi</h3>
+                        <p class="text-xs text-text-muted mt-0.5">Pastikan kata sandi baru Anda minimal 8 karakter dengan kombinasi yang aman.</p>
+                    </div>
+
+                    <form method="POST" action="{{ route('profile.password.update') }}" class="space-y-4">
+                        @csrf
+                        @method('PUT')
+
+                        <div>
+                            <label for="dash-current-password" class="block text-xs font-semibold text-ink mb-1.5">
+                                Kata Sandi Saat Ini <span class="text-rose-500">*</span>
+                            </label>
+                            <input
+                                type="password"
+                                id="dash-current-password"
+                                name="current_password"
+                                required
+                                autocomplete="current-password"
+                                class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-surface text-ink text-sm focus:outline-2 focus:outline-focus"
+                                placeholder="Masukkan kata sandi lama Anda"
+                            >
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="dash-new-password" class="block text-xs font-semibold text-ink mb-1.5">
+                                    Kata Sandi Baru <span class="text-rose-500">*</span>
+                                </label>
+                                <input
+                                    type="password"
+                                    id="dash-new-password"
+                                    name="password"
+                                    required
+                                    minlength="8"
+                                    autocomplete="new-password"
+                                    class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-surface text-ink text-sm focus:outline-2 focus:outline-focus"
+                                    placeholder="Minimal 8 karakter"
+                                >
+                            </div>
+                            <div>
+                                <label for="dash-password-confirmation" class="block text-xs font-semibold text-ink mb-1.5">
+                                    Konfirmasi Kata Sandi Baru <span class="text-rose-500">*</span>
+                                </label>
+                                <input
+                                    type="password"
+                                    id="dash-password-confirmation"
+                                    name="password_confirmation"
+                                    required
+                                    minlength="8"
+                                    autocomplete="new-password"
+                                    class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-surface text-ink text-sm focus:outline-2 focus:outline-focus"
+                                    placeholder="Ulangi kata sandi baru"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="pt-2 flex items-center justify-end">
+                            <button
+                                type="submit"
+                                class="min-h-10 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+                            >
+                                Perbarui Kata Sandi
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Security Status Indicators -->
+                    <div class="pt-6 border-t border-line grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="p-3.5 rounded-xl border border-line bg-surface-soft/40 flex items-start gap-2.5">
+                            <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                            <div>
+                                <p class="text-xs font-bold text-ink">Enkripsi Bcrypt</p>
+                                <p class="text-[11px] text-text-muted mt-0.5">Sandi disimpan dengan salted hash 12 rounds.</p>
+                            </div>
+                        </div>
+                        <div class="p-3.5 rounded-xl border border-line bg-surface-soft/40 flex items-start gap-2.5">
+                            <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <div>
+                                <p class="text-xs font-bold text-ink">Proteksi Sesi</p>
+                                <p class="text-[11px] text-text-muted mt-0.5">Sesi kadaluarsa otomatis saat tidak aktif.</p>
+                            </div>
+                        </div>
+                        <div class="p-3.5 rounded-xl border border-line bg-surface-soft/40 flex items-start gap-2.5">
+                            <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <div>
+                                <p class="text-xs font-bold text-ink">CSRF Protection</p>
+                                <p class="text-[11px] text-text-muted mt-0.5">Token unik memvalidasi seluruh formulir.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: TAMPILAN & TEMA (Light, Dark, System) -->
+            <div id="panel-tampilan" role="tabpanel" aria-labelledby="tab-btn-tampilan" class="hidden p-5 sm:p-8">
+                <div class="max-w-3xl space-y-6">
+                    <div>
+                        <h3 class="text-sm font-bold text-ink">Preferensi Tema &amp; Antarmuka</h3>
+                        <p class="text-xs text-text-muted mt-0.5">Pilih skema visual yang paling nyaman untuk Anda. Pengaturan ini langsung diterapkan dan tersimpan di peramban Anda.</p>
+                    </div>
+
+                    <!-- 3 Theme Cards with Live Switching -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <!-- Theme Card 1: Mode Terang (Ivory & Emerald) -->
+                        <div
+                            id="theme-card-light"
+                            onclick="setThemeDashboard('light')"
+                            class="theme-card-choice relative p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer hover:shadow-md flex flex-col justify-between border-line bg-surface"
+                        >
+                            <div class="space-y-3">
+                                <!-- Mini Mockup Light Mode -->
+                                <div class="w-full h-24 rounded-xl bg-[#FAF9F5] border border-stone-200 p-2.5 flex flex-col justify-between shadow-2xs">
+                                    <div class="flex items-center justify-between">
+                                        <div class="w-12 h-3 rounded-full bg-[#1b4332]/80"></div>
+                                        <div class="w-4 h-4 rounded-full bg-amber-400"></div>
+                                    </div>
+                                    <div class="space-y-1.5">
+                                        <div class="w-3/4 h-2 rounded bg-stone-300"></div>
+                                        <div class="w-1/2 h-2 rounded bg-stone-200"></div>
+                                    </div>
+                                    <div class="flex gap-1.5">
+                                        <div class="w-1/3 h-3 rounded bg-emerald-700"></div>
+                                        <div class="w-1/3 h-3 rounded bg-stone-200"></div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex items-center justify-between">
+                                        <h4 class="text-xs font-bold text-ink flex items-center gap-1.5">
+                                            <svg class="w-3.5 h-3.5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                            </svg>
+                                            <span>Mode Terang</span>
+                                        </h4>
+                                        <span id="badge-active-light" class="hidden text-[9px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded">
+                                            Aktif
+                                        </span>
+                                    </div>
+                                    <p class="text-[11px] text-text-muted mt-1 leading-relaxed">
+                                        Palet Ivory hangat khas Litera dengan kontras optimal untuk pencahayaan terang.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <button
+                                type="button"
+                                class="mt-4 w-full py-1.5 px-3 rounded-lg border border-line bg-surface-soft hover:bg-surface text-xs font-semibold text-ink transition-colors cursor-pointer"
+                            >
+                                Pilih Terang
+                            </button>
+                        </div>
+
+                        <!-- Theme Card 2: Mode Gelap (Forest Green) -->
+                        <div
+                            id="theme-card-dark"
+                            onclick="setThemeDashboard('dark')"
+                            class="theme-card-choice relative p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer hover:shadow-md flex flex-col justify-between border-line bg-surface"
+                        >
+                            <div class="space-y-3">
+                                <!-- Mini Mockup Dark Mode -->
+                                <div class="w-full h-24 rounded-xl bg-[#0e1d17] border border-emerald-900/60 p-2.5 flex flex-col justify-between shadow-2xs">
+                                    <div class="flex items-center justify-between">
+                                        <div class="w-12 h-3 rounded-full bg-emerald-500/80"></div>
+                                        <div class="w-4 h-4 rounded-full bg-emerald-400"></div>
+                                    </div>
+                                    <div class="space-y-1.5">
+                                        <div class="w-3/4 h-2 rounded bg-emerald-800/60"></div>
+                                        <div class="w-1/2 h-2 rounded bg-emerald-900/50"></div>
+                                    </div>
+                                    <div class="flex gap-1.5">
+                                        <div class="w-1/3 h-3 rounded bg-emerald-600"></div>
+                                        <div class="w-1/3 h-3 rounded bg-emerald-900/60"></div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex items-center justify-between">
+                                        <h4 class="text-xs font-bold text-ink flex items-center gap-1.5">
+                                            <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                                            </svg>
+                                            <span>Mode Gelap</span>
+                                        </h4>
+                                        <span id="badge-active-dark" class="hidden text-[9px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded">
+                                            Aktif
+                                        </span>
+                                    </div>
+                                    <p class="text-[11px] text-text-muted mt-1 leading-relaxed">
+                                        Nuansa hijau hutan malam yang ramah mata untuk pencahayaan redup.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <button
+                                type="button"
+                                class="mt-4 w-full py-1.5 px-3 rounded-lg border border-line bg-surface-soft hover:bg-surface text-xs font-semibold text-ink transition-colors cursor-pointer"
+                            >
+                                Pilih Gelap
+                            </button>
+                        </div>
+
+                        <!-- Theme Card 3: Mengikuti Sistem -->
+                        <div
+                            id="theme-card-system"
+                            onclick="setThemeDashboard('system')"
+                            class="theme-card-choice relative p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer hover:shadow-md flex flex-col justify-between border-line bg-surface"
+                        >
+                            <div class="space-y-3">
+                                <!-- Mini Mockup Split System -->
+                                <div class="w-full h-24 rounded-xl overflow-hidden border border-line flex shadow-2xs">
+                                    <div class="w-1/2 h-full bg-[#FAF9F5] p-2 flex flex-col justify-between">
+                                        <div class="w-8 h-2.5 rounded-full bg-[#1b4332]/80"></div>
+                                        <div class="w-full h-1.5 rounded bg-stone-300"></div>
+                                        <div class="w-8 h-2.5 rounded bg-emerald-700"></div>
+                                    </div>
+                                    <div class="w-1/2 h-full bg-[#0e1d17] p-2 flex flex-col justify-between border-l border-line">
+                                        <div class="w-8 h-2.5 rounded-full bg-emerald-500/80 ml-auto"></div>
+                                        <div class="w-full h-1.5 rounded bg-emerald-800/60"></div>
+                                        <div class="w-8 h-2.5 rounded bg-emerald-600 ml-auto"></div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex items-center justify-between">
+                                        <h4 class="text-xs font-bold text-ink flex items-center gap-1.5">
+                                            <svg class="w-3.5 h-3.5 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                            </svg>
+                                            <span>Ikuti Sistem</span>
+                                        </h4>
+                                        <span id="badge-active-system" class="hidden text-[9px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded">
+                                            Aktif
+                                        </span>
+                                    </div>
+                                    <p class="text-[11px] text-text-muted mt-1 leading-relaxed">
+                                        Otomatis menyesuaikan dengan preferensi tema perangkat atau browser Anda.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <button
+                                type="button"
+                                class="mt-4 w-full py-1.5 px-3 rounded-lg border border-line bg-surface-soft hover:bg-surface text-xs font-semibold text-ink transition-colors cursor-pointer"
+                            >
+                                Pilih Sistem
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     @endif
 
     <!-- ======================================================== -->
@@ -1197,7 +1691,115 @@
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        // ==============================================================
+        // PENGATURAN AKUN DASHBOARD FUNCTIONS (GLOBAL SCOPE)
+        // ==============================================================
+        window.switchAccountTab = function (tabKey) {
+            const panels = {
+                'profil': document.getElementById('panel-profil'),
+                'keamanan': document.getElementById('panel-keamanan'),
+                'tampilan': document.getElementById('panel-tampilan')
+            };
+            const buttons = {
+                'profil': document.getElementById('tab-btn-profil'),
+                'keamanan': document.getElementById('tab-btn-keamanan'),
+                'tampilan': document.getElementById('tab-btn-tampilan')
+            };
+
+            for (const [key, panel] of Object.entries(panels)) {
+                if (!panel) continue;
+                const btn = buttons[key];
+                if (key === tabKey) {
+                    panel.classList.remove('hidden');
+                    if (btn) {
+                        btn.classList.add('bg-surface', 'text-ink', 'font-bold', 'shadow-xs', 'border', 'border-line/60');
+                        btn.classList.remove('text-text-muted', 'hover:bg-surface/50');
+                        btn.setAttribute('aria-selected', 'true');
+                    }
+                } else {
+                    panel.classList.add('hidden');
+                    if (btn) {
+                        btn.classList.remove('bg-surface', 'text-ink', 'font-bold', 'shadow-xs', 'border', 'border-line/60');
+                        btn.classList.add('text-text-muted', 'hover:bg-surface/50');
+                        btn.setAttribute('aria-selected', 'false');
+                    }
+                }
+            }
+        };
+
+        window.handleDashPhotoSelect = function (input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const preview = document.getElementById('dash-profile-photo-preview');
+                    const fallback = document.getElementById('dash-profile-avatar-fallback');
+                    const saveBtn = document.getElementById('dash-photo-save-btn');
+                    if (preview) {
+                        preview.src = e.target.result;
+                        preview.hidden = false;
+                    }
+                    if (fallback) fallback.hidden = true;
+                    if (saveBtn) saveBtn.classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        };
+
+        window.setThemeDashboard = function (mode) {
+            if (mode === 'dark') {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            } else if (mode === 'light') {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                localStorage.removeItem('theme');
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }
+            updateThemeCardsUI();
+        };
+
+        window.updateThemeCardsUI = function () {
+            const currentTheme = localStorage.theme || 'system';
+            const cards = {
+                'light': document.getElementById('theme-card-light'),
+                'dark': document.getElementById('theme-card-dark'),
+                'system': document.getElementById('theme-card-system')
+            };
+            const badges = {
+                'light': document.getElementById('badge-active-light'),
+                'dark': document.getElementById('badge-active-dark'),
+                'system': document.getElementById('badge-active-system')
+            };
+
+            for (const [key, card] of Object.entries(cards)) {
+                if (!card) continue;
+                const badge = badges[key];
+                if (key === currentTheme) {
+                    card.classList.add('border-brand-600', 'dark:border-brand-400', 'bg-brand-50/20', 'dark:bg-brand-900/10');
+                    card.classList.remove('border-line');
+                    if (badge) badge.classList.remove('hidden');
+                } else {
+                    card.classList.remove('border-brand-600', 'dark:border-brand-400', 'bg-brand-50/20', 'dark:bg-brand-900/10');
+                    card.classList.add('border-line');
+                    if (badge) badge.classList.add('hidden');
+                }
+            }
+        };
+
         document.addEventListener('DOMContentLoaded', function () {
+            updateThemeCardsUI();
+
+            // Hash anchor auto-scroll
+            if (window.location.hash === '#pengaturan-akun') {
+                const el = document.getElementById('pengaturan-akun');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }
+
             // ==============================================================
             // CHART.JS INTEGRATION (SECTIONS C & D)
             // ==============================================================
