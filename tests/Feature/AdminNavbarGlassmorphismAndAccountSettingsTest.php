@@ -64,11 +64,14 @@ class AdminNavbarGlassmorphismAndAccountSettingsTest extends TestCase
         // Redesigned modern hero banner with legible text
         $response->assertSee('Halo, '.$admin->name.'! 👋');
         $response->assertSee('Admin Dashboard — Sistem Sirkulasi Lengkap');
-        $response->assertSee('href="#pengaturan-akun"', false);
+        $response->assertSee('href="'.route('dashboard').'#pengaturan-akun"', false);
 
-        // Sidebar Account Settings link present
+        // Sidebar Account Settings link present with 3 submenus
         $response->assertSee('id="sidebar-account-settings-link"', false);
         $response->assertSee('sidebar-account-settings-link', false);
+        $response->assertSee('href="'.route('dashboard').'#panel-profil"', false);
+        $response->assertSee('href="'.route('dashboard').'#panel-keamanan"', false);
+        $response->assertSee('href="'.route('dashboard').'#panel-tampilan"', false);
 
         // Pengaturan Akun section present
         $response->assertSee('id="pengaturan-akun"', false);

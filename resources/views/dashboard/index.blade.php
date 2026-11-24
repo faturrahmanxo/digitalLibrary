@@ -264,45 +264,22 @@
         <!-- STAFF & ADMIN OPERATIONAL & ANALYTICS DASHBOARD (Sections 25 & 26) -->
         <!-- ============================================================== -->
 
-        <!-- Modern Glassmorphism Welcome Hero Banner (Litera Forest Green & Ivory) -->
-        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1b4332] via-[#21503c] to-[#122e22] dark:from-[#133023] dark:via-[#193d2c] dark:to-[#0c1f16] border border-emerald-400/30 dark:border-emerald-500/20 p-5 sm:p-7 text-white shadow-xl shadow-emerald-950/20 mb-6 backdrop-blur-xl">
-            <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                <div class="space-y-1.5 max-w-xl">
-                    <p class="text-xs sm:text-sm font-semibold tracking-wider text-emerald-200/90 dark:text-emerald-300/90 uppercase font-sans">
-                        {{ $isAdmin ? 'Admin Dashboard — Sistem Sirkulasi Lengkap' : 'Dashboard Petugas — Operasional Sirkulasi' }}
-                    </p>
-                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight font-sans drop-shadow-xs">
-                        Halo, {{ auth()->user()->name }}! 👋
-                    </h1>
-                    <p class="text-sm text-emerald-100/95 dark:text-emerald-100/90 leading-relaxed font-normal">
-                        {{ $isAdmin ? 'Pantau metrik perpustakaan, analitik sirkulasi, ketersediaan inventaris, dan aktivitas peminjaman secara menyeluruh.' : 'Kelola sirkulasi operasional, validasi pengajuan buku, konfirmasi pengambilan, dan pantau pengembalian harian.' }}
-                    </p>
-                </div>
-                <div class="flex flex-wrap items-center gap-2.5 sm:gap-3 shrink-0">
-                    <button type="button" id="btn-open-dashboard-borrow-modal" data-testid="dashboard-create-borrowing" class="min-h-11 inline-flex items-center justify-center rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-emerald-950 hover:bg-emerald-50 shadow-md hover:shadow-lg transition-all duration-150 cursor-pointer">
-                        <svg class="w-4 h-4 mr-2 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        Catat Peminjaman
-                    </button>
-                    <a href="{{ route('borrowings.index') }}" class="min-h-11 inline-flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 px-4 sm:px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 shadow-xs">
-                        Sirkulasi Buku
-                    </a>
-                    <a href="{{ route('books.index') }}" class="min-h-11 inline-flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 px-4 sm:px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 shadow-xs">
-                        Katalog Buku
-                    </a>
-                    <a href="#pengaturan-akun" class="min-h-11 inline-flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 px-3.5 sm:px-4 py-2.5 text-sm font-semibold text-emerald-200 hover:text-white transition-all duration-150 shadow-xs gap-1.5" title="Pengaturan Akun (Profil, Keamanan, Tampilan)">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                        <span class="hidden xl:inline">Pengaturan</span>
-                    </a>
-                </div>
+        <!-- Modern Minimalist Welcome Hero Banner (Litera Forest Green & Ivory) -->
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#1b4332] via-[#21503c] to-[#122e22] dark:from-[#133023] dark:via-[#193d2c] dark:to-[#0c1f16] border border-emerald-400/25 dark:border-emerald-500/20 px-5 py-4 sm:px-6 sm:py-5 text-white shadow-md mb-5 backdrop-blur-xl">
+            <div class="relative z-10 space-y-1">
+                <p class="text-[11px] sm:text-xs font-semibold tracking-wider text-emerald-200/90 dark:text-emerald-300/90 uppercase font-sans">
+                    {{ $isAdmin ? 'Admin Dashboard — Sistem Sirkulasi Lengkap' : 'Dashboard Petugas — Operasional Sirkulasi' }}
+                </p>
+                <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white leading-tight font-sans">
+                    Halo, {{ auth()->user()->name }}! 👋
+                </h1>
+                <p class="text-xs sm:text-sm text-emerald-100/90 leading-relaxed font-normal max-w-3xl">
+                    {{ $isAdmin ? 'Pantau metrik perpustakaan, analitik sirkulasi, ketersediaan inventaris, dan aktivitas peminjaman secara menyeluruh.' : 'Kelola sirkulasi operasional, validasi pengajuan buku, konfirmasi pengambilan, dan pantau pengembalian harian.' }}
+                </p>
             </div>
             <!-- Decorative subtle ambient glow -->
-            <div class="absolute -right-12 -top-12 w-80 h-80 rounded-full bg-emerald-400/20 dark:bg-emerald-500/15 blur-3xl pointer-events-none" aria-hidden="true"></div>
-            <div class="absolute -left-12 -bottom-12 w-64 h-64 rounded-full bg-amber-400/15 dark:bg-brand-400/10 blur-3xl pointer-events-none" aria-hidden="true"></div>
+            <div class="absolute -right-12 -top-12 w-64 h-64 rounded-full bg-emerald-400/15 dark:bg-emerald-500/10 blur-3xl pointer-events-none" aria-hidden="true"></div>
+            <div class="absolute -left-12 -bottom-12 w-48 h-48 rounded-full bg-amber-400/10 dark:bg-brand-400/10 blur-3xl pointer-events-none" aria-hidden="true"></div>
         </div>
 
         <!-- ============================================================== -->
@@ -411,6 +388,109 @@
                 </p>
             </div>
         </section>
+
+        <!-- ============================================================== -->
+        <!-- SECTION C & SECTION D: BORROWING TREND & COLLECTION CHARTS    -->
+        <!-- ============================================================== -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 mb-6">
+            <!-- SECTION C: BORROWING TREND CHART (Col 8) -->
+            <section aria-labelledby="chart-trend-heading" class="lg:col-span-8 bg-surface rounded-2xl border border-line p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+                <div>
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4 border-b border-line mb-4">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <svg class="w-2.5 h-2.5 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                                <h2 id="chart-trend-heading" class="text-base font-bold text-ink">Grafik Tren Peminjaman &amp; Pengembalian</h2>
+                            </div>
+                            <p class="text-xs text-text-muted mt-0.5">
+                                Menampilkan frekuensi aktual peminjaman dan pengembalian buku (titik nol terisi konsisten).
+                            </p>
+                        </div>
+                        <!-- Period filter toggles -->
+                        <div class="inline-flex rounded-xl p-1 bg-surface-soft border border-line text-xs font-semibold" role="tablist">
+                            <button type="button" class="btn-period-toggle px-3 py-1.5 rounded-lg transition-colors cursor-pointer bg-brand-600 text-white shadow-xs" data-period="7d">
+                                7 Hari
+                            </button>
+                            <button type="button" class="btn-period-toggle px-3 py-1.5 rounded-lg transition-colors cursor-pointer text-text-muted hover:text-ink" data-period="30d">
+                                30 Hari
+                            </button>
+                            <button type="button" class="btn-period-toggle px-3 py-1.5 rounded-lg transition-colors cursor-pointer text-text-muted hover:text-ink" data-period="12m">
+                                12 Bulan
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Chart Container -->
+                    <div class="relative w-full h-[280px] sm:h-[320px]">
+                        <canvas id="borrowingTrendChart" class="w-full h-full"></canvas>
+                        <div id="chart-loading-state" class="absolute inset-0 flex items-center justify-center bg-surface/50 hidden">
+                            <span class="text-xs text-text-muted">Memuat grafik tren...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-4 border-t border-line text-xs text-text-muted mt-4">
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-2.5 h-2.5 fill-current text-brand-600 shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            <span class="font-medium text-ink">Peminjaman Aktual</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-2.5 h-2.5 fill-current text-emerald-500 shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            <span class="font-medium text-ink">Pengembalian Selesai</span>
+                        </div>
+                    </div>
+                    <span class="text-[11px]">Zona Waktu: WIB (Asia/Jakarta)</span>
+                </div>
+            </section>
+
+            <!-- SECTION D: COLLECTION DISTRIBUTION (Col 4) -->
+            <section aria-labelledby="chart-collection-heading" class="lg:col-span-4 bg-surface rounded-2xl border border-line p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between pb-4 border-b border-line mb-4">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-2.5 h-2.5 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                            <h2 id="chart-collection-heading" class="text-base font-bold text-ink">Distribusi Koleksi</h2>
+                        </div>
+                        <span class="text-xs text-text-muted">{{ number_format($totalBookTitles, 0, ',', '.') }} Judul</span>
+                    </div>
+
+                    <div class="relative w-full h-[220px] flex items-center justify-center">
+                        <canvas id="collectionDistributionChart" class="max-h-full"></canvas>
+                    </div>
+
+                    <div class="mt-4 space-y-3 pt-4 border-t border-line">
+                        <div class="flex items-center justify-between text-xs">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-2.5 h-2.5 fill-current text-brand-700 dark:text-brand-400 shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                <span class="font-semibold text-ink">Buku Fisik</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-bold text-ink">{{ number_format($totalPhysicalTitles, 0, ',', '.') }} judul</span>
+                                <span class="text-text-muted ml-1">({{ $collectionDistribution['physical_percent'] }}%)</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-xs">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-2.5 h-2.5 fill-current text-emerald-400 shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                <span class="font-semibold text-ink">E-book Digital</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-bold text-ink">{{ number_format($totalEbookTitles, 0, ',', '.') }} judul</span>
+                                <span class="text-text-muted ml-1">({{ $collectionDistribution['ebook_percent'] }}%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-line mt-4">
+                    <a href="{{ route('books.index') }}" class="w-full inline-flex items-center justify-center py-2 rounded-xl bg-surface-soft hover:bg-surface-soft/80 text-xs font-semibold text-ink transition-colors">
+                        Lihat Seluruh Koleksi &rarr;
+                    </a>
+                </div>
+            </section>
+        </div>
 
         <!-- ============================================================== -->
         <!-- SECTION I & SECTION 26: ATTENTION REQUIRED / PERHATIAN OPERASIONAL -->
@@ -595,109 +675,6 @@
                 </div>
             </div>
         </section>
-
-        <!-- ============================================================== -->
-        <!-- SECTION C & SECTION D: BORROWING TREND & COLLECTION CHARTS    -->
-        <!-- ============================================================== -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 mb-6">
-            <!-- SECTION C: BORROWING TREND CHART (Col 8) -->
-            <section aria-labelledby="chart-trend-heading" class="lg:col-span-8 bg-surface rounded-2xl border border-line p-5 sm:p-6 shadow-xs flex flex-col justify-between">
-                <div>
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4 border-b border-line mb-4">
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <svg class="w-2.5 h-2.5 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-                                <h2 id="chart-trend-heading" class="text-base font-bold text-ink">Grafik Tren Peminjaman &amp; Pengembalian</h2>
-                            </div>
-                            <p class="text-xs text-text-muted mt-0.5">
-                                Menampilkan frekuensi aktual peminjaman dan pengembalian buku (titik nol terisi konsisten).
-                            </p>
-                        </div>
-                        <!-- Period filter toggles -->
-                        <div class="inline-flex rounded-xl p-1 bg-surface-soft border border-line text-xs font-semibold" role="tablist">
-                            <button type="button" class="btn-period-toggle px-3 py-1.5 rounded-lg transition-colors cursor-pointer bg-brand-600 text-white shadow-xs" data-period="7d">
-                                7 Hari
-                            </button>
-                            <button type="button" class="btn-period-toggle px-3 py-1.5 rounded-lg transition-colors cursor-pointer text-text-muted hover:text-ink" data-period="30d">
-                                30 Hari
-                            </button>
-                            <button type="button" class="btn-period-toggle px-3 py-1.5 rounded-lg transition-colors cursor-pointer text-text-muted hover:text-ink" data-period="12m">
-                                12 Bulan
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Chart Container -->
-                    <div class="relative w-full h-[280px] sm:h-[320px]">
-                        <canvas id="borrowingTrendChart" class="w-full h-full"></canvas>
-                        <div id="chart-loading-state" class="absolute inset-0 flex items-center justify-center bg-surface/50 hidden">
-                            <span class="text-xs text-text-muted">Memuat grafik tren...</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-between pt-4 border-t border-line text-xs text-text-muted mt-4">
-                    <div class="flex items-center gap-4">
-                        <div class="flex items-center gap-2">
-                            <svg class="w-2.5 h-2.5 fill-current text-brand-600 shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                            <span class="font-medium text-ink">Peminjaman Aktual</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <svg class="w-2.5 h-2.5 fill-current text-emerald-500 shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                            <span class="font-medium text-ink">Pengembalian Selesai</span>
-                        </div>
-                    </div>
-                    <span class="text-[11px]">Zona Waktu: WIB (Asia/Jakarta)</span>
-                </div>
-            </section>
-
-            <!-- SECTION D: COLLECTION DISTRIBUTION (Col 4) -->
-            <section aria-labelledby="chart-collection-heading" class="lg:col-span-4 bg-surface rounded-2xl border border-line p-5 sm:p-6 shadow-xs flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between pb-4 border-b border-line mb-4">
-                        <div class="flex items-center gap-2">
-                            <svg class="w-2.5 h-2.5 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-                            <h2 id="chart-collection-heading" class="text-base font-bold text-ink">Distribusi Koleksi</h2>
-                        </div>
-                        <span class="text-xs text-text-muted">{{ number_format($totalBookTitles, 0, ',', '.') }} Judul</span>
-                    </div>
-
-                    <div class="relative w-full h-[220px] flex items-center justify-center">
-                        <canvas id="collectionDistributionChart" class="max-h-full"></canvas>
-                    </div>
-
-                    <div class="mt-4 space-y-3 pt-4 border-t border-line">
-                        <div class="flex items-center justify-between text-xs">
-                            <div class="flex items-center gap-2">
-                                <svg class="w-2.5 h-2.5 fill-current text-brand-700 dark:text-brand-400 shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                <span class="font-semibold text-ink">Buku Fisik</span>
-                            </div>
-                            <div class="text-right">
-                                <span class="font-bold text-ink">{{ number_format($totalPhysicalTitles, 0, ',', '.') }} judul</span>
-                                <span class="text-text-muted ml-1">({{ $collectionDistribution['physical_percent'] }}%)</span>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between text-xs">
-                            <div class="flex items-center gap-2">
-                                <svg class="w-2.5 h-2.5 fill-current text-emerald-400 shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                <span class="font-semibold text-ink">E-book Digital</span>
-                            </div>
-                            <div class="text-right">
-                                <span class="font-bold text-ink">{{ number_format($totalEbookTitles, 0, ',', '.') }} judul</span>
-                                <span class="text-text-muted ml-1">({{ $collectionDistribution['ebook_percent'] }}%)</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="pt-4 border-t border-line mt-4">
-                    <a href="{{ route('books.index') }}" class="w-full inline-flex items-center justify-center py-2 rounded-xl bg-surface-soft hover:bg-surface-soft/80 text-xs font-semibold text-ink transition-colors">
-                        Lihat Seluruh Koleksi &rarr;
-                    </a>
-                </div>
-            </section>
-        </div>
 
         <!-- ============================================================== -->
         <!-- SECTION E & SECTION F: CATEGORY & STATUS BREAKDOWN             -->
@@ -1793,11 +1770,35 @@
         document.addEventListener('DOMContentLoaded', function () {
             updateThemeCardsUI();
 
-            // Hash anchor auto-scroll
-            if (window.location.hash === '#pengaturan-akun') {
-                const el = document.getElementById('pengaturan-akun');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
+            // Hash anchor auto-scroll & tab activation
+            function applyHashTab() {
+                const hash = window.location.hash;
+                if (!hash) return;
+                let targetTab = null;
+                if (hash === '#panel-keamanan' || hash === '#keamanan') {
+                    targetTab = 'keamanan';
+                } else if (hash === '#panel-tampilan' || hash === '#tampilan') {
+                    targetTab = 'tampilan';
+                } else if (hash === '#panel-profil' || hash === '#profil' || hash === '#pengaturan-akun') {
+                    targetTab = 'profil';
+                }
+
+                if (targetTab && typeof window.switchAccountTab === 'function') {
+                    window.switchAccountTab(targetTab);
+                }
+
+                if (hash === '#pengaturan-akun' || hash.startsWith('#panel-')) {
+                    const el = document.getElementById('pengaturan-akun');
+                    if (el) {
+                        setTimeout(() => {
+                            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 50);
+                    }
+                }
             }
+
+            window.addEventListener('hashchange', applyHashTab);
+            applyHashTab();
 
             // ==============================================================
             // CHART.JS INTEGRATION (SECTIONS C & D)

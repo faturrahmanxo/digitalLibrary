@@ -280,8 +280,8 @@ class AnalyticsDashboardTest extends TestCase
         $response->assertSee('1 Pengembalian Hari Ini');
         $response->assertSee('Pengajuan Pending');
         $response->assertSee('Catat Peminjaman');
-        $response->assertSee('Sirkulasi Buku');
-        $response->assertSee('Katalog Buku');
+        $response->assertSee('Peminjaman Buku');
+        $response->assertSee('Data Buku');
 
         // Ensure internal user management is NOT accessible to Petugas
         $response->assertDontSee('Kelola Pengguna Internal');

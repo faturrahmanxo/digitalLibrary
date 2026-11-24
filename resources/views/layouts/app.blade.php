@@ -87,7 +87,7 @@
 
     <div class="min-h-screen flex flex-col lg:flex-row">
         <!-- Mobile Drawer Backdrop -->
-        <div id="mobile-drawer-backdrop" class="fixed inset-0 z-40 bg-ink/50 hidden lg:hidden" aria-hidden="true"></div>
+        <div id="mobile-drawer-backdrop" class="fixed inset-0 z-40 bg-black/75 backdrop-blur-xs hidden lg:hidden transition-opacity" aria-hidden="true"></div>
 
         <!-- Sidebar Navigation (FIXED permanently on Desktop, Drawer on Mobile/Tablet) -->
         <aside id="app-sidebar" aria-label="Menu Utama" class="fixed inset-y-0 left-0 z-50 w-64 bg-sidebar border-r border-line transform -translate-x-full transition-transform duration-200 ease-in-out lg:translate-x-0 lg:fixed lg:inset-y-0 lg:left-0 lg:w-64 lg:h-screen lg:flex lg:flex-col lg:shrink-0">
@@ -248,42 +248,67 @@
                         </div>
                     </details>
 
-                    {{-- 4. Pengaturan Akun (Profil, Keamanan, Tampilan) --}}
+                    {{-- 4. Pengaturan Akun (Profil, Keamanan, Tampilan) - Dropdown Accordion --}}
                     @php
-                        $isSettingsActive = request()->is('profile*');
+                        $isSettingsGroupActive = request()->is('profile*');
                     @endphp
-                    <a href="{{ route('dashboard') }}#pengaturan-akun"
-                       id="sidebar-account-settings-link"
-                       class="group flex items-center justify-between px-3.5 py-2.5 rounded-control text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus {{ $isSettingsActive ? 'bg-sidebar-active text-ink font-semibold shadow-xs border-l-4 border-brand-600 dark:border-brand-400 pl-2.5' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
-                        <div class="flex items-center gap-3">
-                            <svg class="w-5 h-5 shrink-0 transition-transform duration-200 group-hover:scale-110 {{ $isSettingsActive ? 'text-brand-600 dark:text-brand-400' : 'text-text-muted group-hover:text-ink' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <details id="sidebar-account-settings" class="group/settings-mgr" @if ($isSettingsGroupActive) open @endif>
+                        <summary id="sidebar-account-settings-summary" class="list-none group cursor-pointer flex items-center justify-between px-3.5 py-2.5 rounded-control text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 hover:bg-surface-soft hover:text-ink {{ $isSettingsGroupActive ? 'bg-sidebar-active/70 text-ink font-semibold' : 'text-text-muted' }}">
+                            <span class="flex items-center gap-3">
+                                <svg class="w-5 h-5 shrink-0 transition-transform duration-200 group-hover:scale-110 {{ $isSettingsGroupActive ? 'text-brand-600 dark:text-brand-400' : 'text-text-muted group-hover:text-ink' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                <span class="{{ $isSettingsGroupActive ? 'text-brand-700 dark:text-ink font-semibold' : '' }}">Pengaturan Akun</span>
+                            </span>
+                            <svg class="w-4 h-4 transition-transform duration-200 group-open/settings-mgr:rotate-180 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
-                            <span class="{{ $isSettingsActive ? 'text-brand-700 dark:text-ink font-semibold' : '' }}">Pengaturan Akun</span>
+                        </summary>
+                        <div class="grid transition-[grid-template-rows] duration-300 ease-out" style="grid-template-rows: 1fr">
+                            <div class="overflow-hidden">
+                                <div class="ml-8 mt-1 space-y-1 border-l border-line pl-3">
+                                    <a href="{{ route('dashboard') }}#panel-profil"
+                                       id="sidebar-account-settings-link"
+                                       onclick="if (typeof switchAccountTab === 'function') { switchAccountTab('profil'); document.getElementById('pengaturan-akun')?.scrollIntoView({behavior: 'smooth'}); }"
+                                       class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium text-text-muted hover:bg-surface-soft hover:text-ink transition-colors group">
+                                        <span>Profil</span>
+                                        <svg class="w-2 h-2 fill-current text-brand-600 dark:text-brand-400 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                                    </a>
+                                    <a href="{{ route('dashboard') }}#panel-keamanan"
+                                       onclick="if (typeof switchAccountTab === 'function') { switchAccountTab('keamanan'); document.getElementById('pengaturan-akun')?.scrollIntoView({behavior: 'smooth'}); }"
+                                       class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium text-text-muted hover:bg-surface-soft hover:text-ink transition-colors group">
+                                        <span>Keamanan</span>
+                                        <svg class="w-2 h-2 fill-current text-brand-600 dark:text-brand-400 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                                    </a>
+                                    <a href="{{ route('dashboard') }}#panel-tampilan"
+                                       onclick="if (typeof switchAccountTab === 'function') { switchAccountTab('tampilan'); document.getElementById('pengaturan-akun')?.scrollIntoView({behavior: 'smooth'}); }"
+                                       class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium text-text-muted hover:bg-surface-soft hover:text-ink transition-colors group">
+                                        <span>Tampilan</span>
+                                        <svg class="w-2 h-2 fill-current text-brand-600 dark:text-brand-400 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                        @if($isSettingsActive)
-                            <svg class="w-2.5 h-2.5 fill-current text-brand-600 dark:text-brand-400 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-                        @endif
-                    </a>
+                    </details>
                 @endif
             </nav>
 
-            <!-- Sidebar User Profile Card (Without redundant logout button) -->
-            <div class="p-4 border-t border-line bg-surface-soft/60 shrink-0">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-full bg-brand-100 dark:bg-brand-900/40 border border-brand-200 dark:border-brand-400/30 text-brand-700 dark:text-brand-400 font-bold text-xs flex items-center justify-center shrink-0">
+            <!-- Sidebar User Profile Card (Refined & Clean Aligned) -->
+            <div class="p-3.5 border-t border-line bg-surface-soft/40 shrink-0">
+                <a href="{{ route('dashboard') }}#pengaturan-akun" class="flex items-center gap-3 p-1.5 rounded-xl hover:bg-surface-soft transition-colors group" title="Buka Pengaturan Akun">
+                    <div class="w-9 h-9 rounded-full bg-brand-600/15 dark:bg-brand-400/20 border border-brand-500/30 text-brand-700 dark:text-brand-400 font-bold text-xs flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-2xs">
                         {{ strtoupper(substr($authUser?->name ?? 'U', 0, 2)) }}
                     </div>
                     <div class="min-w-0 flex-1">
-                        <p class="text-sm font-semibold text-ink truncate">{{ $authUser?->name }}</p>
+                        <p class="text-sm font-bold text-ink truncate leading-tight">{{ $authUser?->name }}</p>
                         <div class="flex items-center gap-1.5 mt-0.5">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold {{ $authUser?->isAdmin() ? 'bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-400 border border-brand-600/20 dark:border-brand-400/30' : ($authUser?->isPetugas() ? 'bg-surface border border-line text-text-muted' : 'bg-success-bg text-success-fg border border-success-fg/20') }}">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase {{ $authUser?->isAdmin() ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30' : ($authUser?->isPetugas() ? 'bg-surface border border-line text-text-muted' : 'bg-success-bg text-success-fg border border-success-fg/20') }}">
                                 {{ $authUser?->role_label }}
                             </span>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
         </aside>
 
@@ -325,21 +350,25 @@
                         </div>
                     </button>
 
-                    <a href="{{ route('dashboard') }}#pengaturan-akun" class="hidden sm:flex items-center gap-2.5 text-sm pl-2.5 border-l border-line/70 hover:opacity-85 transition-opacity" title="Buka Pengaturan Akun di Dashboard">
-                        <div class="w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900/40 border border-brand-200 dark:border-brand-400/30 text-brand-700 dark:text-brand-400 font-bold text-xs flex items-center justify-center shrink-0">
+                    <!-- Topbar User Profile Card (Refined & Balanced) -->
+                    <a href="{{ route('dashboard') }}#pengaturan-akun" class="hidden sm:flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl border border-line/70 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md hover:bg-surface-soft hover:border-brand-300 dark:hover:border-brand-500/30 transition-all text-left group shadow-2xs" title="Buka Pengaturan Akun di Dashboard">
+                        <div class="w-8 h-8 rounded-full bg-brand-600/10 dark:bg-brand-400/15 border border-brand-500/25 text-brand-700 dark:text-brand-300 font-bold text-xs flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                             {{ strtoupper(substr($authUser?->name ?? 'U', 0, 2)) }}
                         </div>
-                        <div>
-                            <p class="font-semibold text-xs text-ink leading-tight">{{ $authUser?->name }}</p>
-                            <span class="inline-flex items-center text-[10px] font-medium text-brand-600 dark:text-brand-400">{{ $authUser?->role_label }}</span>
+                        <div class="flex flex-col justify-center min-w-0">
+                            <span class="font-bold text-xs text-ink leading-tight truncate max-w-[120px]">{{ $authUser?->name }}</span>
+                            <span class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 tracking-wide uppercase leading-none mt-1">{{ $authUser?->role_label }}</span>
                         </div>
                     </a>
 
-                    <!-- Single Authoritative Logout Button -->
-                    <form method="POST" action="{{ route('logout') }}">
+                    <!-- Single Authoritative Logout Button (Icon only on tablet and below) -->
+                    <form method="POST" action="{{ route('logout') }}" class="inline-flex">
                         @csrf
-                        <button type="submit" class="min-h-9 px-3.5 py-1.5 rounded-control border border-line/70 dark:border-white/10 bg-white/50 dark:bg-white/5 backdrop-blur-md text-xs font-semibold text-ink hover:bg-surface-soft hover:border-danger-fg/40 hover:text-danger-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus transition-colors cursor-pointer shadow-2xs" title="Keluar dari akun">
-                            Keluar
+                        <button type="submit" class="min-h-9 p-2 lg:px-3.5 lg:py-1.5 rounded-control border border-line/70 dark:border-white/10 bg-white/50 dark:bg-white/5 backdrop-blur-md text-xs font-semibold text-ink hover:bg-surface-soft hover:border-danger-fg/40 hover:text-danger-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus transition-colors cursor-pointer shadow-2xs inline-flex items-center justify-center gap-1.5" title="Keluar dari akun" aria-label="Keluar dari akun">
+                            <svg class="w-4 h-4 text-danger-fg shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                            </svg>
+                            <span class="hidden lg:inline">Keluar</span>
                         </button>
                     </form>
                 </div>
