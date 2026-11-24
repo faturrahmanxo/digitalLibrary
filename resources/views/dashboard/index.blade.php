@@ -61,118 +61,113 @@
                     </p>
                 </div>
                 <p class="mt-3 text-xs text-text-muted border-t border-line/60 pt-2.5 flex items-center justify-between">
-                    <span>Maksimal 3 judul per akun</span>
-                    <span class="font-semibold text-brand-600 dark:text-brand-400">{{ 3 - min(3, $memberActiveCount) }} kuota tersisa</span>
+                    <span>Maksimal 3 eksemplar</span>
+                    <span class="font-medium text-brand-600 dark:text-brand-400">Aktif</span>
                 </p>
             </div>
 
-            <!-- Metric 2: Tenggat Pengembalian Terdekat -->
+            <!-- Metric 2: Jatuh Tempo Terdekat -->
             <div class="card-interactive bg-surface rounded-2xl border border-line p-5.5 shadow-xs hover:border-brand-400 flex flex-col justify-between">
                 <div>
-                    <span class="inline-flex items-center text-[11px] font-semibold text-amber-700 bg-amber-50 dark:bg-amber-950/40 dark:text-amber-300 px-2.5 py-0.5 rounded-full border border-amber-200/50 mb-2">
-                        Tenggat Terdekat
+                    <span class="inline-flex items-center text-[11px] font-semibold text-amber-700 bg-amber-50 dark:bg-amber-900/40 dark:text-amber-400 px-2.5 py-0.5 rounded-full border border-amber-200/50 mb-2">
+                        Batas Waktu
                     </span>
                     <p class="text-xs font-semibold text-text-muted">Jatuh Tempo Pengembalian</p>
-                    @if ($nextDueBorrowing)
-                        @php
-                            $daysLeft = now()->diffInDays($nextDueBorrowing->due_at, false);
-                        @endphp
-                        <p class="mt-1 text-xl sm:text-2xl font-extrabold text-ink tabular-nums tracking-tight">
-                            {{ $nextDueBorrowing->due_at?->format('d M Y') }}
-                        </p>
-                        <p class="text-xs font-bold {{ $daysLeft < 0 ? 'text-danger-fg' : ($daysLeft <= 2 ? 'text-amber-600' : 'text-emerald-600') }} mt-0.5">
-                            {{ $daysLeft < 0 ? 'Terlambat ' . abs($daysLeft) . ' hari' : ($daysLeft === 0 ? 'Jatuh tempo hari ini' : $daysLeft . ' hari tersisa') }}
-                        </p>
-                    @else
-                        <p class="mt-1 text-2xl font-bold text-ink tracking-tight">
-                            &mdash;
-                        </p>
-                        <p class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5">Tidak ada tunggakan pinjaman</p>
-                    @endif
+                    <p class="mt-1 text-xl font-bold text-ink tabular-nums tracking-tight">
+                        @if ($nextDueBorrowing && $nextDueBorrowing->due_at)
+                            {{ $nextDueBorrowing->due_at->translatedFormat('d M Y') }}
+                        @else
+                            <span class="text-text-muted font-normal text-base">Tidak ada pinjaman</span>
+                        @endif
+                    </p>
                 </div>
-                <p class="mt-3 text-xs text-text-muted border-t border-line/60 pt-2.5 flex items-center justify-between">
-                    <span>Loket Sirkulasi Lt. 1</span>
-                    <span class="text-text-muted">Pusat Kampus</span>
+                <p class="mt-3 text-xs text-text-muted border-t border-line/60 pt-2.5">
+                    @if ($nextDueBorrowing && $nextDueBorrowing->isOverdue())
+                        <span class="text-rose-600 font-semibold">Telah melewati batas waktu!</span>
+                    @elseif ($nextDueBorrowing && $nextDueBorrowing->due_at)
+                        <span class="text-amber-600 font-medium">{{ \Carbon\Carbon::now('Asia/Jakarta')->diffInDays($nextDueBorrowing->due_at, false) >= 0 ? \Carbon\Carbon::now('Asia/Jakarta')->diffInDays($nextDueBorrowing->due_at) . ' hari lagi' : 'Hari ini' }}</span>
+                    @else
+                        <span>Tertib administrasi</span>
+                    @endif
                 </p>
             </div>
 
-            <!-- Metric 3: Koleksi Favorit Disimpan -->
+            <!-- Metric 3: Total Riwayat Pengembalian -->
             <div class="card-interactive bg-surface rounded-2xl border border-line p-5.5 shadow-xs hover:border-brand-400 flex flex-col justify-between">
                 <div>
-                    <span class="inline-flex items-center text-[11px] font-semibold text-red-700 bg-red-50 dark:bg-red-950/40 dark:text-red-300 px-2.5 py-0.5 rounded-full border border-red-200/50 mb-2">
+                    <span class="inline-flex items-center text-[11px] font-semibold text-emerald-700 bg-emerald-50 dark:bg-emerald-900/40 dark:text-emerald-400 px-2.5 py-0.5 rounded-full border border-emerald-200/50 mb-2">
+                        Histori Sukses
+                    </span>
+                    <p class="text-xs font-semibold text-text-muted">Total Pengembalian</p>
+                    <p class="mt-1 text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
+                        {{ $memberHistoryCount }}
+                        <span class="text-sm font-normal text-text-muted font-sans">kali</span>
+                    </p>
+                </div>
+                <p class="mt-3 text-xs text-text-muted border-t border-line/60 pt-2.5 flex items-center justify-between">
+                    <span>Riwayat peminjaman selesai</span>
+                    <a href="{{ route('collection.index') }}" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">Detail &rarr;</a>
+                </p>
+            </div>
+
+            <!-- Metric 4: Koleksi Favorit Tersimpan -->
+            <div class="card-interactive bg-surface rounded-2xl border border-line p-5.5 shadow-xs hover:border-brand-400 flex flex-col justify-between">
+                <div>
+                    <span class="inline-flex items-center text-[11px] font-semibold text-rose-700 bg-rose-50 dark:bg-rose-900/40 dark:text-rose-400 px-2.5 py-0.5 rounded-full border border-rose-200/50 mb-2">
                         Daftar Bacaan
                     </span>
-                    <p class="text-xs font-semibold text-text-muted">Koleksi Buku Favorit</p>
+                    <p class="text-xs font-semibold text-text-muted">Buku Disimpan / Favorit</p>
                     <p class="mt-1 text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
                         {{ $userFavoritesCount }}
                         <span class="text-sm font-normal text-text-muted font-sans">buku</span>
                     </p>
                 </div>
                 <p class="mt-3 text-xs text-text-muted border-t border-line/60 pt-2.5 flex items-center justify-between">
-                    <span>Disimpan untuk riset</span>
-                    <a href="{{ route('favorites.index') }}" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">Buka Favorit &rarr;</a>
-                </p>
-            </div>
-
-            <!-- Metric 4: Riwayat Peminjaman Selesai -->
-            <div class="card-interactive bg-surface rounded-2xl border border-line p-5.5 shadow-xs hover:border-brand-400 flex flex-col justify-between">
-                <div>
-                    <span class="inline-flex items-center text-[11px] font-semibold text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-200/50 mb-2">
-                        Histori Sirkulasi
-                    </span>
-                    <p class="text-xs font-semibold text-text-muted">Peminjaman Selesai</p>
-                    <p class="mt-1 text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
-                        {{ $memberHistoryCount }}
-                        <span class="text-sm font-normal text-text-muted font-sans">transaksi</span>
-                    </p>
-                </div>
-                <p class="mt-3 text-xs text-text-muted border-t border-line/60 pt-2.5 flex items-center justify-between">
-                    <span>Total riwayat selesai</span>
-                    <a href="{{ route('borrowings.index', ['status' => 'returned']) }}" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">Lihat Riwayat &rarr;</a>
+                    <span>Koleksi yang ditandai</span>
+                    <a href="{{ route('favorites.index') }}" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">Buka &rarr;</a>
                 </p>
             </div>
         </section>
 
-        <!-- 3. Active Borrowings & Fast Book Access Grid -->
+        <!-- 3. Active Loans & Recent Returns Table -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
-            
-            <!-- Left: Active Loans Table (Col 8) -->
             <section aria-labelledby="active-loans-heading" class="lg:col-span-8 bg-surface rounded-2xl border border-line overflow-hidden shadow-xs flex flex-col justify-between">
                 <div>
-                    <div class="p-5 border-b border-line flex items-center justify-between gap-3 bg-surface-soft/40">
+                    <div class="p-5 border-b border-line flex items-center justify-between gap-2 bg-surface-soft/40">
                         <div class="flex items-center gap-2.5">
                             <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
                             <h2 id="active-loans-heading" class="text-base font-bold text-ink">Buku yang Sedang Anda Pinjam</h2>
                         </div>
-                        <a href="{{ route('borrowings.index') }}" class="text-xs font-semibold text-brand-600 hover:text-brand-700 hover:underline">
-                            Lihat Semua Riwayat &rarr;
+                        <a href="{{ route('collection.index') }}" class="text-xs font-semibold text-brand-600 hover:text-brand-700 hover:underline flex items-center gap-1">
+                            <span>Koleksi Saya</span>
+                            <span>&rarr;</span>
                         </a>
                     </div>
 
                     @if ($activeBorrowings->isEmpty())
                         <div class="p-12 text-center">
-                            <div class="w-14 h-14 rounded-2xl bg-brand-50 dark:bg-brand-950/40 text-brand-600 mx-auto flex items-center justify-center mb-3">
-                                <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <div class="w-12 h-12 rounded-2xl bg-surface-soft text-text-muted flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                                 </svg>
                             </div>
-                            <h3 class="text-sm font-bold text-ink">Tidak Ada Buku yang Sedang Dipinjam</h3>
-                            <p class="text-xs text-text-muted mt-1 max-w-sm mx-auto">
-                                Anda sedang tidak membawa pinjaman buku fisik. Jelajahi katalog buku perpustakaan untuk meminjam koleksi referensi baru.
-                            </p>
-                            <a href="{{ route('home') }}#katalog" class="mt-4 inline-flex items-center px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-xs transition-colors">
-                                Cari Buku di Portal Kampus &rarr;
-                            </a>
+                            <p class="text-sm font-semibold text-ink">Anda tidak memiliki pinjaman aktif saat ini.</p>
+                            <p class="mt-1 text-xs text-text-muted">Jelajahi koleksi kami dan pinjam buku fisik atau baca e-book kapan saja.</p>
+                            <div class="mt-4">
+                                <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-600 text-white text-xs font-semibold hover:bg-brand-700 transition-colors">
+                                    Mulai Cari Buku
+                                </a>
+                            </div>
                         </div>
                     @else
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse">
                                 <thead>
                                     <tr class="bg-surface-soft/60 border-b border-line text-xs font-semibold text-text-muted">
-                                        <th scope="col" class="py-3 px-4">Judul Buku</th>
-                                        <th scope="col" class="py-3 px-4 whitespace-nowrap">Tgl Pinjam</th>
-                                        <th scope="col" class="py-3 px-4 whitespace-nowrap">Jatuh Tempo</th>
-                                        <th scope="col" class="py-3 px-4 text-right">Aksi</th>
+                                        <th class="py-3 px-4">Buku</th>
+                                        <th class="py-3 px-4 whitespace-nowrap">Tanggal Pinjam</th>
+                                        <th class="py-3 px-4 whitespace-nowrap">Jatuh Tempo</th>
+                                        <th class="py-3 px-4 whitespace-nowrap">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-line text-sm">
@@ -180,22 +175,40 @@
                                         @foreach ($loan->items as $item)
                                             <tr class="hover:bg-brand-50/20 transition-colors">
                                                 <td class="py-3.5 px-4">
-                                                    <p class="font-semibold text-ink line-clamp-1">{{ $item->book?->title ?? 'Buku Perpustakaan' }}</p>
-                                                    <p class="text-xs text-text-muted font-mono mt-0.5">{{ $loan->transaction_code }} / {{ $item->book?->author }}</p>
+                                                    <div class="flex items-center gap-3">
+                                                        <div class="w-10 h-14 bg-surface-soft rounded-lg overflow-hidden shrink-0 border border-line shadow-xs">
+                                                            @if ($item->book?->cover_path)
+                                                                <img src="{{ asset('storage/' . $item->book->cover_path) }}" alt="{{ $item->book->title }}" class="w-full h-full object-cover">
+                                                            @else
+                                                                <div class="w-full h-full flex items-center justify-center text-text-muted">
+                                                                    <svg class="w-5 h-5 opacity-40" fill="currentColor" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                        <div>
+                                                            <a href="{{ route('books.show', $item->book) }}" class="font-bold text-ink hover:text-brand-600 line-clamp-1">
+                                                                {{ $item->book?->title ?? 'Judul Tidak Tersedia' }}
+                                                            </a>
+                                                            <p class="text-xs text-text-muted mt-0.5">{{ $item->book?->author }}</p>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                                 <td class="py-3.5 px-4 text-xs text-text-muted tabular-nums whitespace-nowrap">
-                                                    {{ $loan->borrowed_at?->format('d M Y') }}
+                                                    {{ $loan->borrowed_at?->translatedFormat('d M Y') }}
                                                 </td>
-                                                <td class="py-3.5 px-4 text-xs tabular-nums whitespace-nowrap">
-                                                    <span class="font-semibold text-ink">{{ $loan->due_at?->format('d M Y') }}</span>
+                                                <td class="py-3.5 px-4 text-xs tabular-nums whitespace-nowrap font-medium {{ $loan->isOverdue() ? 'text-rose-600 font-bold' : 'text-ink' }}">
+                                                    {{ $loan->due_at?->translatedFormat('d M Y') }}
+                                                </td>
+                                                <td class="py-3.5 px-4 whitespace-nowrap">
                                                     @if ($loan->isOverdue())
-                                                        <span class="block text-[10px] text-danger-fg font-bold">Terlambat</span>
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+                                                            Terlambat
+                                                        </span>
+                                                    @else
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                            Dipinjam
+                                                        </span>
                                                     @endif
-                                                </td>
-                                                <td class="py-3.5 px-4 text-right whitespace-nowrap">
-                                                    <a href="{{ route('borrowings.show', $loan) }}" class="inline-flex items-center px-3 py-1.5 rounded-lg border border-line bg-surface hover:bg-surface-soft text-xs font-semibold text-brand-600 transition-colors">
-                                                        Detail
-                                                    </a>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -205,95 +218,79 @@
                         </div>
                     @endif
                 </div>
-
-                <!-- Footer tip -->
-                <div class="p-4 border-t border-line bg-surface-soft/40 text-[11px] text-text-muted flex items-center justify-between">
-                    <span>Pengembalian buku fisik dilakukan di loket sirkulasi perpustakaan pusat lantai 1.</span>
-                    <a href="{{ route('home') }}#jam-layanan" class="font-semibold text-brand-600 hover:underline">Jam Buka &rarr;</a>
-                </div>
             </section>
 
-            <!-- Right: Favorite Quick Access & Campus Rules (Col 4) -->
-            <div class="lg:col-span-4 space-y-6">
-                
-                <!-- Favorite Books Preview -->
-                <div class="bg-surface rounded-2xl border border-line p-5 shadow-xs">
-                    <div class="flex items-center justify-between pb-3 border-b border-line mb-3">
-                        <h3 class="text-sm font-bold text-ink">Buku Favorit Saya</h3>
-                        <a href="{{ route('favorites.index') }}" class="text-xs font-semibold text-brand-600 hover:underline">Lihat Semua</a>
+            <!-- Right Column: Quick Reading List / Favorites -->
+            <section aria-labelledby="favorite-books-heading" class="lg:col-span-4 bg-surface rounded-2xl border border-line p-5 shadow-xs flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between pb-3 border-b border-line mb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                            <h2 id="favorite-books-heading" class="text-sm font-bold text-ink">Daftar Bacaan Favorit</h2>
+                        </div>
+                        <a href="{{ route('favorites.index') }}" class="text-xs font-semibold text-brand-600 hover:underline">Semua</a>
                     </div>
 
                     @if ($favoriteBooks->isEmpty())
-                        <p class="text-xs text-text-muted py-4 text-center">Belum ada buku favorit yang disimpan.</p>
-                        <a href="{{ route('home') }}#katalog" class="block w-full text-center py-2 rounded-xl border border-line text-xs font-semibold text-text-muted hover:text-ink hover:bg-surface-soft transition-colors">
-                            Jelajahi Katalog
-                        </a>
+                        <div class="py-8 text-center text-xs text-text-muted">
+                            <p>Belum ada buku dalam favorit Anda.</p>
+                            <p class="mt-1">Tandai buku favorit di halaman katalog!</p>
+                        </div>
                     @else
                         <div class="space-y-3">
-                            @foreach ($favoriteBooks as $favBook)
-                                <div class="flex items-center justify-between gap-3 p-2 rounded-xl hover:bg-surface-soft transition-colors">
-                                    <div class="min-w-0">
-                                        <h4 class="text-xs font-bold text-ink truncate">{{ $favBook->title }}</h4>
-                                        <p class="text-[11px] text-text-muted truncate">{{ $favBook->author }}</p>
+                            @foreach ($favoriteBooks as $fav)
+                                <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-soft transition-colors">
+                                    <div class="w-9 h-12 bg-surface-soft rounded border border-line overflow-hidden shrink-0">
+                                        @if ($fav->cover_path)
+                                            <img src="{{ asset('storage/' . $fav->cover_path) }}" alt="{{ $fav->title }}" class="w-full h-full object-cover">
+                                        @endif
                                     </div>
-                                    <a href="{{ route('books.read', $favBook) }}" class="px-2.5 py-1 rounded-lg bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 text-xs font-semibold shrink-0 hover:bg-brand-100 transition-colors">
-                                        Baca
-                                    </a>
+                                    <div class="min-w-0 flex-1">
+                                        <a href="{{ route('books.show', $fav) }}" class="text-xs font-bold text-ink hover:text-brand-600 truncate block">
+                                            {{ $fav->title }}
+                                        </a>
+                                        <p class="text-[11px] text-text-muted truncate">{{ $fav->author }}</p>
+                                    </div>
                                 </div>
                             @endforeach
                         </div>
                     @endif
                 </div>
-
-                <!-- Academic Guidance Card -->
-                <div class="bg-surface rounded-2xl border border-line p-5 shadow-xs space-y-3">
-                    <h3 class="text-sm font-bold text-ink">Panduan Sirkulasi Sivitas</h3>
-                    <ul class="space-y-2 text-xs text-text-muted">
-                        <li class="flex items-start gap-2">
-                            <span class="text-brand-600 font-bold">&ndash;</span>
-                            <span>Maksimal peminjaman <strong>3 eksemplar buku</strong> sekaligus.</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <span class="text-brand-600 font-bold">&ndash;</span>
-                            <span>Pilihan durasi peminjaman: <strong>3, 7, 14, 21, hingga 30 hari</strong>.</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <span class="text-brand-600 font-bold">&ndash;</span>
-                            <span>Tunjukkan kartu anggota digital atau KTM saat pengambilan di konter sirkulasi.</span>
-                        </li>
-                    </ul>
-                </div>
-
-            </div>
-
+            </section>
         </div>
 
     @else
         <!-- ============================================================== -->
-        <!-- STAFF & ADMIN OPERATIONAL DASHBOARD (Litera Internal Management) -->
+        <!-- STAFF & ADMIN OPERATIONAL & ANALYTICS DASHBOARD (Sections 25 & 26) -->
         <!-- ============================================================== -->
 
         <!-- Modern Welcome Hero Banner -->
-        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-brand-800 via-brand-600 to-brand-400 p-6 sm:p-8 text-white shadow-md mb-8 border border-white/20">
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-brand-800 via-brand-700 to-brand-600 dark:from-brand-900 dark:via-brand-800 dark:to-brand-700 p-6 sm:p-8 text-white shadow-md mb-8 border border-white/20">
             <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                 <div class="space-y-2 max-w-xl">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-semibold text-white border border-white/30 shadow-xs">
                         <span class="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span>
-                        <span>Litera Sirkulasi Perpustakaan Aktif</span>
+                        <span>{{ $isAdmin ? 'Admin Dashboard — Sistem Sirkulasi Lengkap' : 'Dashboard Petugas — Operasional Sirkulasi' }}</span>
                     </div>
-                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight font-sans">
                         Halo, {{ auth()->user()->name }}! 👋
                     </h1>
                     <p class="text-sm text-brand-50 leading-relaxed font-normal">
-                        Kelola sirkulasi buku, monitor ketersediaan eksemplar, dan pantau pengembalian tepat waktu secara akurat dari satu dasbor terpadu.
+                        {{ $isAdmin ? 'Pantau metrik perpustakaan, analitik sirkulasi, ketersediaan inventaris, dan aktivitas peminjaman secara menyeluruh.' : 'Kelola sirkulasi operasional, validasi pengajuan buku, konfirmasi pengambilan, dan pantau pengembalian harian.' }}
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-3 shrink-0">
-                    <button type="button" id="btn-open-dashboard-borrow-modal" data-testid="dashboard-create-borrowing" class="min-h-11 inline-flex items-center justify-center rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-brand-700 dark:text-brand-700 hover:bg-brand-50 shadow-md transition-all duration-150 cursor-pointer">
-                        Catat Peminjaman Baru
+                    <button type="button" id="btn-open-dashboard-borrow-modal" data-testid="dashboard-create-borrowing" class="min-h-11 inline-flex items-center justify-center rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-brand-700 hover:bg-brand-50 shadow-md transition-all duration-150 cursor-pointer">
+                        <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Catat Peminjaman
                     </button>
                     <a href="{{ route('borrowings.index') }}" class="min-h-11 inline-flex items-center justify-center rounded-xl bg-white/15 backdrop-blur-md border border-white/30 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/25 transition-all duration-150">
-                        Lihat Riwayat
+                        Sirkulasi Buku
+                    </a>
+                    <a href="{{ route('books.index') }}" class="min-h-11 inline-flex items-center justify-center rounded-xl bg-white/15 backdrop-blur-md border border-white/30 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/25 transition-all duration-150">
+                        Katalog Buku
                     </a>
                 </div>
             </div>
@@ -302,386 +299,729 @@
             <div class="absolute -left-16 -bottom-16 w-64 h-64 rounded-full bg-brand-400/20 blur-3xl pointer-events-none" aria-hidden="true"></div>
         </div>
 
-        <!-- 4 Mandatory KPI Stat Cards (FR-008 & ADR-009) -->
-        <section aria-label="Indikator Kinerja Utama Perpustakaan" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5 mb-8">
-            <!-- KPI 1: Jumlah Judul Buku -->
-            <div class="group card-interactive bg-surface rounded-2xl border border-line p-5.5 shadow-xs hover:border-brand-400 flex flex-col justify-between" data-testid="kpi-book-titles">
-                <div class="flex items-start justify-between gap-4">
+        <!-- ============================================================== -->
+        <!-- SECTION I & SECTION 26: ATTENTION REQUIRED / PERHATIAN OPERASIONAL -->
+        <!-- ============================================================== -->
+        <section aria-label="Informasi Perhatian Operasional" class="mb-8">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full {{ $attentionRequired['has_attention'] ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500' }}"></span>
+                    <h2 class="text-sm font-bold text-ink uppercase tracking-wider font-sans">
+                        {{ $isPetugas ? 'Fokus Operasional Petugas' : 'Perhatian Operasional & Tindakan' }}
+                    </h2>
+                </div>
+                @if ($returnsTodayCount > 0)
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        <span>{{ $returnsTodayCount }} Pengembalian Hari Ini</span>
+                    </span>
+                @endif
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Attention 1: Pengajuan Pending -->
+                <div class="p-4.5 rounded-2xl border {{ $pendingCount > 0 ? 'bg-amber-50/60 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800/40' : 'bg-surface border-line' }} flex items-start justify-between">
                     <div>
-                        <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-brand-700 bg-brand-50 dark:bg-brand-900/40 dark:text-brand-400 dark:border-brand-400/30 px-2.5 py-0.5 rounded-full border border-brand-200/50 mb-2">
-                            Katalog Aktif
-                        </span>
-                        <p class="text-xs font-semibold text-text-muted">Jumlah Judul Buku</p>
-                        <p class="mt-1 text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
-                            {{ number_format($totalBookTitles, 0, ',', '.') }}
-                            <span class="text-sm font-normal text-text-muted font-sans">judul</span>
+                        <p class="text-xs font-medium {{ $pendingCount > 0 ? 'text-amber-800 dark:text-amber-300' : 'text-text-muted' }}">
+                            Pengajuan Pending
+                        </p>
+                        <p class="mt-1 text-2xl font-extrabold text-ink tabular-nums font-italiana">
+                            {{ $pendingCount }}
+                            <span class="text-xs font-normal text-text-muted font-sans">transaksi</span>
+                        </p>
+                        <p class="mt-2 text-[11px] text-text-muted">
+                            {{ $pendingCount > 0 ? 'Perlu tinjauan persetujuan petugas' : 'Tidak ada antrean pending' }}
                         </p>
                     </div>
-                    <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-600/20 border border-brand-100 dark:border-brand-400/30 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-200">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    <a href="{{ route('borrowings.index', ['status' => 'pending']) }}" class="p-2 rounded-xl {{ $pendingCount > 0 ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' : 'bg-surface-soft text-text-muted hover:text-ink' }} transition-colors" title="Lihat Pengajuan">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
-                    </div>
+                    </a>
                 </div>
-                <p class="mt-3 text-xs text-text-muted border-t border-line/60 pt-2.5 flex items-center justify-between">
-                    <span>Koleksi judul buku aktif</span>
-                    <a href="{{ route('books.index') }}" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">Kelola &rarr;</a>
+
+                <!-- Attention 2: Approved Menunggu Pengambilan -->
+                <div class="p-4.5 rounded-2xl border {{ $awaitingPickupCount > 0 ? 'bg-blue-50/60 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800/40' : 'bg-surface border-line' }} flex items-start justify-between">
+                    <div>
+                        <p class="text-xs font-medium {{ $awaitingPickupCount > 0 ? 'text-blue-800 dark:text-blue-300' : 'text-text-muted' }}">
+                            Menunggu Pengambilan
+                        </p>
+                        <p class="mt-1 text-2xl font-extrabold text-ink tabular-nums font-italiana">
+                            {{ $awaitingPickupCount }}
+                            <span class="text-xs font-normal text-text-muted font-sans">buku disetujui</span>
+                        </p>
+                        <p class="mt-2 text-[11px] text-text-muted">
+                            {{ $awaitingPickupCount > 0 ? 'Stok direservasi, tunggu penyerahan' : 'Semua buku diserahkan' }}
+                        </p>
+                    </div>
+                    <a href="{{ route('borrowings.index', ['status' => 'approved']) }}" class="p-2 rounded-xl {{ $awaitingPickupCount > 0 ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-surface-soft text-text-muted hover:text-ink' }} transition-colors" title="Lihat Penyerahan">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- Attention 3: Peminjaman Terlambat -->
+                <div class="p-4.5 rounded-2xl border {{ $overdueLoansCount > 0 ? 'bg-rose-50/60 dark:bg-rose-950/20 border-rose-200 dark:border-rose-800/40' : 'bg-surface border-line' }} flex items-start justify-between">
+                    <div>
+                        <p class="text-xs font-medium {{ $overdueLoansCount > 0 ? 'text-rose-800 dark:text-rose-300' : 'text-text-muted' }}">
+                            Peminjaman Terlambat
+                        </p>
+                        <p class="mt-1 text-2xl font-extrabold text-ink tabular-nums font-italiana">
+                            {{ $overdueLoansCount }}
+                            <span class="text-xs font-normal text-text-muted font-sans">peminjaman</span>
+                        </p>
+                        <p class="mt-2 text-[11px] text-text-muted">
+                            {{ $overdueLoansCount > 0 ? 'Melewati batas jatuh tempo pengembalian' : 'Tidak ada peminjaman terlambat' }}
+                        </p>
+                    </div>
+                    <a href="{{ route('borrowings.index', ['status' => 'overdue']) }}" class="p-2 rounded-xl {{ $overdueLoansCount > 0 ? 'bg-rose-100 text-rose-700 hover:bg-rose-200' : 'bg-surface-soft text-text-muted hover:text-ink' }} transition-colors" title="Lihat Keterlambatan">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- Attention 4: Buku Fisik Stok Habis -->
+                <div class="p-4.5 rounded-2xl border {{ $outOfStockPhysicalTitles > 0 ? 'bg-slate-50 dark:bg-slate-900 border-line' : 'bg-surface border-line' }} flex items-start justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-text-muted">
+                            Buku Fisik Stok Habis
+                        </p>
+                        <p class="mt-1 text-2xl font-extrabold text-ink tabular-nums font-italiana">
+                            {{ $outOfStockPhysicalTitles }}
+                            <span class="text-xs font-normal text-text-muted font-sans">judul</span>
+                        </p>
+                        <p class="mt-2 text-[11px] text-text-muted">
+                            {{ $outOfStockPhysicalTitles > 0 ? 'Koleksi dengan sisa stok 0 eksemplar' : 'Semua judul fisik tersedia' }}
+                        </p>
+                    </div>
+                    <a href="{{ route('books.index', ['stock' => 'empty']) }}" class="p-2 rounded-xl bg-surface-soft text-text-muted hover:text-ink transition-colors" title="Lihat Stok Habis">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- SECTION A: MAIN SUMMARY (6 Authoritative KPIs)                 -->
+        <!-- ============================================================== -->
+        <section aria-label="Indikator Kinerja Utama Perpustakaan" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-6 gap-4 mb-8">
+            <!-- 1. Total Judul Buku -->
+            <div class="group card-interactive bg-surface rounded-2xl border border-line p-5 shadow-xs hover:border-brand-400 flex flex-col justify-between" data-testid="kpi-book-titles">
+                <div>
+                    <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-brand-700 bg-brand-50 dark:bg-brand-900/40 dark:text-brand-300 px-2 py-0.5 rounded-md mb-2">
+                        Katalog
+                    </span>
+                    <p class="text-xs font-semibold text-text-muted">Total Judul Buku</p>
+                    <p class="mt-1 text-2xl sm:text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
+                        {{ number_format($totalBookTitles, 0, ',', '.') }}
+                    </p>
+                </div>
+                <p class="mt-3 text-[11px] text-text-muted border-t border-line/60 pt-2 flex items-center justify-between">
+                    <span>Semua jenis judul</span>
+                    <a href="{{ route('books.index') }}" class="text-brand-600 font-semibold hover:underline">Kelola &rarr;</a>
                 </p>
             </div>
 
-            <!-- KPI 2: Stok Buku Tersedia -->
-            <div class="group card-interactive bg-surface rounded-2xl border border-line p-5.5 shadow-xs hover:border-brand-400 flex flex-col justify-between" data-testid="kpi-available-stock">
-                <div class="flex items-start justify-between gap-4">
-                    <div>
-                        <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-brand-700 bg-brand-50 dark:bg-brand-900/40 dark:text-brand-400 dark:border-brand-400/30 px-2.5 py-0.5 rounded-full border border-brand-200/50 mb-2">
-                            Siap Dipinjam
-                        </span>
-                        <p class="text-xs font-semibold text-text-muted">Stok Buku Tersedia</p>
-                        <p class="mt-1 text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
-                            {{ number_format($totalAvailableStock, 0, ',', '.') }}
-                            <span class="text-sm font-normal text-text-muted font-sans">eksemplar</span>
-                        </p>
-                    </div>
-                    <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-600/20 border border-brand-100 dark:border-brand-400/30 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-200">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                        </svg>
-                    </div>
+            <!-- 2. Total Buku Fisik -->
+            <div class="group card-interactive bg-surface rounded-2xl border border-line p-5 shadow-xs hover:border-brand-400 flex flex-col justify-between">
+                <div>
+                    <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 dark:bg-emerald-900/40 dark:text-emerald-300 px-2 py-0.5 rounded-md mb-2">
+                        Fisik
+                    </span>
+                    <p class="text-xs font-semibold text-text-muted">Total Buku Fisik</p>
+                    <p class="mt-1 text-2xl sm:text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
+                        {{ number_format($totalPhysicalTitles, 0, ',', '.') }}
+                    </p>
                 </div>
-                <p class="mt-3 text-xs text-text-muted border-t border-line/60 pt-2.5 flex items-center justify-between">
-                    <span>Eksemplar fisik di rak</span>
-                    <span class="text-brand-600 dark:text-brand-400 font-semibold">Tersedia</span>
+                <p class="mt-3 text-[11px] text-text-muted border-t border-line/60 pt-2 flex items-center justify-between">
+                    <span>Judul di rak fisik</span>
+                    <a href="{{ route('books.index', ['collection_type' => 'physical']) }}" class="text-brand-600 font-semibold hover:underline">Filter &rarr;</a>
                 </p>
             </div>
 
-            <!-- KPI 3: Jumlah Anggota Aktif -->
-            <div class="group card-interactive bg-surface rounded-2xl border border-line p-5.5 shadow-xs hover:border-brand-400 flex flex-col justify-between" data-testid="kpi-active-members">
-                <div class="flex items-start justify-between gap-4">
-                    <div>
-                        <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-brand-700 bg-brand-50 dark:bg-brand-900/40 dark:text-brand-400 dark:border-brand-400/30 px-2.5 py-0.5 rounded-full border border-brand-200/50 mb-2">
-                            Peminjam Aktif
-                        </span>
-                        <p class="text-xs font-semibold text-text-muted">Jumlah Anggota Aktif</p>
-                        <p class="mt-1 text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
-                            {{ number_format($totalActiveMembers, 0, ',', '.') }}
-                            <span class="text-sm font-normal text-text-muted font-sans">anggota</span>
-                        </p>
-                    </div>
-                    <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-600/20 border border-brand-100 dark:border-brand-400/30 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-200">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                    </div>
+            <!-- 3. Total E-book -->
+            <div class="group card-interactive bg-surface rounded-2xl border border-line p-5 shadow-xs hover:border-brand-400 flex flex-col justify-between">
+                <div>
+                    <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 dark:bg-indigo-900/40 dark:text-indigo-300 px-2 py-0.5 rounded-md mb-2">
+                        Digital
+                    </span>
+                    <p class="text-xs font-semibold text-text-muted">Total E-book</p>
+                    <p class="mt-1 text-2xl sm:text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
+                        {{ number_format($totalEbookTitles, 0, ',', '.') }}
+                    </p>
                 </div>
-                <p class="mt-3 text-xs text-text-muted border-t border-line/60 pt-2.5 flex items-center justify-between">
-                    <span>Dapat meminjam koleksi</span>
-                    <a href="{{ route('members.index') }}" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">Kelola &rarr;</a>
+                <p class="mt-3 text-[11px] text-text-muted border-t border-line/60 pt-2 flex items-center justify-between">
+                    <span>Baca daring &amp; unduh</span>
+                    <a href="{{ route('books.index', ['collection_type' => 'e-book']) }}" class="text-brand-600 font-semibold hover:underline">Filter &rarr;</a>
                 </p>
             </div>
 
-            <!-- KPI 4: Buku Sedang Dipinjam -->
-            <div class="group card-interactive bg-surface rounded-2xl border border-line p-5.5 shadow-xs hover:border-brand-400 flex flex-col justify-between" data-testid="kpi-borrowed-copies">
-                <div class="flex items-start justify-between gap-4">
-                    <div>
-                        <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-brand-700 bg-brand-50 dark:bg-brand-900/40 dark:text-brand-400 dark:border-brand-400/30 px-2.5 py-0.5 rounded-full border border-brand-200/50 mb-2">
-                            Dalam Sirkulasi
-                        </span>
-                        <p class="text-xs font-semibold text-text-muted">Buku Sedang Dipinjam</p>
-                        <p class="mt-1 text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
-                            {{ number_format($totalBorrowedCopies, 0, ',', '.') }}
-                            <span class="text-sm font-normal text-text-muted font-sans">eksemplar</span>
-                        </p>
-                    </div>
-                    <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-600/20 border border-brand-100 dark:border-brand-400/30 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-200">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
+            <!-- 4. Total Anggota -->
+            <div class="group card-interactive bg-surface rounded-2xl border border-line p-5 shadow-xs hover:border-brand-400 flex flex-col justify-between" data-testid="kpi-active-members">
+                <div>
+                    <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 dark:bg-amber-900/40 dark:text-amber-300 px-2 py-0.5 rounded-md mb-2">
+                        Peminjam
+                    </span>
+                    <p class="text-xs font-semibold text-text-muted">Total Anggota</p>
+                    <p class="mt-1 text-2xl sm:text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
+                        {{ number_format($totalActiveMembers, 0, ',', '.') }}
+                    </p>
                 </div>
-                <p class="mt-3 text-xs text-text-muted border-t border-line/60 pt-2.5 flex items-center justify-between">
-                    <span>Total eksemplar di peminjam</span>
-                    <a href="{{ route('borrowings.index', ['status' => 'borrowed']) }}" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">Pantau &rarr;</a>
+                <p class="mt-3 text-[11px] text-text-muted border-t border-line/60 pt-2 flex items-center justify-between">
+                    <span>Sivitas terdaftar</span>
+                    <a href="{{ route('members.index') }}" class="text-brand-600 font-semibold hover:underline">Kelola &rarr;</a>
+                </p>
+            </div>
+
+            <!-- 5. Peminjaman Aktif -->
+            <div class="group card-interactive bg-surface rounded-2xl border border-line p-5 shadow-xs hover:border-brand-400 flex flex-col justify-between" data-testid="kpi-borrowed-copies">
+                <div>
+                    <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-cyan-700 bg-cyan-50 dark:bg-cyan-900/40 dark:text-cyan-300 px-2 py-0.5 rounded-md mb-2">
+                        Sirkulasi
+                    </span>
+                    <p class="text-xs font-semibold text-text-muted">Peminjaman Aktif</p>
+                    <p class="mt-1 text-2xl sm:text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana">
+                        {{ number_format($activeLoansCount, 0, ',', '.') }}
+                    </p>
+                </div>
+                <p class="mt-3 text-[11px] text-text-muted border-t border-line/60 pt-2 flex items-center justify-between">
+                    <span>{{ $totalBorrowedCopies }} eks dipinjam</span>
+                    <a href="{{ route('borrowings.index', ['status' => 'borrowed']) }}" class="text-brand-600 font-semibold hover:underline">Pantau &rarr;</a>
+                </p>
+            </div>
+
+            <!-- 6. Peminjaman Terlambat -->
+            <div class="group card-interactive bg-surface rounded-2xl border border-line p-5 shadow-xs hover:border-rose-400 flex flex-col justify-between">
+                <div>
+                    <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider {{ $overdueLoansCount > 0 ? 'text-rose-700 bg-rose-50 dark:bg-rose-900/40 dark:text-rose-300' : 'text-slate-600 bg-slate-100 dark:bg-slate-800' }} px-2 py-0.5 rounded-md mb-2">
+                        Jatuh Tempo
+                    </span>
+                    <p class="text-xs font-semibold text-text-muted">Peminjaman Terlambat</p>
+                    <p class="mt-1 text-2xl sm:text-3xl font-extrabold text-ink tabular-nums tracking-tight font-italiana {{ $overdueLoansCount > 0 ? 'text-rose-600' : '' }}">
+                        {{ number_format($overdueLoansCount, 0, ',', '.') }}
+                    </p>
+                </div>
+                <p class="mt-3 text-[11px] text-text-muted border-t border-line/60 pt-2 flex items-center justify-between">
+                    <span>Lewat batas waktu</span>
+                    <a href="{{ route('borrowings.index', ['status' => 'overdue']) }}" class="text-rose-600 font-semibold hover:underline">Tindak &rarr;</a>
                 </p>
             </div>
         </section>
 
         <!-- ============================================================== -->
-        <!-- 2-GENRE TRACKING & ANALYTICS: Novel & Fiksi vs Keilmuan & Edukasi -->
+        <!-- SECTION B: INVENTORY SUMMARY (Physical Books Only)             -->
         <!-- ============================================================== -->
-        <section aria-label="Tracking Dua Genre Utama" class="mb-8">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+        <section aria-label="Ringkasan Inventaris Eksemplar Fisik" class="mb-8 bg-surface rounded-2xl border border-line p-5 sm:p-6 shadow-xs">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-4 border-b border-line mb-5">
                 <div>
-                    <div class="inline-flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-brand-600 dark:bg-brand-400"></span>
-                        <h2 class="text-base font-bold text-ink">Tracking 2 Genre Utama</h2>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
+                        <h2 class="text-base font-bold text-ink font-sans">Ringkasan Inventaris Eksemplar Fisik</h2>
                     </div>
                     <p class="text-xs text-text-muted mt-0.5 font-sans">
-                        Pemantauan sirkulasi koleksi genre Novel &amp; Fiksi dan Keilmuan &amp; Edukasi.
+                        Perhitungan real-time fisik perpustakaan berdasarkan formula stok: Total = Tersedia + Direservasi + Sedang Dipinjam.
                     </p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <a href="{{ route('catalog.index', ['genre' => 'novel-fiksi']) }}" class="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline">
-                        Katalog Novel &rarr;
-                    </a>
-                    <span class="text-line text-xs">&bull;</span>
-                    <a href="{{ route('catalog.index', ['genre' => 'keilmuan-edukasi']) }}" class="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline">
-                        Katalog Keilmuan &rarr;
-                    </a>
+                    <span class="text-xs px-2.5 py-1 rounded-lg bg-surface-soft border border-line text-text-muted font-mono">
+                        E-book tidak dihitung sebagai eksemplar fisik
+                    </span>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                <!-- Genre Card 1: Novel & Fiksi -->
-                <div class="card-interactive bg-surface rounded-2xl border border-line p-5 sm:p-6 shadow-xs hover:border-amber-400/60 dark:hover:border-amber-400/40 flex flex-col justify-between">
-                    <div>
-                        <!-- Header Card -->
-                        <div class="flex items-start justify-between gap-3 pb-4 border-b border-line">
-                            <div class="flex items-center gap-3">
-                                <div class="w-11 h-11 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-500/20 shadow-xs shrink-0">
-                                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <span class="inline-block px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-700 dark:text-amber-300 text-[10px] font-bold uppercase tracking-wider font-sans mb-1">
-                                        {{ $genreTracking['novel']['badge'] }}
-                                    </span>
-                                    <h3 class="text-base font-bold text-ink leading-tight font-sans">
-                                        {{ $genreTracking['novel']['name'] }}
-                                    </h3>
-                                </div>
-                            </div>
-                            <span class="font-year font-bold text-lg text-amber-600 dark:text-amber-400">
-                                {{ $genreTracking['novel']['rate'] }}%
-                                <span class="text-[10px] font-sans font-normal text-text-muted block text-right">Tersedia</span>
-                            </span>
-                        </div>
-
-                        <!-- Progress Bar Ketersediaan -->
-                        <div class="my-3.5">
-                            <div class="w-full h-2 rounded-full bg-surface-soft overflow-hidden">
-                                <div class="h-full bg-amber-500 rounded-full transition-all duration-500" style="width: {{ $genreTracking['novel']['rate'] }}%"></div>
-                            </div>
-                        </div>
-
-                        <!-- 3 Mini Stats -->
-                        <div class="grid grid-cols-3 gap-2 py-3 bg-surface-soft/60 rounded-xl px-3 border border-line/60 text-center">
-                            <div>
-                                <span class="text-[10px] text-text-muted uppercase font-semibold font-sans block">Judul</span>
-                                <span class="font-italiana font-bold text-lg text-ink">{{ $genreTracking['novel']['titles'] }}</span>
-                            </div>
-                            <div class="border-x border-line/60">
-                                <span class="text-[10px] text-text-muted uppercase font-semibold font-sans block">Tersedia</span>
-                                <span class="font-year font-bold text-lg text-emerald-600 dark:text-emerald-400">{{ $genreTracking['novel']['available'] }}</span>
-                            </div>
-                            <div>
-                                <span class="text-[10px] text-text-muted uppercase font-semibold font-sans block">Dipinjam</span>
-                                <span class="font-year font-bold text-lg text-amber-600 dark:text-amber-400">{{ $genreTracking['novel']['borrowed'] }}</span>
-                            </div>
-                        </div>
-
-                        <!-- Sample Titles in this Genre -->
-                        <div class="mt-4 space-y-2">
-                            <span class="text-[11px] font-bold text-text-muted uppercase tracking-wider font-sans block">Koleksi Terkait:</span>
-                            @forelse ($genreTracking['novel']['books'] as $nBook)
-                                <div class="flex items-center justify-between text-xs py-1 border-b border-line/40 last:border-0">
-                                    <span class="font-medium text-ink truncate max-w-[220px] sm:max-w-[280px]" title="{{ $nBook->title }}">{{ $nBook->title }}</span>
-                                    <span class="text-[11px] text-text-muted shrink-0">{{ $nBook->stock_available }} eks</span>
-                                </div>
-                            @empty
-                                <p class="text-xs text-text-muted italic py-1">Belum ada buku di kategori ini.</p>
-                            @endforelse
-                        </div>
-                    </div>
-
-                    <div class="pt-4 mt-3 border-t border-line flex items-center justify-between">
-                        <span class="text-xs text-text-muted">Total Fisik: {{ $genreTracking['novel']['total_stock'] }} eksemplar</span>
-                        <a href="{{ route('catalog.index', ['genre' => 'novel-fiksi']) }}" class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1 font-sans">
-                            <span>Buka Genre</span>
-                            <span>&rarr;</span>
-                        </a>
-                    </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                <!-- 1. Total Eksemplar Fisik -->
+                <div class="p-3.5 rounded-xl bg-surface-soft/60 border border-line text-center">
+                    <p class="text-[11px] font-medium text-text-muted">Total Eksemplar Fisik</p>
+                    <p class="mt-1 text-2xl font-bold text-ink tabular-nums font-italiana">
+                        {{ number_format($totalPhysicalCopies, 0, ',', '.') }}
+                    </p>
+                    <p class="mt-1 text-[10px] text-text-muted">Koleksi keseluruhan</p>
                 </div>
 
-                <!-- Genre Card 2: Keilmuan & Edukasi -->
-                <div class="card-interactive bg-surface rounded-2xl border border-line p-5 sm:p-6 shadow-xs hover:border-brand-600 dark:hover:border-brand-400 flex flex-col justify-between">
-                    <div>
-                        <!-- Header Card -->
-                        <div class="flex items-start justify-between gap-3 pb-4 border-b border-line">
-                            <div class="flex items-center gap-3">
-                                <div class="w-11 h-11 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center border border-brand-500/20 shadow-xs shrink-0">
-                                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <span class="inline-block px-2 py-0.5 rounded-md bg-brand-500/10 text-brand-700 dark:text-brand-300 text-[10px] font-bold uppercase tracking-wider font-sans mb-1">
-                                        {{ $genreTracking['keilmuan']['badge'] }}
-                                    </span>
-                                    <h3 class="text-base font-bold text-ink leading-tight font-sans">
-                                        {{ $genreTracking['keilmuan']['name'] }}
-                                    </h3>
-                                </div>
-                            </div>
-                            <span class="font-year font-bold text-lg text-brand-600 dark:text-brand-400">
-                                {{ $genreTracking['keilmuan']['rate'] }}%
-                                <span class="text-[10px] font-sans font-normal text-text-muted block text-right">Tersedia</span>
-                            </span>
-                        </div>
+                <!-- 2. Stok Tersedia -->
+                <div class="p-3.5 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-800/40 text-center" data-testid="kpi-available-stock">
+                    <p class="text-[11px] font-medium text-emerald-800 dark:text-emerald-300">Stok Tersedia</p>
+                    <p class="mt-1 text-2xl font-bold text-emerald-700 dark:text-emerald-400 tabular-nums font-italiana">
+                        {{ number_format($totalAvailableStock, 0, ',', '.') }}
+                    </p>
+                    <p class="mt-1 text-[10px] text-emerald-600 dark:text-emerald-400">Siap dipinjam di rak</p>
+                </div>
 
-                        <!-- Progress Bar Ketersediaan -->
-                        <div class="my-3.5">
-                            <div class="w-full h-2 rounded-full bg-surface-soft overflow-hidden">
-                                <div class="h-full bg-brand-600 dark:bg-brand-400 rounded-full transition-all duration-500" style="width: {{ $genreTracking['keilmuan']['rate'] }}%"></div>
-                            </div>
-                        </div>
+                <!-- 3. Stok Direservasi -->
+                <div class="p-3.5 rounded-xl bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-800/40 text-center">
+                    <p class="text-[11px] font-medium text-blue-800 dark:text-blue-300">Stok Direservasi</p>
+                    <p class="mt-1 text-2xl font-bold text-blue-700 dark:text-blue-400 tabular-nums font-italiana">
+                        {{ number_format($totalReservedStock, 0, ',', '.') }}
+                    </p>
+                    <p class="mt-1 text-[10px] text-blue-600 dark:text-blue-400">Approved, belum ambil</p>
+                </div>
 
-                        <!-- 3 Mini Stats -->
-                        <div class="grid grid-cols-3 gap-2 py-3 bg-surface-soft/60 rounded-xl px-3 border border-line/60 text-center">
-                            <div>
-                                <span class="text-[10px] text-text-muted uppercase font-semibold font-sans block">Judul</span>
-                                <span class="font-italiana font-bold text-lg text-ink">{{ $genreTracking['keilmuan']['titles'] }}</span>
-                            </div>
-                            <div class="border-x border-line/60">
-                                <span class="text-[10px] text-text-muted uppercase font-semibold font-sans block">Tersedia</span>
-                                <span class="font-year font-bold text-lg text-brand-700 dark:text-brand-300">{{ $genreTracking['keilmuan']['available'] }}</span>
-                            </div>
-                            <div>
-                                <span class="text-[10px] text-text-muted uppercase font-semibold font-sans block">Dipinjam</span>
-                                <span class="font-year font-bold text-lg text-brand-600 dark:text-brand-400">{{ $genreTracking['keilmuan']['borrowed'] }}</span>
-                            </div>
-                        </div>
+                <!-- 4. Stok Sedang Dipinjam -->
+                <div class="p-3.5 rounded-xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-800/40 text-center">
+                    <p class="text-[11px] font-medium text-amber-800 dark:text-amber-300">Sedang Dipinjam</p>
+                    <p class="mt-1 text-2xl font-bold text-amber-700 dark:text-amber-400 tabular-nums font-italiana">
+                        {{ number_format($totalBorrowedStock, 0, ',', '.') }}
+                    </p>
+                    <p class="mt-1 text-[10px] text-amber-600 dark:text-amber-400">Di tangan peminjam</p>
+                </div>
 
-                        <!-- Sample Titles in this Genre -->
-                        <div class="mt-4 space-y-2">
-                            <span class="text-[11px] font-bold text-text-muted uppercase tracking-wider font-sans block">Koleksi Terkait:</span>
-                            @forelse ($genreTracking['keilmuan']['books'] as $kBook)
-                                <div class="flex items-center justify-between text-xs py-1 border-b border-line/40 last:border-0">
-                                    <span class="font-medium text-ink truncate max-w-[220px] sm:max-w-[280px]" title="{{ $kBook->title }}">{{ $kBook->title }}</span>
-                                    <span class="text-[11px] text-text-muted shrink-0">{{ $kBook->stock_available }} eks</span>
-                                </div>
-                            @empty
-                                <p class="text-xs text-text-muted italic py-1">Belum ada buku di kategori ini.</p>
-                            @endforelse
-                        </div>
-                    </div>
+                <!-- 5. Stok Tidak Layak / Hilang -->
+                <div class="p-3.5 rounded-xl bg-surface-soft/60 border border-line text-center">
+                    <p class="text-[11px] font-medium text-text-muted">Rusak / Hilang</p>
+                    <p class="mt-1 text-2xl font-bold text-text-muted tabular-nums font-italiana">
+                        {{ number_format($damagedLostStock, 0, ',', '.') }}
+                    </p>
+                    <p class="mt-1 text-[10px] text-text-muted">Kondisi nonaktif</p>
+                </div>
 
-                    <div class="pt-4 mt-3 border-t border-line flex items-center justify-between">
-                        <span class="text-xs text-text-muted">Total Fisik: {{ $genreTracking['keilmuan']['total_stock'] }} eksemplar</span>
-                        <a href="{{ route('catalog.index', ['genre' => 'keilmuan-edukasi']) }}" class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1 font-sans">
-                            <span>Buka Genre</span>
-                            <span>&rarr;</span>
-                        </a>
-                    </div>
+                <!-- 6. Judul Fisik Stok Habis -->
+                <div class="p-3.5 rounded-xl bg-surface-soft/60 border border-line text-center">
+                    <p class="text-[11px] font-medium text-text-muted">Judul Stok Habis</p>
+                    <p class="mt-1 text-2xl font-bold text-ink tabular-nums font-italiana {{ $outOfStockPhysicalTitles > 0 ? 'text-rose-600' : '' }}">
+                        {{ number_format($outOfStockPhysicalTitles, 0, ',', '.') }}
+                    </p>
+                    <p class="mt-1 text-[10px] text-text-muted">Stok tersedia = 0</p>
                 </div>
             </div>
         </section>
 
-        <!-- Recent Borrowings Panel (Staff View) - Full Width Expansion -->
-        <div class="w-full">
-            <section aria-labelledby="recent-borrowings-heading" class="w-full bg-surface rounded-2xl border border-line overflow-hidden shadow-xs">
-                <div class="p-5 border-b border-line flex items-center justify-between gap-2 bg-surface-soft/40">
-                    <div class="flex items-center gap-2.5">
-                        <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
-                        <h2 id="recent-borrowings-heading" class="text-base font-bold text-ink">Riwayat Peminjaman Terbaru</h2>
+        <!-- ============================================================== -->
+        <!-- SECTION C & SECTION D: BORROWING TREND & COLLECTION CHARTS    -->
+        <!-- ============================================================== -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
+            <!-- SECTION C: BORROWING TREND CHART (Col 8) -->
+            <section aria-labelledby="chart-trend-heading" class="lg:col-span-8 bg-surface rounded-2xl border border-line p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+                <div>
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4 border-b border-line mb-4">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
+                                <h2 id="chart-trend-heading" class="text-base font-bold text-ink">Grafik Tren Peminjaman &amp; Pengembalian</h2>
+                            </div>
+                            <p class="text-xs text-text-muted mt-0.5">
+                                Menampilkan frekuensi aktual peminjaman dan pengembalian buku (titik nol terisi konsisten).
+                            </p>
+                        </div>
+                        <!-- Period filter toggles -->
+                        <div class="inline-flex rounded-xl p-1 bg-surface-soft border border-line text-xs font-semibold" role="tablist">
+                            <button type="button" class="btn-period-toggle px-3 py-1.5 rounded-lg transition-colors cursor-pointer bg-brand-600 text-white shadow-xs" data-period="7d">
+                                7 Hari
+                            </button>
+                            <button type="button" class="btn-period-toggle px-3 py-1.5 rounded-lg transition-colors cursor-pointer text-text-muted hover:text-ink" data-period="30d">
+                                30 Hari
+                            </button>
+                            <button type="button" class="btn-period-toggle px-3 py-1.5 rounded-lg transition-colors cursor-pointer text-text-muted hover:text-ink" data-period="12m">
+                                12 Bulan
+                            </button>
+                        </div>
                     </div>
-                    <a href="{{ route('borrowings.index') }}" class="text-xs font-semibold text-brand-600 hover:text-brand-700 hover:underline flex items-center gap-1">
-                        <span>Semua Riwayat</span>
-                        <span>&rarr;</span>
-                    </a>
+
+                    <!-- Chart Container -->
+                    <div class="relative w-full h-[280px] sm:h-[320px]">
+                        <canvas id="borrowingTrendChart" class="w-full h-full"></canvas>
+                        <div id="chart-loading-state" class="absolute inset-0 flex items-center justify-center bg-surface/50 hidden">
+                            <span class="text-xs text-text-muted">Memuat grafik tren...</span>
+                        </div>
+                    </div>
                 </div>
 
-                @if ($recentBorrowings->isEmpty())
-                    <div class="p-12 text-center">
-                        <div class="w-12 h-12 rounded-2xl bg-surface-soft text-text-muted flex items-center justify-center mx-auto mb-3">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                            </svg>
+                <div class="flex items-center justify-between pt-4 border-t border-line text-xs text-text-muted mt-4">
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-brand-600"></span>
+                            <span class="font-medium text-ink">Peminjaman Aktual</span>
                         </div>
-                        <p class="text-sm font-semibold text-ink">Belum ada riwayat transaksi peminjaman.</p>
-                        <p class="mt-1 text-xs text-text-muted">Catatan peminjaman akan otomatis tampil saat ada peminjaman.</p>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                            <span class="font-medium text-ink">Pengembalian Selesai</span>
+                        </div>
                     </div>
-                @else
-                    <div class="overflow-x-auto">
-                        <table class="w-full min-w-[620px] text-left border-collapse">
-                            <thead>
-                                <tr class="bg-surface-soft/60 border-b border-line text-xs font-semibold text-text-muted">
-                                    <th scope="col" class="py-3 px-4 whitespace-nowrap">Kode</th>
-                                    <th scope="col" class="py-3 px-4 min-w-[140px]">Anggota</th>
-                                    <th scope="col" class="py-3 px-4 whitespace-nowrap">Jatuh Tempo</th>
-                                    <th scope="col" class="py-3 px-4 text-right whitespace-nowrap">Jumlah</th>
-                                    <th scope="col" class="py-3 px-4 whitespace-nowrap">Status</th>
-                                    <th scope="col" class="py-3 px-4 text-right whitespace-nowrap">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-line text-sm">
-                                @foreach ($recentBorrowings as $loan)
-                                    <tr class="hover:bg-brand-50/20 transition-colors">
-                                        <td class="py-3.5 px-4 font-mono text-xs font-semibold text-ink whitespace-nowrap">
-                                            <a href="{{ route('borrowings.show', $loan) }}" class="hover:text-brand-600">
-                                                {{ $loan->transaction_code }}
-                                            </a>
-                                        </td>
-                                        <td class="py-3.5 px-4">
-                                            <div class="flex items-center gap-2.5">
-                                                <div class="w-7 h-7 rounded-full bg-brand-50 dark:bg-brand-600/25 border border-brand-100 dark:border-brand-400/30 text-brand-700 dark:text-brand-400 font-bold text-[11px] flex items-center justify-center shrink-0">
-                                                    {{ strtoupper(substr($loan->member_name_snapshot, 0, 2)) }}
-                                                </div>
-                                                <span class="font-medium text-ink truncate">{{ $loan->member_name_snapshot }}</span>
-                                            </div>
-                                        </td>
-                                        <td class="py-3.5 px-4 text-text-muted tabular-nums whitespace-nowrap text-xs">
-                                            {{ $loan->due_at?->format('d M Y') }}
-                                        </td>
-                                        <td class="py-3.5 px-4 text-right tabular-nums whitespace-nowrap text-xs font-semibold text-ink">
-                                            {{ $loan->total_quantity }} <span class="text-text-muted font-normal">eks</span>
-                                        </td>
-                                        <td class="py-3.5 px-4 whitespace-nowrap">
-                                            <div class="flex flex-wrap items-center gap-1.5">
-                                                @if ($loan->isBorrowed())
-                                                    <x-status-badge variant="info">Dipinjam</x-status-badge>
-                                                    @if ($loan->isOverdue())
-                                                        <x-status-badge variant="warning">Terlambat</x-status-badge>
-                                                    @endif
-                                                @else
-                                                    <x-status-badge variant="success">Dikembalikan</x-status-badge>
-                                                @endif
-                                            </div>
-                                        </td>
-                                        <td class="py-3.5 px-4 text-right whitespace-nowrap">
-                                            <div class="inline-flex items-center justify-end gap-2">
-                                                @can('return', $loan)
-                                                    @if ($loan->isBorrowed())
-                                                        <button
-                                                            type="button"
-                                                            class="btn-open-return-modal inline-flex items-center px-2.5 py-1 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold cursor-pointer shadow-xs transition-colors"
-                                                            data-loan-code="{{ $loan->transaction_code }}"
-                                                            data-member-name="{{ $loan->member_name_snapshot }}"
-                                                            data-quantity="{{ $loan->total_quantity }}"
-                                                            data-action-url="{{ route('borrowings.return', $loan) }}"
-                                                            title="Kembalikan Buku"
-                                                        >
-                                                            Kembalikan
-                                                        </button>
-                                                    @endif
-                                                @endcan
-                                                <a href="{{ route('borrowings.show', $loan) }}" class="inline-flex items-center px-2.5 py-1 rounded-md border border-line bg-surface text-xs font-semibold text-brand-600 hover:bg-brand-50 hover:border-brand-200 transition-colors">
-                                                    Detail
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                    <span class="text-[11px]">Zona Waktu: WIB (Asia/Jakarta)</span>
+                </div>
+            </section>
+
+            <!-- SECTION D: COLLECTION DISTRIBUTION (Col 4) -->
+            <section aria-labelledby="chart-collection-heading" class="lg:col-span-4 bg-surface rounded-2xl border border-line p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between pb-4 border-b border-line mb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
+                            <h2 id="chart-collection-heading" class="text-base font-bold text-ink">Distribusi Koleksi</h2>
+                        </div>
+                        <span class="text-xs text-text-muted">{{ number_format($totalBookTitles, 0, ',', '.') }} Judul</span>
                     </div>
-                @endif
+
+                    <div class="relative w-full h-[220px] flex items-center justify-center">
+                        <canvas id="collectionDistributionChart" class="max-h-full"></canvas>
+                    </div>
+
+                    <div class="mt-4 space-y-3 pt-4 border-t border-line">
+                        <div class="flex items-center justify-between text-xs">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-brand-700"></span>
+                                <span class="font-semibold text-ink">Buku Fisik</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-bold text-ink">{{ number_format($totalPhysicalTitles, 0, ',', '.') }} judul</span>
+                                <span class="text-text-muted ml-1">({{ $collectionDistribution['physical_percent'] }}%)</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-xs">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+                                <span class="font-semibold text-ink">E-book Digital</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-bold text-ink">{{ number_format($totalEbookTitles, 0, ',', '.') }} judul</span>
+                                <span class="text-text-muted ml-1">({{ $collectionDistribution['ebook_percent'] }}%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-line mt-4">
+                    <a href="{{ route('books.index') }}" class="w-full inline-flex items-center justify-center py-2 rounded-xl bg-surface-soft hover:bg-surface-soft/80 text-xs font-semibold text-ink transition-colors">
+                        Lihat Seluruh Koleksi &rarr;
+                    </a>
+                </div>
             </section>
         </div>
+
+        <!-- ============================================================== -->
+        <!-- SECTION E & SECTION F: CATEGORY & STATUS BREAKDOWN             -->
+        <!-- ============================================================== -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
+            <!-- SECTION E: CATEGORY DISTRIBUTION (Col 6) -->
+            <section aria-labelledby="category-distribution-heading" class="lg:col-span-6 bg-surface rounded-2xl border border-line p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between pb-4 border-b border-line mb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
+                            <h2 id="category-distribution-heading" class="text-base font-bold text-ink">Distribusi Kategori Buku</h2>
+                        </div>
+                        <a href="{{ route('categories.index') }}" class="text-xs font-semibold text-brand-600 hover:underline">
+                            Kelola Kategori &rarr;
+                        </a>
+                    </div>
+
+                    @if ($categoryDistribution->isEmpty())
+                        <div class="py-12 text-center text-xs text-text-muted">
+                            Belum ada data kategori buku terdaftar.
+                        </div>
+                    @else
+                        <div class="space-y-3.5">
+                            @foreach ($categoryDistribution->take(6) as $cat)
+                                <div>
+                                    <div class="flex items-center justify-between text-xs mb-1.5">
+                                        <span class="font-semibold text-ink">{{ $cat['name'] }}</span>
+                                        <span class="text-text-muted tabular-nums">
+                                            <strong>{{ $cat['count'] }}</strong> judul ({{ $cat['percent'] }}%)
+                                        </span>
+                                    </div>
+                                    <div class="w-full h-2 rounded-full bg-surface-soft overflow-hidden">
+                                        <div class="h-full bg-brand-600 rounded-full transition-all duration-500" style="width: {{ max(4, $cat['percent']) }}%"></div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
+                <div class="pt-4 border-t border-line mt-4 text-xs text-text-muted flex items-center justify-between">
+                    <span>Data dihitung dari total {{ $totalBookTitles }} judul buku terdaftar</span>
+                    <a href="{{ route('books.index') }}" class="text-brand-600 font-semibold hover:underline">Filter Katalog &rarr;</a>
+                </div>
+            </section>
+
+            <!-- SECTION F: BORROWING STATUS BREAKDOWN (Col 6) -->
+            <section aria-labelledby="status-breakdown-heading" class="lg:col-span-6 bg-surface rounded-2xl border border-line p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between pb-4 border-b border-line mb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
+                            <h2 id="status-breakdown-heading" class="text-base font-bold text-ink">Ringkasan Status Transaksi Sirkulasi</h2>
+                        </div>
+                        <a href="{{ route('borrowings.index') }}" class="text-xs font-semibold text-brand-600 hover:underline">
+                            Semua Transaksi &rarr;
+                        </a>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <!-- 1. Pending -->
+                        <a href="{{ route('borrowings.index', ['status' => 'pending']) }}" class="p-3.5 rounded-xl border border-line bg-surface hover:border-amber-400 transition-colors block">
+                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-50 text-amber-700 border border-amber-200">
+                                Pending
+                            </span>
+                            <p class="mt-2 text-xl font-bold text-ink tabular-nums font-italiana">{{ $statusBreakdown['pending'] }}</p>
+                            <p class="text-[11px] text-text-muted mt-0.5">Menunggu Persetujuan</p>
+                        </a>
+
+                        <!-- 2. Approved -->
+                        <a href="{{ route('borrowings.index', ['status' => 'approved']) }}" class="p-3.5 rounded-xl border border-line bg-surface hover:border-blue-400 transition-colors block">
+                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-blue-50 text-blue-700 border border-blue-200">
+                                Disetujui
+                            </span>
+                            <p class="mt-2 text-xl font-bold text-ink tabular-nums font-italiana">{{ $statusBreakdown['approved'] }}</p>
+                            <p class="text-[11px] text-text-muted mt-0.5">Menunggu Pengambilan</p>
+                        </a>
+
+                        <!-- 3. Borrowed (Tepat Waktu) -->
+                        <a href="{{ route('borrowings.index', ['status' => 'borrowed']) }}" class="p-3.5 rounded-xl border border-line bg-surface hover:border-emerald-400 transition-colors block">
+                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-cyan-50 text-cyan-700 border border-cyan-200">
+                                Aktif
+                            </span>
+                            <p class="mt-2 text-xl font-bold text-ink tabular-nums font-italiana">{{ $statusBreakdown['active_on_time'] }}</p>
+                            <p class="text-[11px] text-text-muted mt-0.5">Sedang Dipinjam</p>
+                        </a>
+
+                        <!-- 4. Terlambat -->
+                        <a href="{{ route('borrowings.index', ['status' => 'overdue']) }}" class="p-3.5 rounded-xl border border-line bg-surface hover:border-rose-400 transition-colors block">
+                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-rose-50 text-rose-700 border border-rose-200">
+                                Terlambat
+                            </span>
+                            <p class="mt-2 text-xl font-bold text-rose-600 tabular-nums font-italiana">{{ $statusBreakdown['overdue'] }}</p>
+                            <p class="text-[11px] text-text-muted mt-0.5">Lewat Jatuh Tempo</p>
+                        </a>
+
+                        <!-- 5. Dikembalikan -->
+                        <a href="{{ route('borrowings.index', ['status' => 'returned']) }}" class="p-3.5 rounded-xl border border-line bg-surface hover:border-emerald-400 transition-colors block">
+                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                Selesai
+                            </span>
+                            <p class="mt-2 text-xl font-bold text-ink tabular-nums font-italiana">{{ $statusBreakdown['returned'] }}</p>
+                            <p class="text-[11px] text-text-muted mt-0.5">Sudah Dikembalikan</p>
+                        </a>
+
+                        <!-- 6. Ditolak / Batal -->
+                        <a href="{{ route('borrowings.index', ['status' => 'rejected']) }}" class="p-3.5 rounded-xl border border-line bg-surface hover:border-slate-400 transition-colors block">
+                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-100 text-slate-700 border border-slate-200">
+                                Ditolak
+                            </span>
+                            <p class="mt-2 text-xl font-bold text-ink tabular-nums font-italiana">{{ $statusBreakdown['rejected'] }}</p>
+                            <p class="text-[11px] text-text-muted mt-0.5">Batal / Ditolak</p>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-line mt-4 text-xs text-text-muted">
+                    Klik salah satu status di atas untuk membuka daftar peminjaman dengan filter terkait.
+                </div>
+            </section>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- SECTION G: POPULAR BOOKS (TOP 5 MOST BORROWED PHYSICAL)        -->
+        <!-- ============================================================== -->
+        <section aria-labelledby="popular-books-heading" class="bg-surface rounded-2xl border border-line overflow-hidden shadow-xs mb-8">
+            <div class="p-5 border-b border-line flex items-center justify-between gap-2 bg-surface-soft/40">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                    <h2 id="popular-books-heading" class="text-base font-bold text-ink">Buku Fisik Paling Sering Dipinjam (Top 5)</h2>
+                </div>
+                <span class="text-xs text-text-muted">Dihitung dari transaksi peminjaman riil</span>
+            </div>
+
+            @if ($popularBooks->isEmpty())
+                <div class="p-12 text-center text-xs text-text-muted">
+                    Belum ada data transaksi peminjaman buku fisik.
+                </div>
+            @else
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-surface-soft/60 border-b border-line text-xs font-semibold text-text-muted">
+                                <th class="py-3 px-4 w-12 text-center">#</th>
+                                <th class="py-3 px-4">Koleksi Buku</th>
+                                <th class="py-3 px-4">Kategori</th>
+                                <th class="py-3 px-4 text-center whitespace-nowrap">Sisa Stok</th>
+                                <th class="py-3 px-4 text-right whitespace-nowrap">Total Peminjaman</th>
+                                <th class="py-3 px-4 text-right whitespace-nowrap">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-line text-sm">
+                            @foreach ($popularBooks as $index => $book)
+                                <tr class="hover:bg-brand-50/20 transition-colors">
+                                    <td class="py-3.5 px-4 text-center font-bold text-xs text-text-muted font-mono">
+                                        {{ $index + 1 }}
+                                    </td>
+                                    <td class="py-3.5 px-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-14 bg-surface-soft rounded-lg overflow-hidden shrink-0 border border-line shadow-xs">
+                                                @if ($book->cover_path)
+                                                    <img src="{{ asset('storage/' . $book->cover_path) }}" alt="{{ $book->title }}" class="w-full h-full object-cover">
+                                                @else
+                                                    <div class="w-full h-full flex items-center justify-center text-text-muted">
+                                                        <svg class="w-5 h-5 opacity-40" fill="currentColor" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div>
+                                                <a href="{{ route('books.show', $book) }}" class="font-bold text-ink hover:text-brand-600 line-clamp-1">
+                                                    {{ $book->title }}
+                                                </a>
+                                                <p class="text-xs text-text-muted mt-0.5">{{ $book->author }}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-3.5 px-4 whitespace-nowrap text-xs">
+                                        <span class="px-2.5 py-1 rounded-md bg-surface-soft border border-line text-ink font-medium">
+                                            {{ $book->category?->name ?? 'Umum' }}
+                                        </span>
+                                    </td>
+                                    <td class="py-3.5 px-4 text-center whitespace-nowrap text-xs font-semibold tabular-nums {{ $book->stock_available > 0 ? 'text-emerald-600' : 'text-rose-600' }}">
+                                        {{ $book->stock_available }} eks
+                                    </td>
+                                    <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 font-bold text-xs tabular-nums border border-brand-200/60">
+                                            {{ $book->total_borrow_count ?? $book->borrow_count ?? 0 }} kali
+                                        </span>
+                                    </td>
+                                    <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                                        <a href="{{ route('books.show', $book) }}" class="text-xs font-semibold text-brand-600 hover:underline">
+                                            Detail &rarr;
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- SECTION H: RECENT TRANSACTIONS (5–10 LATEST)                   -->
+        <!-- ============================================================== -->
+        <section aria-labelledby="recent-borrowings-heading" class="w-full bg-surface rounded-2xl border border-line overflow-hidden shadow-xs mb-8">
+            <div class="p-5 border-b border-line flex items-center justify-between gap-2 bg-surface-soft/40">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
+                    <h2 id="recent-borrowings-heading" class="text-base font-bold text-ink">Aktivitas Transaksi Sirkulasi Terbaru</h2>
+                </div>
+                <a href="{{ route('borrowings.index') }}" class="text-xs font-semibold text-brand-600 hover:text-brand-700 hover:underline flex items-center gap-1">
+                    <span>Lihat Semua Transaksi</span>
+                    <span>&rarr;</span>
+                </a>
+            </div>
+
+            @if ($recentTransactions->isEmpty())
+                <div class="p-12 text-center">
+                    <div class="w-12 h-12 rounded-2xl bg-surface-soft text-text-muted flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                    </div>
+                    <p class="text-sm font-semibold text-ink">Belum ada riwayat transaksi peminjaman.</p>
+                    <p class="mt-1 text-xs text-text-muted">Catatan transaksi sirkulasi akan otomatis tampil begitu peminjaman dicatat.</p>
+                </div>
+            @else
+                <div class="overflow-x-auto">
+                    <table class="w-full min-w-[680px] text-left border-collapse">
+                        <thead>
+                            <tr class="bg-surface-soft/60 border-b border-line text-xs font-semibold text-text-muted">
+                                <th scope="col" class="py-3 px-4 whitespace-nowrap">Kode</th>
+                                <th scope="col" class="py-3 px-4 min-w-[140px]">Anggota</th>
+                                <th scope="col" class="py-3 px-4 min-w-[180px]">Buku Dipinjam</th>
+                                <th scope="col" class="py-3 px-4 whitespace-nowrap">Tanggal Pinjam</th>
+                                <th scope="col" class="py-3 px-4 whitespace-nowrap">Status</th>
+                                <th scope="col" class="py-3 px-4 text-right whitespace-nowrap">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-line text-sm">
+                            @foreach ($recentTransactions as $loan)
+                                <tr class="hover:bg-brand-50/20 transition-colors">
+                                    <td class="py-3.5 px-4 font-mono text-xs font-semibold text-ink whitespace-nowrap">
+                                        <a href="{{ route('borrowings.show', $loan) }}" class="hover:text-brand-600">
+                                            {{ $loan->transaction_code }}
+                                        </a>
+                                    </td>
+                                    <td class="py-3.5 px-4">
+                                        <div class="flex items-center gap-2.5">
+                                            <div class="w-7 h-7 rounded-full bg-brand-50 dark:bg-brand-600/25 border border-brand-100 dark:border-brand-400/30 text-brand-700 dark:text-brand-400 font-bold text-[11px] flex items-center justify-center shrink-0">
+                                                {{ strtoupper(substr($loan->member_name_snapshot ?? ($loan->member?->name ?? 'AN'), 0, 2)) }}
+                                            </div>
+                                            <span class="font-medium text-ink truncate">{{ $loan->member_name_snapshot ?? ($loan->member?->name ?? '-') }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3.5 px-4">
+                                        <p class="font-medium text-ink text-xs line-clamp-1">
+                                            {{ $loan->book?->title ?? ($loan->items->first()?->book?->title ?? 'Judul Buku') }}
+                                        </p>
+                                        @if ($loan->items->count() > 1)
+                                            <span class="text-[10px] text-text-muted">+{{ $loan->items->count() - 1 }} buku lainnya</span>
+                                        @endif
+                                    </td>
+                                    <td class="py-3.5 px-4 text-text-muted tabular-nums whitespace-nowrap text-xs">
+                                        {{ $loan->borrowed_at?->format('d M Y') ?? ($loan->created_at?->format('d M Y') ?? '-') }}
+                                    </td>
+                                    <td class="py-3.5 px-4 whitespace-nowrap">
+                                        @if ($loan->isPending())
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                                                Pending
+                                            </span>
+                                        @elseif ($loan->isApproved())
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                                                Disetujui
+                                            </span>
+                                        @elseif ($loan->isBorrowed())
+                                            @if ($loan->isOverdue())
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+                                                    Terlambat
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-cyan-50 text-cyan-700 border border-cyan-200">
+                                                    Dipinjam
+                                                </span>
+                                            @endif
+                                        @elseif ($loan->isReturned())
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                Dikembalikan
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                                                {{ ucfirst($loan->status) }}
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                                        <div class="inline-flex items-center justify-end gap-2">
+                                            @can('return', $loan)
+                                                @if ($loan->isBorrowed())
+                                                    <button
+                                                        type="button"
+                                                        class="btn-open-return-modal inline-flex items-center px-2.5 py-1 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold cursor-pointer shadow-xs transition-colors"
+                                                        data-loan-code="{{ $loan->transaction_code }}"
+                                                        data-member-name="{{ $loan->member_name_snapshot ?? ($loan->member?->name ?? '-') }}"
+                                                        data-quantity="{{ $loan->total_quantity }}"
+                                                        data-action-url="{{ route('borrowings.return', $loan) }}"
+                                                        title="Kembalikan Buku"
+                                                    >
+                                                        Kembalikan
+                                                    </button>
+                                                @endif
+                                            @endcan
+                                            <a href="{{ route('borrowings.show', $loan) }}" class="inline-flex items-center px-2.5 py-1 rounded-md border border-line bg-surface text-xs font-semibold text-brand-600 hover:bg-brand-50 hover:border-brand-200 transition-colors">
+                                                Detail
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </section>
     @endif
 
     <!-- ======================================================== -->
-    <!-- POPUP CATAT PEMINJAMAN DASHBOARD (Latar Digelapin)      -->
+    <!-- POPUP CATAT PEMINJAMAN DASHBOARD (Modal Reusable)        -->
     <!-- ======================================================== -->
     @can('create', \App\Models\Borrowing::class)
         <div id="dashboard-borrow-modal" class="modal-animated fixed inset-0 z-50 hidden overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="dash-modal-title">
@@ -855,9 +1195,171 @@
     </div>
 
     @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Quick Return Modal for Dashboard
+            // ==============================================================
+            // CHART.JS INTEGRATION (SECTIONS C & D)
+            // ==============================================================
+            const trendData = @json($trendData ?? []);
+            const collectionData = @json($collectionDistribution ?? []);
+            let currentPeriod = '7d';
+            let trendChartInstance = null;
+
+            if (typeof Chart !== 'undefined') {
+                // 1. Borrowing Trend Chart
+                const trendCtx = document.getElementById('borrowingTrendChart');
+                if (trendCtx && trendData[currentPeriod]) {
+                    trendChartInstance = new Chart(trendCtx, {
+                        type: 'line',
+                        data: {
+                            labels: trendData[currentPeriod].labels,
+                            datasets: [
+                                {
+                                    label: 'Peminjaman',
+                                    data: trendData[currentPeriod].borrowed,
+                                    borderColor: '#2d6a4f',
+                                    backgroundColor: 'rgba(45, 106, 79, 0.1)',
+                                    fill: true,
+                                    tension: 0.35,
+                                    pointBackgroundColor: '#2d6a4f',
+                                    pointBorderColor: '#ffffff',
+                                    pointBorderWidth: 2,
+                                    pointRadius: 4,
+                                    pointHoverRadius: 6,
+                                },
+                                {
+                                    label: 'Pengembalian',
+                                    data: trendData[currentPeriod].returned,
+                                    borderColor: '#10b981',
+                                    backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                                    fill: true,
+                                    tension: 0.35,
+                                    pointBackgroundColor: '#10b981',
+                                    pointBorderColor: '#ffffff',
+                                    pointBorderWidth: 2,
+                                    pointRadius: 4,
+                                    pointHoverRadius: 6,
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    mode: 'index',
+                                    intersect: false,
+                                    padding: 10,
+                                    cornerRadius: 8,
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `${context.dataset.label}: ${context.parsed.y} transaksi`;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    grid: {
+                                        display: false
+                                    },
+                                    ticks: {
+                                        font: {
+                                            size: 11
+                                        }
+                                    }
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        stepSize: 1,
+                                        font: {
+                                            size: 11
+                                        }
+                                    },
+                                    grid: {
+                                        color: 'rgba(0, 0, 0, 0.05)'
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // Period Toggle Buttons Listener
+                    const periodButtons = document.querySelectorAll('.btn-period-toggle');
+                    periodButtons.forEach(btn => {
+                        btn.addEventListener('click', function () {
+                            const period = this.getAttribute('data-period');
+                            if (!trendData[period] || period === currentPeriod) return;
+
+                            currentPeriod = period;
+
+                            // Update active button styling
+                            periodButtons.forEach(b => {
+                                b.classList.remove('bg-brand-600', 'text-white', 'shadow-xs');
+                                b.classList.add('text-text-muted');
+                            });
+                            this.classList.remove('text-text-muted');
+                            this.classList.add('bg-brand-600', 'text-white', 'shadow-xs');
+
+                            // Update chart datasets
+                            trendChartInstance.data.labels = trendData[period].labels;
+                            trendChartInstance.data.datasets[0].data = trendData[period].borrowed;
+                            trendChartInstance.data.datasets[1].data = trendData[period].returned;
+                            trendChartInstance.update();
+                        });
+                    });
+                }
+
+                // 2. Collection Distribution Donut Chart
+                const collectionCtx = document.getElementById('collectionDistributionChart');
+                if (collectionCtx) {
+                    new Chart(collectionCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Buku Fisik', 'E-book Digital'],
+                            datasets: [{
+                                data: [
+                                    collectionData.physical || 0,
+                                    collectionData.ebook || 0
+                                ],
+                                backgroundColor: ['#1b4332', '#52b788'],
+                                hoverBackgroundColor: ['#2d6a4f', '#74c69d'],
+                                borderWidth: 2,
+                                borderColor: '#ffffff',
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const total = (collectionData.physical || 0) + (collectionData.ebook || 0);
+                                            const val = context.parsed;
+                                            const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                                            return `${context.label}: ${val} judul (${pct}%)`;
+                                        }
+                                    }
+                                }
+                            },
+                            cutout: '72%'
+                        }
+                    });
+                }
+            }
+
+            // ==============================================================
+            // MODAL LOGIC (BORROW & QUICK RETURN)
+            // ==============================================================
             const dashReturnModal = document.getElementById('dash-quick-return-modal');
             const dashReturnBackdrop = document.getElementById('dash-quick-return-backdrop');
             const dashReturnCloseBtn = document.getElementById('btn-close-dash-return');
@@ -976,18 +1478,6 @@
                     dashSubmit.classList.add('opacity-75', 'cursor-not-allowed');
                 });
             }
-
-            // Connect "Pinjam" buttons in member books grid
-            document.querySelectorAll('.btn-trigger-borrow-book').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const bookId = this.dataset.bookId;
-                    const bookSelect = document.getElementById('dash-book-select');
-                    if (bookSelect && bookId) {
-                        bookSelect.value = bookId;
-                    }
-                    if (dashModal) dashModal.classList.remove('hidden');
-                });
-            });
         });
     </script>
     @endpush

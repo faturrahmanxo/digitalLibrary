@@ -20,6 +20,10 @@ class User extends Authenticatable
 
     public const ROLE_ANGGOTA = 'anggota';
 
+    public const ROLE_STAFF = 'staff';
+
+    public const ROLE_MEMBER = 'member';
+
     public const ROLES = [
         self::ROLE_ADMIN,
         self::ROLE_PETUGAS,
@@ -54,27 +58,77 @@ class User extends Authenticatable
 
     public function isPetugas(): bool
     {
-        return $this->role === self::ROLE_PETUGAS;
+        return in_array($this->role, [self::ROLE_PETUGAS, self::ROLE_STAFF], true);
+    }
+
+    public function isStaff(): bool
+    {
+        return $this->isPetugas();
     }
 
     public function isAnggota(): bool
     {
-        return $this->role === self::ROLE_ANGGOTA;
+        return in_array($this->role, [self::ROLE_ANGGOTA, self::ROLE_MEMBER], true);
+    }
+
+    public function isMember(): bool
+    {
+        return $this->isAnggota();
+    }
+
+    public function isActive(): bool
+    {
+        return ! $this->trashed();
+    }
+
+    public function isInactive(): bool
+    {
+        return $this->trashed();
+    }
+
+    public function getStatusAttribute(): string
+    {
+        return $this->trashed() ? 'inactive' : 'active';
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->trashed() ? 'Nonaktif' : 'Aktif';
     }
 
     public function getRoleLabelAttribute(): string
     {
         return match ($this->role) {
             self::ROLE_ADMIN => 'Admin',
-            self::ROLE_PETUGAS => 'Petugas',
-            self::ROLE_ANGGOTA => 'Anggota',
+            self::ROLE_PETUGAS, self::ROLE_STAFF => 'Petugas',
+            self::ROLE_ANGGOTA, self::ROLE_MEMBER => 'Anggota',
             default => ucfirst($this->role),
         };
+    }
+
+    public function member()
+    {
+        return $this->hasOne(Member::class, 'email', 'email')->withTrashed();
     }
 
     public function borrowings(): HasMany
     {
         return $this->hasMany(Borrowing::class, 'staff_id');
+    }
+
+    public function userBorrowings(): HasMany
+    {
+        return $this->hasMany(Borrowing::class, 'user_id');
+    }
+
+    public function approvedBorrowings(): HasMany
+    {
+        return $this->hasMany(Borrowing::class, 'approved_by');
+    }
+
+    public function handedOverBorrowings(): HasMany
+    {
+        return $this->hasMany(Borrowing::class, 'handed_over_by');
     }
 
     public function digitalBorrowings(): HasMany

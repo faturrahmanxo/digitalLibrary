@@ -14,6 +14,8 @@ use App\Http\Controllers\LandingController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\NovelVolumeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PublisherController;
+use App\Http\Controllers\ShelfController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureActiveInternalUser;
 use Illuminate\Support\Facades\Route;
@@ -25,7 +27,7 @@ Route::get('/jelajahi', [CatalogController::class, 'index'])->name('jelajahi');
 Route::get('/katalog', fn () => redirect()->route('catalog.index'));
 Route::get('/profil', [InfoController::class, 'profil'])->name('info.profil');
 Route::get('/layanan', [InfoController::class, 'layanan'])->name('info.layanan');
-Route::get('/books/{book}', [BookController::class, 'publicShow'])
+Route::get('/books/{book}', [CatalogController::class, 'show'])
     ->whereNumber('book')
     ->name('books.show');
 
@@ -65,8 +67,11 @@ Route::middleware(['auth', EnsureActiveInternalUser::class])->group(function () 
     // Internal Dashboard & Operations
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    Route::post('/users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
     Route::resource('users', UserController::class)->except(['show']);
     Route::resource('categories', CategoryController::class)->except(['show']);
+    Route::resource('shelves', ShelfController::class)->except(['show']);
+    Route::resource('publishers', PublisherController::class)->except(['show']);
     Route::resource('books', BookController::class)->except(['show']);
     Route::get('/books/{book}/volumes', [NovelVolumeController::class, 'index'])->name('books.volumes.index');
     Route::get('/books/{book}/volumes/create', [NovelVolumeController::class, 'create'])->name('books.volumes.create');
@@ -74,11 +79,16 @@ Route::middleware(['auth', EnsureActiveInternalUser::class])->group(function () 
     Route::get('/books/{book}/volumes/{volume}/edit', [NovelVolumeController::class, 'edit'])->whereNumber('volume')->name('books.volumes.edit');
     Route::put('/books/{book}/volumes/{volume}', [NovelVolumeController::class, 'update'])->whereNumber('volume')->name('books.volumes.update');
     Route::delete('/books/{book}/volumes/{volume}', [NovelVolumeController::class, 'destroy'])->whereNumber('volume')->name('books.volumes.destroy');
-    Route::resource('members', MemberController::class);
+    Route::post('/members/{id}/restore', [MemberController::class, 'restore'])->name('members.restore');
+    Route::resource('members', MemberController::class)->withTrashed(['show', 'edit', 'update']);
 
     Route::get('/borrowings', [BorrowingController::class, 'index'])->name('borrowings.index');
     Route::get('/borrowings/create', [BorrowingController::class, 'create'])->name('borrowings.create');
     Route::post('/borrowings', [BorrowingController::class, 'store'])->name('borrowings.store');
     Route::get('/borrowings/{borrowing}', [BorrowingController::class, 'show'])->name('borrowings.show');
+    Route::post('/borrowings/{borrowing}/approve', [BorrowingController::class, 'approve'])->name('borrowings.approve');
+    Route::post('/borrowings/{borrowing}/handover', [BorrowingController::class, 'handover'])->name('borrowings.handover');
+    Route::post('/borrowings/{borrowing}/reject', [BorrowingController::class, 'reject'])->name('borrowings.reject');
+    Route::post('/borrowings/{borrowing}/cancel', [BorrowingController::class, 'cancel'])->name('borrowings.cancel');
     Route::post('/borrowings/{borrowing}/return', [BorrowingController::class, 'returnBorrowing'])->name('borrowings.return');
 });

@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\Borrowing;
 use App\Models\BorrowingItem;
 use App\Models\Category;
+use App\Models\Publisher;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -25,35 +26,65 @@ class BookStockService
                 ]);
             }
 
-            $stockTotal = (int) ($data['stock_total'] ?? 0);
+            $collectionType = $data['collection_type'] ?? 'physical';
+            $isPhysical = $collectionType === 'physical';
+            $isEbook = in_array($collectionType, ['ebook', 'e-book'], true);
+
+            $stockTotal = (int) ($data['stock_total'] ?? $data['total_copies'] ?? ($isPhysical ? 1 : 0));
             if ($stockTotal < 0) {
                 throw ValidationException::withMessages([
                     'stock_total' => 'Stok total harus berupa bilangan bulat non-negatif.',
                 ]);
             }
 
-            $collectionType = $data['collection_type'] ?? 'e-book';
-            $isEbook = $collectionType === 'e-book';
-            $digitalFilePath = $data['digital_file_path'] ?? null;
-            $downloadUrl = isset($data['download_url']) && trim((string) $data['download_url']) !== '' ? trim((string) $data['download_url']) : null;
+            $digitalFilePath = $isPhysical ? null : ($data['digital_file_path'] ?? null);
+            $downloadUrl = (! $isPhysical && isset($data['download_url']) && trim((string) $data['download_url']) !== '')
+                ? trim((string) $data['download_url'])
+                : null;
+            $readUrl = (! $isPhysical && isset($data['read_url']) && trim((string) $data['read_url']) !== '')
+                ? trim((string) $data['read_url'])
+                : null;
             $digitalLendingAllowed = $isEbook && (bool) ($data['digital_lending_allowed'] ?? false);
 
             $this->ensureDigitalFileIsAllowed($digitalLendingAllowed, $digitalFilePath);
 
+            $publisherId = $data['publisher_id'] ?? null;
+            $publisherName = isset($data['publisher']) && trim((string) $data['publisher']) !== ''
+                ? trim((string) $data['publisher'])
+                : null;
+
+            if (! $publisherId && $publisherName !== null) {
+                $pub = Publisher::where('name', $publisherName)->first();
+                if ($pub) {
+                    $publisherId = $pub->id;
+                }
+            }
+
+            $shelfId = $isPhysical ? ($data['shelf_id'] ?? null) : null;
+            $status = $data['status'] ?? 'active';
+
             return Book::create([
                 'category_id' => $category->id,
+                'shelf_id' => $shelfId,
+                'publisher_id' => $publisherId,
                 'title' => trim((string) $data['title']),
                 'author' => trim((string) $data['author']),
                 'collection_type' => $collectionType,
                 'description' => $data['description'] ?? null,
                 'synopsis' => $data['synopsis'] ?? null,
                 'isbn' => isset($data['isbn']) && trim((string) $data['isbn']) !== '' ? trim((string) $data['isbn']) : null,
-                'publisher' => isset($data['publisher']) && trim((string) $data['publisher']) !== '' ? trim((string) $data['publisher']) : null,
+                'publisher' => $publisherName,
                 'publication_year' => isset($data['publication_year']) && $data['publication_year'] !== '' ? (int) $data['publication_year'] : null,
                 'stock_total' => $stockTotal,
                 'stock_available' => $stockTotal,
+                'total_copies' => $stockTotal,
+                'available_copies' => $stockTotal,
+                'reserved_copies' => 0,
+                'borrowed_copies' => 0,
                 'digital_file_path' => $digitalFilePath,
+                'read_url' => $readUrl,
                 'download_url' => $downloadUrl,
+                'status' => $status,
                 'digital_license_count' => $isEbook ? max(0, (int) ($data['digital_license_count'] ?? 0)) : 0,
                 'digital_lending_allowed' => $digitalLendingAllowed,
                 'cover_path' => $data['cover_path'] ?? null,
@@ -84,8 +115,17 @@ class BookStockService
             }
 
             $newCollectionType = $data['collection_type'] ?? $lockedBook->collection_type;
+            $typeChanged = false;
+            if ($newCollectionType !== $lockedBook->collection_type) {
+                $isOldDigital = in_array($lockedBook->collection_type, ['ebook', 'e-book'], true);
+                $isNewDigital = in_array($newCollectionType, ['ebook', 'e-book'], true);
+                if (! ($isOldDigital && $isNewDigital)) {
+                    $typeChanged = true;
+                }
+            }
+
             if (
-                $newCollectionType !== $lockedBook->collection_type
+                $typeChanged
                 && (
                     $lockedBook->borrowingItems()->exists()
                     || $lockedBook->novelVolumes()->exists()
@@ -98,13 +138,23 @@ class BookStockService
                 ]);
             }
 
+            $isPhysical = $newCollectionType === 'physical';
+            $isEbook = in_array($newCollectionType, ['ebook', 'e-book'], true);
+
             $oldTotal = (int) $lockedBook->stock_total;
             $oldAvailable = (int) $lockedBook->stock_available;
-            $newTotal = (int) ($data['stock_total'] ?? $oldTotal);
+            $newTotal = (int) ($data['stock_total'] ?? $data['total_copies'] ?? $oldTotal);
 
             if ($newTotal < 0) {
                 throw ValidationException::withMessages([
                     'stock_total' => 'Stok total tidak boleh bernilai negatif.',
+                ]);
+            }
+
+            $minRequired = (int) $lockedBook->borrowed_copies + (int) $lockedBook->reserved_copies;
+            if ($newTotal < $minRequired) {
+                throw ValidationException::withMessages([
+                    'stock_total' => "Total stok tidak dapat dikurangi karena sebagian eksemplar sedang dipinjam atau direservasi ({$minRequired}).",
                 ]);
             }
 
@@ -123,7 +173,6 @@ class BookStockService
                 ]);
             }
 
-            $isEbook = $newCollectionType === 'e-book';
             $newDigitalLicenseCount = $isEbook
                 ? (int) ($data['digital_license_count'] ?? $lockedBook->digital_license_count)
                 : 0;
@@ -135,12 +184,21 @@ class BookStockService
                 ]);
             }
 
-            $newDigitalFilePath = array_key_exists('digital_file_path', $data)
-                ? $data['digital_file_path']
-                : $lockedBook->digital_file_path;
-            $newDownloadUrl = array_key_exists('download_url', $data)
-                ? (isset($data['download_url']) && trim((string) $data['download_url']) !== '' ? trim((string) $data['download_url']) : null)
-                : $lockedBook->download_url;
+            $newDigitalFilePath = $isPhysical
+                ? null
+                : (array_key_exists('digital_file_path', $data) ? $data['digital_file_path'] : $lockedBook->digital_file_path);
+
+            $newDownloadUrl = $isPhysical
+                ? null
+                : (array_key_exists('download_url', $data)
+                    ? (isset($data['download_url']) && trim((string) $data['download_url']) !== '' ? trim((string) $data['download_url']) : null)
+                    : $lockedBook->download_url);
+
+            $newReadUrl = $isPhysical
+                ? null
+                : (array_key_exists('read_url', $data)
+                    ? (isset($data['read_url']) && trim((string) $data['read_url']) !== '' ? trim((string) $data['read_url']) : null)
+                    : $lockedBook->read_url);
 
             if ($activeDigitalLoans > 0 && $newDigitalFilePath !== $lockedBook->digital_file_path) {
                 throw ValidationException::withMessages([
@@ -152,20 +210,44 @@ class BookStockService
                 && (bool) ($data['digital_lending_allowed'] ?? $lockedBook->digital_lending_allowed);
             $this->ensureDigitalFileIsAllowed($digitalLendingAllowed, $newDigitalFilePath);
 
+            $publisherId = array_key_exists('publisher_id', $data) ? $data['publisher_id'] : $lockedBook->publisher_id;
+            $publisherName = array_key_exists('publisher', $data) && trim((string) $data['publisher']) !== ''
+                ? trim((string) $data['publisher'])
+                : $lockedBook->getRawOriginal('publisher');
+
+            if (! $publisherId && $publisherName !== null) {
+                $pub = Publisher::where('name', $publisherName)->first();
+                if ($pub) {
+                    $publisherId = $pub->id;
+                }
+            }
+
+            $shelfId = $isPhysical
+                ? (array_key_exists('shelf_id', $data) ? $data['shelf_id'] : $lockedBook->shelf_id)
+                : null;
+
+            $status = array_key_exists('status', $data) ? $data['status'] : ($lockedBook->status ?? 'active');
+
             $updatePayload = [
                 'category_id' => $category->id,
+                'shelf_id' => $shelfId,
+                'publisher_id' => $publisherId,
                 'title' => trim((string) $data['title']),
                 'author' => trim((string) $data['author']),
                 'collection_type' => $newCollectionType,
                 'description' => array_key_exists('description', $data) ? $data['description'] : $lockedBook->description,
                 'synopsis' => array_key_exists('synopsis', $data) ? $data['synopsis'] : $lockedBook->synopsis,
                 'isbn' => array_key_exists('isbn', $data) && trim((string) $data['isbn']) !== '' ? trim((string) $data['isbn']) : null,
-                'publisher' => array_key_exists('publisher', $data) && trim((string) $data['publisher']) !== '' ? trim((string) $data['publisher']) : null,
+                'publisher' => $publisherName,
                 'publication_year' => array_key_exists('publication_year', $data) && $data['publication_year'] !== '' && $data['publication_year'] !== null ? (int) $data['publication_year'] : null,
                 'stock_total' => $newTotal,
                 'stock_available' => $newAvailable,
+                'total_copies' => $newTotal,
+                'available_copies' => $newAvailable,
                 'digital_file_path' => $newDigitalFilePath,
+                'read_url' => $newReadUrl,
                 'download_url' => $newDownloadUrl,
+                'status' => $status,
                 'digital_license_count' => $newDigitalLicenseCount,
                 'digital_lending_allowed' => $digitalLendingAllowed,
             ];
@@ -176,7 +258,7 @@ class BookStockService
 
             $lockedBook->update($updatePayload);
 
-            return $lockedBook->fresh(['category']);
+            return $lockedBook->fresh(['category', 'shelf', 'publisher']);
         });
     }
 

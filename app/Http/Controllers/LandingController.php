@@ -18,30 +18,42 @@ class LandingController extends Controller
         $search = trim((string) $request->query('q', ''));
         $categoryId = $request->query('category_id');
 
-        $featuredBooks = Book::with('category')
+        $activeBooksQuery = Book::query()
+            ->with(['category', 'shelf', 'publisher'])
+            ->where(function ($q) {
+                $q->where('status', Book::STATUS_ACTIVE)
+                    ->orWhereNull('status');
+            });
+
+        $featuredBooks = (clone $activeBooksQuery)
             ->latest('id')
             ->take(6)
             ->get();
 
-        $categories = Category::withCount('books')
+        $categories = Category::withCount(['books' => function ($q) {
+            $q->where('status', Book::STATUS_ACTIVE)->orWhereNull('status');
+        }])
             ->orderBy('name')
             ->get();
 
-        $latestEbooks = Book::with('category')
-            ->where('collection_type', 'e-book')
+        $latestEbooks = (clone $activeBooksQuery)
+            ->whereNotIn('collection_type', [Book::COLLECTION_TYPE_PHYSICAL, 'fisik'])
             ->latest('id')
             ->take(5)
             ->get();
 
-        $latestNovels = Book::with('category')
-            ->where('collection_type', 'novel')
+        $latestNovels = (clone $activeBooksQuery)
+            ->where(function ($q) {
+                $q->where('collection_type', 'novel')
+                    ->orWhereHas('category', fn ($c) => $c->where('name', 'like', '%Novel%'));
+            })
             ->latest('id')
             ->take(5)
             ->get();
 
         $stats = [
-            'total_titles' => Book::count(),
-            'total_available' => (int) Book::sum('stock_available'),
+            'total_titles' => Book::where(fn ($q) => $q->where('status', Book::STATUS_ACTIVE)->orWhereNull('status'))->count(),
+            'total_available' => (int) Book::sum('available_copies'),
             'total_members' => Member::count(),
             'total_borrowings' => Borrowing::count(),
         ];
@@ -54,9 +66,16 @@ class LandingController extends Controller
         if ($user) {
             $userFavoriteIds = $user->favorites()->pluck('book_id')->toArray();
             if ($user->isAnggota()) {
-                $userActiveBorrowingsCount = Borrowing::whereHas('member', function ($q) use ($user) {
-                    $q->where('email', $user->email);
-                })->where('status', Borrowing::STATUS_BORROWED)->count();
+                $userActiveBorrowingsCount = Borrowing::query()
+                    ->where(function ($q) use ($user) {
+                        $q->where('user_id', $user->id)
+                            ->orWhere('borrower_user_id', $user->id);
+                        if ($user->email) {
+                            $q->orWhereHas('member', fn ($mq) => $mq->where('email', $user->email));
+                        }
+                    })
+                    ->where('status', Borrowing::STATUS_BORROWED)
+                    ->count();
             }
         }
 

@@ -14,7 +14,12 @@ class BookPolicy
 
     public function view(User $user, Book $book): bool
     {
-        return in_array($user->role, [User::ROLE_ADMIN, User::ROLE_PETUGAS, User::ROLE_ANGGOTA], true);
+        return in_array($user->role, [User::ROLE_ADMIN, User::ROLE_PETUGAS, User::ROLE_ANGGOTA, User::ROLE_STAFF, User::ROLE_MEMBER], true);
+    }
+
+    public function manage(User $user, Book $book): bool
+    {
+        return $user->isAdmin() || $user->isPetugas();
     }
 
     public function create(User $user): bool

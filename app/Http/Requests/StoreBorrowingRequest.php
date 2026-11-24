@@ -25,16 +25,16 @@ class StoreBorrowingRequest extends FormRequest
 
         // If authenticated user is anggota, automatically bind to their own member record
         if ($this->user()?->isAnggota()) {
-            $member = Member::firstOrCreate(
-                ['email' => $this->user()->email],
-                [
+            $member = Member::withTrashed()->where('email', $this->user()->email)->first();
+            if (! $member) {
+                $member = Member::create([
                     'member_code' => sprintf('AGT-%05d', Member::withTrashed()->count() + 1),
                     'name' => $this->user()->name,
                     'email' => $this->user()->email,
                     'phone' => '081200000000',
                     'address' => 'Anggota Perpustakaan',
-                ]
-            );
+                ]);
+            }
 
             $this->merge([
                 'member_id' => $member->id,

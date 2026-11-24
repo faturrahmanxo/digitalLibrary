@@ -90,6 +90,7 @@
 
                     <!-- Search Input & Filter Button Toolbar -->
                     <form method="GET" action="{{ route('catalog.index') }}" class="pt-2">
+                        @if ($collectionType)<input type="hidden" name="collection_type" value="{{ $collectionType }}">@endif
                         @if ($categoryId)<input type="hidden" name="category_id" value="{{ $categoryId }}">@endif
                         @if ($author)<input type="hidden" name="author" value="{{ $author }}">@endif
                         @if ($isbn)<input type="hidden" name="isbn" value="{{ $isbn }}">@endif
@@ -132,7 +133,7 @@
                                 </svg>
                                 <span>Filter</span>
                                 @php
-                                    $activeFilterCount = (int)($categoryId !== null) + (int)($author !== '') + (int)($isbn !== '') + (int)($publisher !== '') + (int)($year !== null) + (int)($availability !== '');
+                                    $activeFilterCount = (int)($categoryId !== null) + (int)($author !== '') + (int)($isbn !== '') + (int)($publisher !== '') + (int)($year !== null) + (int)($availability !== '') + (int)($collectionType !== '');
                                 @endphp
                                 @if ($activeFilterCount > 0)
                                     <span class="w-5 h-5 rounded-full bg-brand-600 text-white text-[10px] font-bold flex items-center justify-center">
@@ -150,7 +151,7 @@
                             <span><strong class="text-ink font-serif font-italiana font-bold text-sm">{{ number_format($books->total(), 0, ',', '.') }}</strong> judul buku ditemukan</span>
                         </span>
 
-                        @if ($search || $categoryId || $author || $isbn || $publisher || $year || $availability)
+                        @if ($search || $categoryId || $author || $isbn || $publisher || $year || $availability || $collectionType)
                             <a href="{{ route('catalog.index') }}" class="font-bold text-brand-600 dark:text-brand-400 hover:underline ml-2">
                                 Reset Semua Filter &times;
                             </a>
@@ -297,6 +298,36 @@
     <!-- ======================================================== -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
         
+        <!-- Format Koleksi Quick Switcher (Semua, Buku Fisik, E-book) -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <div class="inline-flex p-1 rounded-2xl bg-surface border border-line shadow-2xs self-start">
+                <a
+                    href="{{ route('catalog.index', array_filter(array_merge(request()->query(), ['collection_type' => '']))) }}"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold transition-all {{ empty($collectionType) ? 'bg-brand-600 text-white shadow-xs' : 'text-text-muted hover:text-ink' }}"
+                >
+                    Semua Koleksi
+                </a>
+                <a
+                    href="{{ route('catalog.index', array_merge(request()->query(), ['collection_type' => 'physical'])) }}"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold transition-all {{ $collectionType === 'physical' ? 'bg-brand-600 text-white shadow-xs' : 'text-text-muted hover:text-ink' }}"
+                >
+                    Buku Fisik
+                </a>
+                <a
+                    href="{{ route('catalog.index', array_merge(request()->query(), ['collection_type' => 'ebook'])) }}"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold transition-all {{ in_array($collectionType, ['ebook', 'e-book'], true) ? 'bg-brand-600 text-white shadow-xs' : 'text-text-muted hover:text-ink' }}"
+                >
+                    E-book
+                </a>
+            </div>
+
+            @if ($collectionType)
+                <span class="text-xs font-medium text-text-muted">
+                    Menampilkan format: <strong class="text-ink">{{ $collectionType === 'physical' ? 'Buku Fisik' : 'E-book' }}</strong>
+                </span>
+            @endif
+        </div>
+
         @if ($books->isEmpty())
             <div class="p-16 text-center rounded-3xl border border-line bg-surface max-w-lg mx-auto shadow-xs">
                 <div class="w-14 h-14 rounded-2xl bg-surface-soft text-text-muted flex items-center justify-center mx-auto mb-4">
@@ -313,64 +344,86 @@
                 </a>
             </div>
         @else
-            <!-- 4-Column Book Cards Grid (Same Style & Unified Blue Gradient as Beranda) -->
+            <!-- 4-Column Book Cards Grid (Same Style & Unified Forest Green & Ivory Theme as Beranda) -->
             @php
                 $cardGradient = 'linear-gradient(135deg, #15241B 0%, #294638 100%)';
             @endphp
             <div class="grid grid-cols-1 min-[400px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 sm:gap-6 mb-12">
                 @foreach ($books as $index => $book)
-                    @if ($book->collection_type === 'e-book')
-                        <x-book-card-ebook :book="$book" :href="route('books.show', $book)" />
+                    @if ($book->collection_type === 'e-book' || $book->collection_type === 'novel')
+                        <x-book-card-ebook
+                            :book="$book"
+                            :href="route('books.show', $book)"
+                            :cover-label="$book->collection_type === 'novel' ? 'novel' : 'e-book'"
+                            class="w-full"
+                        />
                     @else
-                    <a
-                        href="{{ route('books.show', $book) }}"
-                        class="group card-interactive flex flex-col justify-between cursor-pointer focus:outline-none"
-                        title="{{ $book->title }}"
-                    >
-                        <!-- Minimalist Large Book Cover Container (Matching Beranda) -->
-                        <div class="aspect-[3/4.2] w-full rounded-3xl overflow-hidden relative shadow-md border border-line flex items-center justify-center">
-                            
-                            @if ($book->cover_path)
-                                <img src="{{ asset('storage/' . $book->cover_path) }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                            @else
-                                <!-- Fallback Artistic Graphic with Diagonal Pinstripe Motif & Unified Blue Gradient -->
-                                <div
-                                    class="w-full h-full p-6 flex flex-col items-center justify-center text-white relative overflow-hidden group-hover:scale-105 transition-transform duration-300"
-                                    style="background: {{ $cardGradient }};"
-                                >
-                                    <div class="absolute inset-0 motif-diagonal-lines opacity-35 pointer-events-none"></div>
-                                    <div class="relative z-10 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-lg group-hover:scale-110 transition-transform">
-                                        <span class="font-serif font-bold text-3xl sm:text-4xl text-white tracking-wider">
-                                            {{ strtoupper(substr($book->title, 0, 2)) }}
+                        <a
+                            href="{{ route('books.show', $book) }}"
+                            class="group card-interactive flex flex-col justify-between cursor-pointer focus:outline-none"
+                            title="{{ $book->title }}"
+                        >
+                            <!-- Minimalist Large Book Cover Container (Matching Beranda) -->
+                            <div class="aspect-[3/4.2] w-full rounded-3xl overflow-hidden relative shadow-md border border-line flex items-center justify-center bg-surface-soft">
+                                
+                                @if ($book->cover_path)
+                                    <img src="{{ asset('storage/' . $book->cover_path) }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                @else
+                                    <!-- Fallback Artistic Graphic with Diagonal Pinstripe Motif & Unified Forest Green Gradient -->
+                                    <div
+                                        class="w-full h-full p-6 flex flex-col items-center justify-center text-white relative overflow-hidden group-hover:scale-105 transition-transform duration-300"
+                                        style="background: {{ $cardGradient }};"
+                                    >
+                                        <div class="absolute inset-0 motif-diagonal-lines opacity-35 pointer-events-none"></div>
+                                        <div class="relative z-10 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-lg group-hover:scale-110 transition-transform">
+                                            <span class="font-serif font-bold text-3xl sm:text-4xl text-white tracking-wider">
+                                                {{ strtoupper(substr($book->title, 0, 2)) }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <!-- Category Badge at Top Left Inside Cover -->
+                                <div class="absolute top-3.5 left-3.5 z-20 pointer-events-none">
+                                    <span class="inline-block px-2.5 py-1 rounded-lg bg-black/65 dark:bg-black/80 backdrop-blur-md text-white text-[10px] font-bold tracking-wider uppercase font-sans shadow-sm">
+                                        {{ $book->category?->name ?? 'UMUM' }}
+                                    </span>
+                                </div>
+
+                                <!-- Format Badge at Top Right Inside Cover -->
+                                <div class="absolute top-3.5 right-3.5 z-20 pointer-events-none">
+                                    <span class="inline-block px-2.5 py-1 rounded-lg bg-brand-600/90 text-white text-[9px] font-extrabold tracking-wider uppercase font-sans shadow-xs">
+                                        FISIK
+                                    </span>
+                                </div>
+
+                                @if ($book->isPhysical() && $book->available_copies <= 0)
+                                    <div class="absolute bottom-3 left-3 right-3 z-20 pointer-events-none text-center">
+                                        <span class="inline-block w-full px-2 py-1 rounded-lg bg-rose-600/90 text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                                            Stok Habis
                                         </span>
                                     </div>
+                                @endif
+
+                            </div>
+
+                            <!-- Metadata Below Card (Title, Author, Year - Same Style as Beranda) -->
+                            <div class="pt-4 flex-1 flex flex-col">
+                                <h3 class="text-sm sm:text-base font-bold text-ink font-sans tracking-tight line-clamp-2 leading-snug group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors" title="{{ $book->title }}">
+                                    {{ $book->title }}
+                                </h3>
+                                <p class="text-xs text-text-muted uppercase tracking-wider truncate mt-1.5 font-sans font-medium">
+                                    {{ $book->author }}
+                                </p>
+                                <div class="flex items-center justify-between text-xs text-text-muted mt-2 pt-2 border-t border-line/60">
+                                    <span class="font-year font-bold text-ink/90">{{ $book->publication_year }}</span>
+                                    <span class="text-[11px] font-semibold text-brand-600 dark:text-brand-400">
+                                        {{ $book->shelf?->code ? 'Rak ' . $book->shelf->code : ($book->available_copies > 0 ? $book->available_copies . ' Stok' : 'Habis') }}
+                                    </span>
                                 </div>
-                            @endif
-
-                            <!-- Category Badge at Top Left Inside Cover -->
-                            <div class="absolute top-3.5 left-3.5 z-20 pointer-events-none">
-                                <span class="inline-block px-3 py-1 rounded-lg bg-black/65 dark:bg-black/80 backdrop-blur-md text-white text-[10px] font-bold tracking-wider uppercase font-sans shadow-sm">
-                                    {{ $book->category?->name ?? 'UMUM' }}
-                                </span>
                             </div>
 
-                        </div>
-
-                        <!-- Metadata Below Card (Title, Author, Year - Same Style as Beranda) -->
-                        <div class="pt-4 flex-1 flex flex-col">
-                            <h3 class="text-sm sm:text-base font-bold text-ink font-sans tracking-tight line-clamp-2 leading-snug group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors" title="{{ $book->title }}">
-                                {{ $book->title }}
-                            </h3>
-                            <p class="text-xs text-text-muted uppercase tracking-wider truncate mt-1.5 font-sans font-medium">
-                                {{ $book->author }}
-                            </p>
-                            <div class="flex items-center justify-between text-xs text-text-muted mt-1">
-                                <span class="font-year font-bold text-ink/90">{{ $book->publication_year }}</span>
-                                <span class="text-[11px] font-mono text-text-muted/70">ISBN {{ substr($book->isbn, -6) }}</span>
-                            </div>
-                        </div>
-
-                    </a>
+                        </a>
                     @endif
                 @endforeach
             </div>
@@ -420,33 +473,20 @@
                 <!-- Keep Current Search Term If Available -->
                 <input type="hidden" name="q" value="{{ $search }}">
 
-                <!-- Row 1: Pengarang & ISBN -->
+                <!-- Row 1: Format Koleksi & Kategori -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-text-muted mb-1.5">Pengarang</label>
-                        <input
-                            type="text"
-                            name="author"
-                            value="{{ $author }}"
-                            placeholder="Nama pengarang..."
-                            class="w-full px-3.5 py-2.5 rounded-2xl border border-line bg-surface text-ink text-xs sm:text-sm placeholder:text-text-muted/60 focus:outline-none focus:ring-2 focus:ring-brand-600 dark:focus:ring-brand-400 transition-all"
+                        <label class="block text-xs font-semibold text-text-muted mb-1.5">Format Koleksi</label>
+                        <select
+                            name="collection_type"
+                            class="w-full px-3.5 py-2.5 rounded-2xl border border-line bg-surface text-ink text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-600 dark:focus:ring-brand-400 transition-all cursor-pointer"
                         >
+                            <option value="">Semua Format (Fisik &amp; E-book)</option>
+                            <option value="physical" @selected($collectionType === 'physical')>Buku Fisik (Tercetak di Rak)</option>
+                            <option value="ebook" @selected(in_array($collectionType, ['ebook', 'e-book'], true))>E-book (Akses Digital)</option>
+                        </select>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-semibold text-text-muted mb-1.5">ISBN</label>
-                        <input
-                            type="text"
-                            name="isbn"
-                            value="{{ $isbn }}"
-                            placeholder="978-xxx-..."
-                            class="w-full px-3.5 py-2.5 rounded-2xl border border-line bg-surface text-ink text-xs sm:text-sm placeholder:text-text-muted/60 focus:outline-none focus:ring-2 focus:ring-brand-600 dark:focus:ring-brand-400 transition-all"
-                        >
-                    </div>
-                </div>
-
-                <!-- Row 2: Kategori & Penerbit -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-text-muted mb-1.5">Klasifikasi Kategori</label>
                         <select
@@ -461,6 +501,20 @@
                             @endforeach
                         </select>
                     </div>
+                </div>
+
+                <!-- Row 2: Pengarang & Penerbit -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-text-muted mb-1.5">Pengarang</label>
+                        <input
+                            type="text"
+                            name="author"
+                            value="{{ $author }}"
+                            placeholder="Nama pengarang..."
+                            class="w-full px-3.5 py-2.5 rounded-2xl border border-line bg-surface text-ink text-xs sm:text-sm placeholder:text-text-muted/60 focus:outline-none focus:ring-2 focus:ring-brand-600 dark:focus:ring-brand-400 transition-all"
+                        >
+                    </div>
 
                     <div>
                         <label class="block text-xs font-semibold text-text-muted mb-1.5">Penerbit</label>
@@ -474,8 +528,19 @@
                     </div>
                 </div>
 
-                <!-- Row 3: Tahun Terbit, Ketersediaan & Urutan -->
+                <!-- Row 3: ISBN, Tahun Terbit & Ketersediaan -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-text-muted mb-1.5">ISBN</label>
+                        <input
+                            type="text"
+                            name="isbn"
+                            value="{{ $isbn }}"
+                            placeholder="978-xxx-..."
+                            class="w-full px-3.5 py-2.5 rounded-2xl border border-line bg-surface text-ink text-xs sm:text-sm placeholder:text-text-muted/60 focus:outline-none focus:ring-2 focus:ring-brand-600 dark:focus:ring-brand-400 transition-all"
+                        >
+                    </div>
+
                     <div>
                         <label class="block text-xs font-semibold text-text-muted mb-1.5">Tahun Terbit</label>
                         <select
@@ -492,7 +557,7 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-text-muted mb-1.5">Ketersediaan Rak</label>
+                        <label class="block text-xs font-semibold text-text-muted mb-1.5">Ketersediaan Rak Fisik</label>
                         <select
                             name="availability"
                             class="w-full px-3.5 py-2.5 rounded-2xl border border-line bg-surface text-ink text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-600 dark:focus:ring-brand-400 transition-all cursor-pointer"
@@ -502,20 +567,21 @@
                             <option value="empty" @selected($availability === 'empty')>Sedang Dipinjam / Kosong</option>
                         </select>
                     </div>
+                </div>
 
-                    <div>
-                        <label class="block text-xs font-semibold text-text-muted mb-1.5">Urutan Tampilan</label>
-                        <select
-                            name="sort"
-                            class="w-full px-3.5 py-2.5 rounded-2xl border border-line bg-surface text-ink text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-600 dark:focus:ring-brand-400 transition-all cursor-pointer"
-                        >
-                            <option value="newest" @selected($sort === 'newest')>Terbaru Masuk</option>
-                            <option value="popular" @selected($sort === 'popular')>Stok Terbanyak</option>
-                            <option value="title_asc" @selected($sort === 'title_asc')>Judul A &ndash; Z</option>
-                            <option value="title_desc" @selected($sort === 'title_desc')>Judul Z &ndash; A</option>
-                            <option value="year_desc" @selected($sort === 'year_desc')>Tahun Rilis (Terbaru)</option>
-                        </select>
-                    </div>
+                <!-- Row 4: Urutan Tampilan -->
+                <div>
+                    <label class="block text-xs font-semibold text-text-muted mb-1.5">Urutan Tampilan</label>
+                    <select
+                        name="sort"
+                        class="w-full px-3.5 py-2.5 rounded-2xl border border-line bg-surface text-ink text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-600 dark:focus:ring-brand-400 transition-all cursor-pointer"
+                    >
+                        <option value="newest" @selected($sort === 'newest')>Terbaru Masuk</option>
+                        <option value="popular" @selected($sort === 'popular')>Stok Terbanyak</option>
+                        <option value="title_asc" @selected($sort === 'title_asc')>Judul A &ndash; Z</option>
+                        <option value="title_desc" @selected($sort === 'title_desc')>Judul Z &ndash; A</option>
+                        <option value="year_desc" @selected($sort === 'year_desc')>Tahun Rilis (Terbaru)</option>
+                    </select>
                 </div>
 
                 <!-- Modal Actions -->

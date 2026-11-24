@@ -103,76 +103,151 @@
             </div>
 
             <nav class="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto">
-                @foreach ($navItems as $item)
-                    @if ($item['show'])
-                        @if ($item['route'] === 'books.index' && ! $isAnggota)
-                            @php
-                                $bookCollectionIsActive = in_array(request('collection_type'), ['e-book', 'novel'], true);
-                            @endphp
-                            <details id="sidebar-books-menu" class="group/sidebar-books" @if ($bookCollectionIsActive) open @endif>
-                                <summary id="sidebar-books-summary" class="list-none group cursor-pointer flex items-center justify-between px-3.5 py-2.5 rounded-control text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 hover:bg-surface-soft hover:text-ink text-text-muted">
-                                    <span class="flex items-center gap-3">
-                                        <svg class="w-5 h-5 shrink-0 transition-transform duration-200 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                            {!! $item['icon'] !!}
-                                        </svg>
-                                        <span>{{ $item['label'] }}</span>
-                                    </span>
-                                    <svg class="w-4 h-4 transition-transform duration-200 group-open/sidebar-books:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                @if ($isAnggota)
+                    @foreach ($navItems as $item)
+                        @if ($item['show'])
+                            <a href="{{ route($item['route']) }}"
+                               @if($item['active']) aria-current="page" @endif
+                               class="group flex items-center justify-between px-3.5 py-2.5 rounded-control text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus {{ $item['active'] ? 'bg-sidebar-active text-ink font-semibold shadow-xs border-l-4 border-brand-600 dark:border-brand-400 pl-2.5' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-5 h-5 shrink-0 transition-transform duration-200 group-hover:scale-110 {{ $item['active'] ? 'text-brand-600 dark:text-brand-400' : 'text-text-muted group-hover:text-ink' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                        {!! $item['icon'] !!}
                                     </svg>
-                                </summary>
-                                <div class="grid transition-[grid-template-rows] duration-300 ease-out" style="grid-template-rows: 1fr">
-                                    <div class="overflow-hidden">
-                                        <div class="ml-8 mt-1 space-y-1 border-l border-line pl-3">
-                                            <a href="{{ route('books.index', ['collection_type' => 'e-book']) }}" class="block px-3 py-2 rounded-control text-xs font-medium transition-colors {{ request('collection_type') === 'e-book' ? 'bg-sidebar-active text-ink font-semibold' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">E-book</a>
-                                            <a href="{{ route('books.index', ['collection_type' => 'novel']) }}" class="block px-3 py-2 rounded-control text-xs font-medium transition-colors {{ request('collection_type') === 'novel' ? 'bg-sidebar-active text-ink font-semibold' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">Novel</a>
-                                        </div>
-                                    </div>
+                                    <span class="{{ $item['active'] ? 'text-brand-700 dark:text-ink font-semibold' : '' }}">{{ $item['label'] }}</span>
                                 </div>
-                            </details>
-                        @elseif ($item['route'] === 'categories.index' && ! $isAnggota)
-                            @php
-                                $currentCatGenre = request('genre') ?? request('collection_type');
-                                $categoryCollectionIsActive = request()->routeIs('categories.*');
-                            @endphp
-                            <details id="sidebar-categories-menu" class="group/sidebar-categories" @if ($categoryCollectionIsActive) open @endif>
-                                <summary id="sidebar-categories-summary" class="list-none group cursor-pointer flex items-center justify-between px-3.5 py-2.5 rounded-control text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 hover:bg-surface-soft hover:text-ink text-text-muted">
-                                    <span class="flex items-center gap-3">
-                                        <svg class="w-5 h-5 shrink-0 transition-transform duration-200 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                            {!! $item['icon'] !!}
-                                        </svg>
-                                        <span>{{ $item['label'] }}</span>
-                                    </span>
-                                    <svg class="w-4 h-4 transition-transform duration-200 group-open/sidebar-categories:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                                    </svg>
-                                </summary>
-                                <div class="grid transition-[grid-template-rows] duration-300 ease-out" style="grid-template-rows: 1fr">
-                                    <div class="overflow-hidden">
-                                        <div class="ml-8 mt-1 space-y-1 border-l border-line pl-3">
-                                            <a href="{{ route('categories.index', ['genre' => 'e-book']) }}" class="block px-3 py-2 rounded-control text-xs font-medium transition-colors {{ $currentCatGenre === 'e-book' ? 'bg-sidebar-active text-ink font-semibold' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">E-book</a>
-                                            <a href="{{ route('categories.index', ['genre' => 'novel']) }}" class="block px-3 py-2 rounded-control text-xs font-medium transition-colors {{ $currentCatGenre === 'novel' ? 'bg-sidebar-active text-ink font-semibold' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">Novel</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </details>
-                        @else
-                        <a href="{{ route($item['route']) }}"
-                           @if($item['active']) aria-current="page" @endif
-                           class="group flex items-center justify-between px-3.5 py-2.5 rounded-control text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus {{ $item['active'] ? 'bg-sidebar-active text-ink font-semibold shadow-xs border-l-4 border-brand-600 dark:border-brand-400 pl-2.5' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 shrink-0 transition-transform duration-200 group-hover:scale-110 {{ $item['active'] ? 'text-brand-600 dark:text-brand-400' : 'text-text-muted group-hover:text-ink' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                    {!! $item['icon'] !!}
-                                </svg>
-                                <span class="{{ $item['active'] ? 'text-brand-700 dark:text-ink font-semibold' : '' }}">{{ $item['label'] }}</span>
-                            </div>
-                            @if($item['active'])
-                                <span class="w-2 h-2 rounded-full bg-brand-600 dark:bg-brand-400 animate-pulse"></span>
-                            @endif
-                        </a>
+                                @if($item['active'])
+                                    <span class="w-2 h-2 rounded-full bg-brand-600 dark:bg-brand-400 animate-pulse"></span>
+                                @endif
+                            </a>
                         @endif
-                    @endif
-                @endforeach
+                    @endforeach
+                @else
+                    {{-- 06. ADMIN SIDEBAR STRUCTURE --}}
+                    {{-- 1. Dashboard --}}
+                    @php
+                        $isDashboardActive = request()->routeIs('dashboard');
+                    @endphp
+                    <a href="{{ route('dashboard') }}"
+                       @if($isDashboardActive) aria-current="page" @endif
+                       class="group flex items-center justify-between px-3.5 py-2.5 rounded-control text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus {{ $isDashboardActive ? 'bg-sidebar-active text-ink font-semibold shadow-xs border-l-4 border-brand-600 dark:border-brand-400 pl-2.5' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5 shrink-0 transition-transform duration-200 group-hover:scale-110 {{ $isDashboardActive ? 'text-brand-600 dark:text-brand-400' : 'text-text-muted group-hover:text-ink' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                            </svg>
+                            <span class="{{ $isDashboardActive ? 'text-brand-700 dark:text-ink font-semibold' : '' }}">Dashboard</span>
+                        </div>
+                        @if($isDashboardActive)
+                            <span class="w-2 h-2 rounded-full bg-brand-600 dark:bg-brand-400 animate-pulse"></span>
+                        @endif
+                    </a>
+
+                    {{-- 2. Manajemen Buku (Data Buku, Kategori Buku, Rak Buku, Peminjaman Buku, Penerbit) --}}
+                    @php
+                        $isBookManagementActive = request()->routeIs('books.*') || request()->routeIs('categories.*') || request()->routeIs('shelves.*') || request()->routeIs('borrowings.*') || request()->routeIs('publishers.*') || request()->is('shelves*') || request()->is('publishers*');
+                        $isBooksActive = request()->routeIs('books.*') && !request()->routeIs('books.read');
+                        $isCategoriesActive = request()->routeIs('categories.*');
+                        $isShelvesActive = request()->routeIs('shelves.*') || request()->is('shelves*');
+                        $isBorrowingsActive = request()->routeIs('borrowings.*');
+                        $isPublishersActive = request()->routeIs('publishers.*') || request()->is('publishers*');
+                    @endphp
+                    <details id="sidebar-book-management" class="group/book-mgr" @if ($isBookManagementActive) open @endif>
+                        <summary id="sidebar-book-management-summary" class="list-none group cursor-pointer flex items-center justify-between px-3.5 py-2.5 rounded-control text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 hover:bg-surface-soft hover:text-ink {{ $isBookManagementActive ? 'bg-sidebar-active/70 text-ink font-semibold' : 'text-text-muted' }}">
+                            <span class="flex items-center gap-3">
+                                <svg class="w-5 h-5 shrink-0 transition-transform duration-200 group-hover:scale-110 {{ $isBookManagementActive ? 'text-brand-600 dark:text-brand-400' : 'text-text-muted group-hover:text-ink' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                </svg>
+                                <span class="{{ $isBookManagementActive ? 'text-brand-700 dark:text-ink font-semibold' : '' }}">Manajemen Buku</span>
+                            </span>
+                            <svg class="w-4 h-4 transition-transform duration-200 group-open/book-mgr:rotate-180 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </summary>
+                        <div class="grid transition-[grid-template-rows] duration-300 ease-out" style="grid-template-rows: 1fr">
+                            <div class="overflow-hidden">
+                                <div class="ml-8 mt-1 space-y-1 border-l border-line pl-3">
+                                    <a href="{{ route('books.index') }}"
+                                       class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium transition-colors {{ $isBooksActive ? 'bg-sidebar-active text-ink font-semibold shadow-xs' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
+                                        <span>Data Buku</span>
+                                        @if($isBooksActive)
+                                            <span class="w-1.5 h-1.5 rounded-full bg-brand-600 dark:bg-brand-400"></span>
+                                        @endif
+                                    </a>
+                                    <a href="{{ route('categories.index') }}"
+                                       class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium transition-colors {{ $isCategoriesActive ? 'bg-sidebar-active text-ink font-semibold shadow-xs' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
+                                        <span>Kategori Buku</span>
+                                        @if($isCategoriesActive)
+                                            <span class="w-1.5 h-1.5 rounded-full bg-brand-600 dark:bg-brand-400"></span>
+                                        @endif
+                                    </a>
+                                    <a href="{{ Route::has('shelves.index') ? route('shelves.index') : url('/shelves') }}"
+                                       class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium transition-colors {{ $isShelvesActive ? 'bg-sidebar-active text-ink font-semibold shadow-xs' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
+                                        <span>Rak Buku</span>
+                                        @if($isShelvesActive)
+                                            <span class="w-1.5 h-1.5 rounded-full bg-brand-600 dark:bg-brand-400"></span>
+                                        @endif
+                                    </a>
+                                    <a href="{{ route('borrowings.index') }}"
+                                       class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium transition-colors {{ $isBorrowingsActive ? 'bg-sidebar-active text-ink font-semibold shadow-xs' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
+                                        <span>Peminjaman Buku</span>
+                                        @if($isBorrowingsActive)
+                                            <span class="w-1.5 h-1.5 rounded-full bg-brand-600 dark:bg-brand-400"></span>
+                                        @endif
+                                    </a>
+                                    <a href="{{ Route::has('publishers.index') ? route('publishers.index') : url('/publishers') }}"
+                                       class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium transition-colors {{ $isPublishersActive ? 'bg-sidebar-active text-ink font-semibold shadow-xs' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
+                                        <span>Penerbit</span>
+                                        @if($isPublishersActive)
+                                            <span class="w-1.5 h-1.5 rounded-full bg-brand-600 dark:bg-brand-400"></span>
+                                        @endif
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+
+                    {{-- 3. Manajemen Pengguna (Anggota, Admin & Petugas) --}}
+                    @php
+                        $isUserManagementActive = request()->routeIs('members.*') || request()->routeIs('users.*');
+                        $isMembersActive = request()->routeIs('members.*');
+                        $isUsersActive = request()->routeIs('users.*');
+                        $canManageUsers = $authUser?->isAdmin() ?? false;
+                    @endphp
+                    <details id="sidebar-user-management" class="group/user-mgr" @if ($isUserManagementActive) open @endif>
+                        <summary id="sidebar-user-management-summary" class="list-none group cursor-pointer flex items-center justify-between px-3.5 py-2.5 rounded-control text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 hover:bg-surface-soft hover:text-ink {{ $isUserManagementActive ? 'bg-sidebar-active/70 text-ink font-semibold' : 'text-text-muted' }}">
+                            <span class="flex items-center gap-3">
+                                <svg class="w-5 h-5 shrink-0 transition-transform duration-200 group-hover:scale-110 {{ $isUserManagementActive ? 'text-brand-600 dark:text-brand-400' : 'text-text-muted group-hover:text-ink' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                </svg>
+                                <span class="{{ $isUserManagementActive ? 'text-brand-700 dark:text-ink font-semibold' : '' }}">Manajemen Pengguna</span>
+                            </span>
+                            <svg class="w-4 h-4 transition-transform duration-200 group-open/user-mgr:rotate-180 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </summary>
+                        <div class="grid transition-[grid-template-rows] duration-300 ease-out" style="grid-template-rows: 1fr">
+                            <div class="overflow-hidden">
+                                <div class="ml-8 mt-1 space-y-1 border-l border-line pl-3">
+                                    <a href="{{ route('members.index') }}"
+                                       class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium transition-colors {{ $isMembersActive ? 'bg-sidebar-active text-ink font-semibold shadow-xs' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
+                                        <span>Anggota</span>
+                                        @if($isMembersActive)
+                                            <span class="w-1.5 h-1.5 rounded-full bg-brand-600 dark:bg-brand-400"></span>
+                                        @endif
+                                    </a>
+                                    @if ($canManageUsers)
+                                        <a href="{{ route('users.index') }}"
+                                           class="flex items-center justify-between px-3 py-2 rounded-control text-xs font-medium transition-colors {{ $isUsersActive ? 'bg-sidebar-active text-ink font-semibold shadow-xs' : 'text-text-muted hover:bg-surface-soft hover:text-ink' }}">
+                                            <span>Admin &amp; Petugas</span>
+                                            @if($isUsersActive)
+                                                <span class="w-1.5 h-1.5 rounded-full bg-brand-600 dark:bg-brand-400"></span>
+                                            @endif
+                                        </a>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                @endif
             </nav>
 
             <!-- Sidebar User Profile Card (Without redundant logout button) -->

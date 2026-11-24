@@ -25,7 +25,7 @@ class EnsureActiveInternalUser
             ]);
         }
 
-        if (! in_array($user->role, [User::ROLE_ADMIN, User::ROLE_PETUGAS, User::ROLE_ANGGOTA], true)) {
+        if (! in_array($user->role, [User::ROLE_ADMIN, User::ROLE_PETUGAS, User::ROLE_ANGGOTA, User::ROLE_STAFF, User::ROLE_MEMBER], true)) {
             abort(403, 'Anda tidak memiliki izin untuk mengakses halaman ini.');
         }
 

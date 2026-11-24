@@ -31,4 +31,14 @@ class MemberPolicy
     {
         return $user->isAdmin() || $user->isPetugas();
     }
+
+    public function restore(User $user, Member $member): bool
+    {
+        return $user->isAdmin() || $user->isPetugas();
+    }
+
+    public function forceDelete(User $user, Member $member): bool
+    {
+        return false;
+    }
 }

@@ -149,7 +149,11 @@ class NovelVolumeController extends Controller
 
     private function ensureNovel(Book $book): void
     {
-        abort_unless($book->collection_type === 'novel', 404);
+        abort_unless(
+            $book->collection_type === 'novel'
+            || str_contains(strtolower($book->category?->name ?? ''), 'novel'),
+            404
+        );
     }
 
     private function ensureVolumeBelongsToBook(Book $book, NovelVolume $volume): void

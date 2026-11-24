@@ -19,23 +19,33 @@ class MemberController extends Controller
         Gate::authorize('viewAny', Member::class);
 
         $search = trim((string) $request->query('q', ''));
+        $statusFilter = trim((string) $request->query('status', ''));
 
-        $members = Member::query()
-            ->withCount('activeBorrowings')
-            ->when($search !== '', function ($query) use ($search) {
-                $query->where(function ($sub) use ($search) {
-                    $sub->where('member_code', 'like', "%{$search}%")
-                        ->orWhere('name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-                });
-            })
-            ->orderBy('name')
+        $query = Member::query()->withCount('activeBorrowings');
+
+        if ($statusFilter === 'inactive') {
+            $query->onlyTrashed();
+        } elseif ($statusFilter === 'all') {
+            $query->withTrashed();
+        }
+
+        if ($search !== '') {
+            $query->where(function ($sub) use ($search): void {
+                $sub->where('member_code', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+
+        $members = $query->orderBy('name')
             ->paginate(15)
             ->withQueryString();
 
         return view('members.index', [
             'members' => $members,
             'search' => $search,
+            'statusFilter' => $statusFilter,
         ]);
     }
 
@@ -68,7 +78,7 @@ class MemberController extends Controller
         Gate::authorize('view', $member);
 
         $member->load([
-            'borrowings' => fn ($query) => $query->with(['staff', 'items.book'])->latest('borrowed_at'),
+            'borrowings' => fn ($query) => $query->with(['staff', 'returnedByUser', 'items.book'])->latest('borrowed_at'),
         ]);
 
         return view('members.show', [
@@ -101,7 +111,7 @@ class MemberController extends Controller
     {
         Gate::authorize('delete', $member);
 
-        DB::transaction(function () use ($member) {
+        DB::transaction(function () use ($member): void {
             /** @var Member $lockedMember */
             $lockedMember = Member::withTrashed()->lockForUpdate()->findOrFail($member->id);
 
@@ -117,5 +127,18 @@ class MemberController extends Controller
         return redirect()
             ->route('members.index')
             ->with('success', 'Anggota berhasil diarsipkan.');
+    }
+
+    public function restore(int $id): RedirectResponse
+    {
+        Gate::authorize('create', Member::class);
+
+        /** @var Member $member */
+        $member = Member::onlyTrashed()->findOrFail($id);
+        $member->restore();
+
+        return redirect()
+            ->route('members.show', $member)
+            ->with('success', "Data anggota {$member->name} berhasil diaktifkan kembali.");
     }
 }

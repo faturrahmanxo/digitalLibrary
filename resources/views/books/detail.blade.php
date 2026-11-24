@@ -60,10 +60,10 @@
         <div class="book-detail-enter mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
             <header class="mb-6 flex flex-wrap items-center justify-between gap-3">
                 <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">
-                    {{ $isNovel ? 'NOVEL' : 'E-BOOK / KEILMUAN' }}
+                    {{ $isPhysical ? 'BUKU FISIK' : ($isNovel ? 'NOVEL' : 'E-BOOK / KEILMUAN') }}
                 </p>
                 <a
-                    href="{{ route('catalog.index', ['genre' => $backGenre]) }}"
+                    href="{{ route('catalog.index', $backGenre ? ['genre' => $backGenre] : []) }}"
                     class="inline-flex min-h-9 items-center gap-2 rounded-lg border border-line/70 bg-transparent px-3 py-2 text-xs font-semibold text-ink transition-colors hover:border-line/70 hover:bg-surface-soft/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none"
                 >
                     <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -72,6 +72,18 @@
                     <span>{{ $backLabel }}</span>
                 </a>
             </header>
+
+            @if (session('success'))
+                <div role="status" class="mb-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 dark:text-emerald-200 text-xs sm:text-sm font-medium">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div role="alert" class="mb-6 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-800 dark:text-rose-200 text-xs sm:text-sm font-medium">
+                    {{ session('error') }}
+                </div>
+            @endif
 
             @if (session('status'))
                 <p role="status" class="mb-4 text-xs leading-relaxed text-text-muted">
@@ -120,6 +132,44 @@
                         </p>
                     @endif
 
+                    <!-- ============================================== -->
+                    <!-- PHYSICAL BOOK: SHELF & STOCK INFORMATION       -->
+                    <!-- ============================================== -->
+                    @if ($isPhysical)
+                        <div class="mt-5 p-4 rounded-2xl bg-surface border border-line shadow-2xs space-y-3">
+                            <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-text-muted">Lokasi Rak:</span>
+                                    <strong class="font-bold text-ink">
+                                        @if ($book->shelf)
+                                            {{ $book->shelf->name }} ({{ $book->shelf->code }})
+                                            @if ($book->shelf->location)
+                                                <span class="text-text-muted font-normal">· {{ $book->shelf->location }}</span>
+                                            @endif
+                                        @else
+                                            Rak Utama Perpustakaan
+                                        @endif
+                                    </strong>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-text-muted">Ketersediaan Stok:</span>
+                                    @if ($book->available_copies > 0)
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold">
+                                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                            {{ $book->available_copies }} eksemplar tersedia
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-700 dark:text-rose-400 font-bold">
+                                            <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                                            Stok Habis
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Synopsis / Description -->
                     <section class="mt-5" aria-labelledby="book-description-heading">
                         <h2 id="book-description-heading" class="font-serif text-lg font-bold text-ink sm:text-xl">Tentang Buku</h2>
                         @if (filled($description))
@@ -130,7 +180,7 @@
                                 aria-controls="book-description"
                                 aria-expanded="false"
                                 hidden
-                                class="mt-2 text-xs font-semibold text-brand-600 underline decoration-transparent underline-offset-4 transition-colors hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus dark:text-brand-400 dark:hover:text-brand-300 motion-reduce:transition-none"
+                                class="mt-2 text-xs font-semibold text-brand-600 underline decoration-transparent underline-offset-4 transition-colors hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus dark:text-brand-400 dark:hover:text-brand-300 motion-reduce:transition-none cursor-pointer"
                             >
                                 Baca Selengkapnya
                             </button>
@@ -139,137 +189,213 @@
                         @endif
                     </section>
 
-                    @if (! $hasDigitalAccessFile)
+                    @if (! $isPhysical && ! $hasDigitalAccessFile)
                         <p role="status" class="mt-4 text-xs leading-relaxed text-text-muted">
                             Belum ada file digital yang dapat diakses untuk buku ini.
                         </p>
                     @endif
 
-                    @if ($book->hasDownload())
-                        <div class="mt-5 border-t border-line/70 pt-4">
-                            <a
-                                href="{{ $book->getDownloadLink() }}"
-                                @if ($book->download_url) target="_blank" rel="noopener noreferrer" @endif
-                                class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus shadow-xs"
-                            >
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                </svg>
-                                <span>Download {{ $isNovel ? 'Novel' : 'File' }}</span>
-                            </a>
-                        </div>
-                    @endif
+                    <!-- ============================================== -->
+                    <!-- ACTIONS: PHYSICAL LOAN VS DIGITAL ACCESS       -->
+                    <!-- ============================================== -->
+                    @if ($isPhysical)
+                        <!-- Physical Book Actions -->
+                        <div class="mt-6 border-t border-line/70 pt-5">
+                            @guest
+                                <a
+                                    href="{{ route('login') }}"
+                                    class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-600 hover:bg-brand-700 px-6 py-2.5 text-sm font-bold text-white transition-all shadow-md active:scale-95 cursor-pointer"
+                                >
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013 3v1" />
+                                    </svg>
+                                    <span>Masuk untuk Meminjam</span>
+                                </a>
+                                <p class="mt-2 text-xs text-text-muted">Silakan masuk dengan akun kampus untuk mengajukan peminjaman buku.</p>
+                            @endguest
 
-                    @if (! $isNovel)
-                        <section class="mt-5 border-t border-line/70 pt-4" aria-label="Akses E-book">
-                            @if ($ebookCanDownload)
-                                @if ($ebookBorrowing)
-                                    <p class="text-sm text-text-muted">
-                                        Akses tersedia sampai
-                                        <span class="font-semibold text-ink">{{ $ebookBorrowing->due_at?->format('d M Y') }}</span>.
-                                    </p>
+                            @auth
+                                @if ($userBorrowing)
+                                    @if ($userBorrowing->isPending())
+                                        <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-200">
+                                            <div class="flex items-center gap-2">
+                                                <svg class="w-5 h-5 text-amber-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                <span class="font-bold text-sm">Pengajuan Peminjaman Sedang Menunggu Verifikasi</span>
+                                            </div>
+                                            <p class="mt-1 text-xs text-amber-800/80 dark:text-amber-300/80">
+                                                Pengajuan peminjaman untuk buku ini diajukan pada {{ $userBorrowing->created_at->format('d M Y H:i') }}. Petugas perpustakaan akan segera memverifikasi ketersediaan buku.
+                                            </p>
+                                        </div>
+                                    @elseif ($userBorrowing->isApproved())
+                                        <div class="p-4 rounded-2xl bg-sky-500/10 border border-sky-500/30 text-sky-900 dark:text-sky-200">
+                                            <div class="flex items-center gap-2">
+                                                <svg class="w-5 h-5 text-sky-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                <span class="font-bold text-sm">Pengajuan Disetujui — Siap Diambil</span>
+                                            </div>
+                                            <p class="mt-1 text-xs text-sky-800/80 dark:text-sky-300/80">
+                                                Buku telah direservasi untuk Anda. Silakan tunjukkan kode transaksi <strong>{{ $userBorrowing->transaction_code }}</strong> kepada petugas di meja sirkulasi.
+                                            </p>
+                                        </div>
+                                    @elseif ($userBorrowing->isBorrowed())
+                                        <div class="p-4 rounded-2xl bg-brand-500/10 border border-brand-500/30 text-brand-900 dark:text-brand-200">
+                                            <div class="flex items-center gap-2">
+                                                <svg class="w-5 h-5 text-brand-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                </svg>
+                                                <span class="font-bold text-sm">Buku Sedang Anda Pinjam</span>
+                                            </div>
+                                            <p class="mt-1 text-xs text-brand-800/80 dark:text-brand-300/80">
+                                                Batas waktu pengembalian: <strong class="text-ink">{{ $userBorrowing->due_date?->format('d M Y') }}</strong>
+                                                @if ($userBorrowing->isOverdue())
+                                                    <span class="inline-block ml-1 px-2 py-0.5 rounded-full bg-rose-600 text-white text-[10px] font-bold">Terlambat</span>
+                                                @endif
+                                            </p>
+                                        </div>
+                                    @endif
+                                @else
+                                    @if ($book->available_copies > 0)
+                                        <form method="POST" action="{{ route('books.borrow', $book) }}">
+                                            @csrf
+                                            <button
+                                                type="submit"
+                                                class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-600 hover:bg-brand-700 px-6 py-2.5 text-sm font-bold text-white transition-all shadow-md active:scale-95 cursor-pointer"
+                                            >
+                                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                                </svg>
+                                                <span>Pinjam Buku</span>
+                                            </button>
+                                            <p class="mt-2 text-xs text-text-muted">Masa pinjam 7 hari kalender sejak penyerahan buku fisik di perpustakaan.</p>
+                                        </form>
+                                    @else
+                                        <div class="flex items-center gap-3">
+                                            <button type="button" disabled class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-surface-soft border border-line px-6 py-2.5 text-sm font-semibold text-text-muted cursor-not-allowed opacity-60">
+                                                Stok Habis
+                                            </button>
+                                            <span class="text-xs text-text-muted">Seluruh eksemplar buku ini sedang dipinjam oleh civitas lain.</span>
+                                        </div>
+                                    @endif
+                                @endif
+                            @endauth
+                        </div>
+                    @else
+                        <!-- E-book / Novel Digital Actions -->
+                        @if ($book->hasDownload())
+                            <div class="mt-5 border-t border-line/70 pt-4">
+                                <a
+                                    href="{{ $book->getDownloadLink() }}"
+                                    @if ($book->download_url) target="_blank" rel="noopener noreferrer" @endif
+                                    class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus shadow-xs"
+                                >
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                    </svg>
+                                    <span>Download {{ $isNovel ? 'Novel' : 'File' }}</span>
+                                </a>
+                            </div>
+                        @endif
+
+                        @if (! $isNovel)
+                            <section class="mt-5 border-t border-line/70 pt-4" aria-label="Akses E-book">
+                                @if ($ebookCanDownload)
+                                    @if ($ebookBorrowing)
+                                        <p class="text-sm text-text-muted">
+                                            Akses tersedia sampai
+                                            <span class="font-semibold text-ink">{{ $ebookBorrowing->due_at?->format('d M Y') }}</span>.
+                                        </p>
+                                        <div class="mt-3 flex flex-wrap gap-2">
+                                            @if ($ebookCanReadOnline)
+                                                <a href="{{ $readLink ?: route('books.read', $book) }}" class="inline-flex min-h-10 items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
+                                                    Baca Online
+                                                </a>
+                                            @endif
+                                            <a href="{{ $downloadLink ?: route('books.digital.download', $book) }}" class="inline-flex min-h-10 items-center justify-center rounded-lg border border-line px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-surface-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
+                                                Download E-book
+                                            </a>
+                                            <a href="{{ route('borrowings.show', $ebookBorrowing) }}" class="inline-flex min-h-10 items-center justify-center rounded-lg px-3 py-2 text-sm font-semibold text-brand-700 hover:text-brand-800 dark:text-brand-300 dark:hover:text-brand-200">
+                                                Kelola Pinjaman
+                                            </a>
+                                        </div>
+                                    @elseif ($ebookAvailable > 0)
+                                        <p class="text-sm text-text-muted">Akses Tersedia · {{ $ebookAvailable }} lisensi</p>
+                                        @auth
+                                            <form method="POST" action="{{ route('books.digital.borrow', $book) }}" class="mt-3">
+                                                @csrf
+                                                <button type="submit" class="inline-flex min-h-10 items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
+                                                    Pinjam E-book
+                                                </button>
+                                            </form>
+                                        @else
+                                            <a href="{{ route('login') }}" class="mt-3 inline-flex min-h-10 items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
+                                                Login untuk Meminjam E-book
+                                            </a>
+                                        @endauth
+                                    @else
+                                        <p role="status" class="text-sm text-text-muted">Kuota Penuh</p>
+                                    @endif
+                                @elseif ($readLink || $downloadLink)
                                     <div class="mt-3 flex flex-wrap gap-2">
-                                        @if ($ebookCanReadOnline)
-                                            <a href="{{ route('books.read', $book) }}" class="inline-flex min-h-10 items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
+                                        @if ($readLink)
+                                            <a href="{{ $readLink }}" target="_blank" rel="noopener noreferrer" class="inline-flex min-h-10 items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
                                                 Baca Online
                                             </a>
                                         @endif
-                                        <a href="{{ route('books.digital.download', $book) }}" class="inline-flex min-h-10 items-center justify-center rounded-lg border border-line px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-surface-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
-                                            Download E-book
-                                        </a>
-                                        <a href="{{ route('borrowings.show', $ebookBorrowing) }}" class="inline-flex min-h-10 items-center justify-center rounded-lg px-3 py-2 text-sm font-semibold text-brand-700 hover:text-brand-800 dark:text-brand-300 dark:hover:text-brand-200">
-                                            Kelola Pinjaman
-                                        </a>
+                                        @if ($downloadLink)
+                                            <a href="{{ $downloadLink }}" target="_blank" rel="noopener noreferrer" class="inline-flex min-h-10 items-center justify-center rounded-lg border border-line px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-surface-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
+                                                Download E-book
+                                            </a>
+                                        @endif
                                     </div>
-                                @elseif ($ebookAvailable > 0)
-                                    <p class="text-sm text-text-muted">Akses Tersedia · {{ $ebookAvailable }} lisensi</p>
-                                    @auth
-                                        <form method="POST" action="{{ route('books.digital.borrow', $book) }}" class="mt-3">
-                                            @csrf
-                                            <button type="submit" class="inline-flex min-h-10 items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
-                                                Pinjam E-book
-                                            </button>
-                                        </form>
-                                    @else
-                                        <a href="{{ route('login') }}" class="mt-3 inline-flex min-h-10 items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
-                                            Login untuk Meminjam E-book
-                                        </a>
-                                    @endauth
-                                @else
-                                    <p role="status" class="text-sm text-text-muted">Kuota Penuh</p>
                                 @endif
-                                <p class="mt-3 text-xs leading-relaxed text-text-muted">
-                                    Akses digital berakhir saat jatuh tempo. File yang sudah diunduh tidak otomatis kedaluwarsa; pembatasan akses offline memerlukan DRM.
-                                </p>
-                            @endif
-                        </section>
-                    @else
-                        <section class="mt-5 border-t border-line/70 pt-4" aria-labelledby="novel-volumes-heading">
-                            <h2 id="novel-volumes-heading" class="font-serif text-lg font-bold text-ink">Daftar Volume</h2>
-                            @if ($volumes->isEmpty())
-                                <p class="mt-2 text-sm text-text-muted">Belum ada volume yang diterbitkan.</p>
-                            @else
-                                <ul class="mt-2 divide-y divide-line/70">
-                                    @foreach ($volumes as $volume)
-                                        <li class="py-4 first:pt-2">
-                                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                                                <div class="min-w-0">
-                                                    <p class="font-semibold text-ink">
-                                                        Volume {{ $volume->volume_number }}
-                                                        @if (filled($volume->title))
-                                                            <span class="font-normal text-text-muted">· {{ $volume->title }}</span>
-                                                        @endif
-                                                    </p>
-                                                    @if ($volume->digital_download_available)
-                                                        <p class="mt-1 text-xs text-text-muted">Akses Tersedia · {{ $volume->digital_access_available }} lisensi</p>
-                                                    @else
-                                                        <p class="mt-1 text-xs text-text-muted">Peminjaman digital belum tersedia.</p>
-                                                    @endif
-                                                    @if ($volume->my_active_borrowing)
-                                                        <p class="mt-1 text-xs text-text-muted">
-                                                            Pinjaman aktif sampai {{ $volume->my_active_borrowing->due_at?->format('d M Y') }}.
-                                                        </p>
-                                                    @endif
-                                                </div>
+                            </section>
+                        @endif
 
-                                                <div class="flex shrink-0 flex-wrap gap-2">
-                                                    @if ($volume->my_active_borrowing)
-                                                        @if ($volume->digital_download_available)
-                                                            <a href="{{ route('novel-volumes.digital.download', $volume) }}" class="inline-flex min-h-9 items-center justify-center rounded-lg border border-line px-3 py-1.5 text-xs font-semibold text-ink hover:bg-surface-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
-                                                                Download Volume
-                                                            </a>
-                                                        @endif
-                                                        <a href="{{ route('borrowings.show', $volume->my_active_borrowing) }}" class="inline-flex min-h-9 items-center justify-center rounded-lg px-2 py-1.5 text-xs font-semibold text-brand-700 hover:text-brand-800 dark:text-brand-300 dark:hover:text-brand-200">
-                                                            Kelola Pinjaman
-                                                        </a>
-                                                    @elseif ($volume->digital_download_available && $volume->digital_access_available > 0)
-                                                        @auth
-                                                            <form method="POST" action="{{ route('novel-volumes.digital.borrow', $volume) }}">
-                                                                @csrf
-                                                                <button type="submit" class="inline-flex min-h-9 items-center justify-center rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
-                                                                    Pinjam Volume
-                                                                </button>
-                                                            </form>
-                                                        @else
-                                                            <a href="{{ route('login') }}" class="inline-flex min-h-9 items-center justify-center rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
-                                                                Login untuk Meminjam Volume
-                                                            </a>
-                                                        @endauth
-                                                    @elseif ($volume->digital_download_available)
-                                                        <span role="status" class="inline-flex min-h-9 items-center px-2 text-xs text-text-muted">Kuota Penuh</span>
+                        <!-- Novel Volumes List If Available -->
+                        @if ($volumes->isNotEmpty())
+                            <section class="mt-6 border-t border-line/70 pt-5" aria-labelledby="novel-volumes-heading">
+                                <h2 id="novel-volumes-heading" class="font-serif text-lg font-bold text-ink">Daftar Volume</h2>
+                                <ul class="mt-3 divide-y divide-line/70">
+                                    @foreach ($volumes as $volume)
+                                        <li class="py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                            <div>
+                                                <p class="font-semibold text-sm text-ink">
+                                                    Volume {{ $volume->volume_number }}
+                                                    @if (filled($volume->title))
+                                                        <span class="font-normal text-text-muted">· {{ $volume->title }}</span>
                                                     @endif
-                                                </div>
+                                                </p>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                @if (filled($volume->download_url))
+                                                    <a
+                                                        href="{{ $volume->download_url }}"
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        class="px-3.5 py-1.5 rounded-lg border border-line text-xs font-semibold text-ink hover:bg-surface-soft transition-colors"
+                                                    >
+                                                        Download Volume
+                                                    </a>
+                                                @elseif (filled($volume->digital_file_path))
+                                                    <a
+                                                        href="{{ route('novel-volumes.digital.download', $volume) }}"
+                                                        class="px-3.5 py-1.5 rounded-lg border border-line text-xs font-semibold text-ink hover:bg-surface-soft transition-colors"
+                                                    >
+                                                        Download Volume
+                                                    </a>
+                                                @endif
                                             </div>
                                         </li>
                                     @endforeach
                                 </ul>
-                                <p class="mt-2 text-xs leading-relaxed text-text-muted">
-                                    Akses digital berakhir saat jatuh tempo. File yang sudah diunduh tidak otomatis kedaluwarsa; pembatasan akses offline memerlukan DRM.
-                                </p>
-                            @endif
-                        </section>
+                            </section>
+                        @endif
                     @endif
 
+                    <!-- Favorite Toggle -->
                     <div class="mt-4 flex flex-wrap items-center gap-2">
                         @guest
                             <a
@@ -310,7 +436,10 @@
                 </div>
             </section>
 
-            @if (filled($book->category?->name) || filled($book->publisher) || filled($book->isbn))
+            <!-- ============================================== -->
+            <!-- INFORMASI BUKU (METADATA TABLE)                -->
+            <!-- ============================================== -->
+            @if (filled($book->category?->name) || filled($book->publisher) || filled($book->isbn) || ($isPhysical && $book->shelf))
                 <section class="mt-7 border-t border-line/70 pt-5 sm:mt-8" aria-labelledby="book-information-heading">
                     <h2 id="book-information-heading" class="font-serif text-lg font-bold text-ink sm:text-xl">Informasi Buku</h2>
                     <dl class="mt-2 grid grid-cols-1 sm:grid-cols-2 sm:gap-x-8">
@@ -332,10 +461,15 @@
                                 <dd class="break-all text-sm font-medium text-ink">{{ $book->isbn }}</dd>
                             </div>
                         @endif
-                        @if ($ebookCanDownload)
+                        @if ($isPhysical && $book->shelf)
                             <div class="grid grid-cols-[6.5rem_minmax(0,1fr)] gap-3 border-b border-line/60 py-2.5">
-                                <dt class="text-sm text-text-muted">Format File</dt>
-                                <dd class="text-sm font-medium uppercase text-ink">{{ pathinfo($book->digital_file_path, PATHINFO_EXTENSION) }}</dd>
+                                <dt class="text-sm text-text-muted">Lokasi Rak</dt>
+                                <dd class="break-words text-sm font-medium text-ink">
+                                    {{ $book->shelf->name }} ({{ $book->shelf->code }})
+                                    @if ($book->shelf->location)
+                                        · {{ $book->shelf->location }}
+                                    @endif
+                                </dd>
                             </div>
                         @endif
                     </dl>

@@ -30,4 +30,14 @@ class UserPolicy
     {
         return $user->isAdmin();
     }
+
+    public function restore(User $user, User $model): bool
+    {
+        return $user->isAdmin();
+    }
+
+    public function forceDelete(User $user, User $model): bool
+    {
+        return false;
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -18,6 +19,31 @@ class Member extends Model
         'phone',
         'address',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'email', 'email')->withTrashed();
+    }
+
+    public function isActive(): bool
+    {
+        return ! $this->trashed();
+    }
+
+    public function isInactive(): bool
+    {
+        return $this->trashed();
+    }
+
+    public function getStatusAttribute(): string
+    {
+        return $this->trashed() ? 'inactive' : 'active';
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->trashed() ? 'Nonaktif' : 'Aktif';
+    }
 
     public function borrowings(): HasMany
     {

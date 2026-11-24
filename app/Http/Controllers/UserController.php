@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -20,18 +21,29 @@ class UserController extends Controller
 
         $search = trim((string) $request->query('q', ''));
         $roleFilter = trim((string) $request->query('role', ''));
+        $statusFilter = trim((string) $request->query('status', ''));
 
-        $users = User::query()
-            ->when($search !== '', function ($query) use ($search) {
-                $query->where(function ($sub) use ($search) {
-                    $sub->where('name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-                });
-            })
-            ->when(in_array($roleFilter, [User::ROLE_ADMIN, User::ROLE_PETUGAS], true), function ($query) use ($roleFilter) {
-                $query->where('role', $roleFilter);
-            })
-            ->orderBy('name')
+        $query = User::query();
+
+        if ($statusFilter === 'inactive') {
+            $query->onlyTrashed();
+        } elseif ($statusFilter === 'all') {
+            $query->withTrashed();
+        }
+
+        if ($search !== '') {
+            $query->where(function ($sub) use ($search): void {
+                $sub->where('name', 'like', "%{$search}%")
+                    ->orWhere('username', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if (in_array($roleFilter, [User::ROLE_ADMIN, User::ROLE_PETUGAS], true)) {
+            $query->where('role', $roleFilter);
+        }
+
+        $users = $query->orderBy('name')
             ->paginate(15)
             ->withQueryString();
 
@@ -41,6 +53,7 @@ class UserController extends Controller
             'users' => $users,
             'search' => $search,
             'roleFilter' => $roleFilter,
+            'statusFilter' => $statusFilter,
             'activeAdminCount' => $activeAdminCount,
         ]);
     }
@@ -59,8 +72,25 @@ class UserController extends Controller
     {
         Gate::authorize('create', User::class);
 
+        $username = $request->validated('username');
+        if (! $username) {
+            $baseUsername = strtolower(Str::ascii((string) $request->validated('name')));
+            $baseUsername = preg_replace('/[^a-z0-9._]+/', '_', $baseUsername) ?? '';
+            $baseUsername = trim(substr($baseUsername, 0, 30), '._');
+            $baseUsername = $baseUsername !== '' ? $baseUsername : 'user';
+            $username = $baseUsername;
+            $suffix = 1;
+
+            while (User::withTrashed()->where('username', $username)->exists()) {
+                $suffix++;
+                $suffixText = '_'.$suffix;
+                $username = substr($baseUsername, 0, 30 - strlen($suffixText)).$suffixText;
+            }
+        }
+
         User::create([
             'name' => $request->validated('name'),
+            'username' => $username,
             'email' => $request->validated('email'),
             'role' => $request->validated('role'),
             'password' => $request->validated('password'),
@@ -91,6 +121,10 @@ class UserController extends Controller
             'role' => $request->validated('role'),
         ];
 
+        if ($request->filled('username')) {
+            $payload['username'] = $request->validated('username');
+        }
+
         if ($request->filled('password')) {
             $payload['password'] = $request->validated('password');
         }
@@ -106,7 +140,7 @@ class UserController extends Controller
     {
         Gate::authorize('delete', $user);
 
-        DB::transaction(function () use ($request, $user) {
+        DB::transaction(function () use ($request, $user): void {
             /** @var User $lockedUser */
             $lockedUser = User::withTrashed()->lockForUpdate()->findOrFail($user->id);
 
@@ -131,5 +165,18 @@ class UserController extends Controller
         return redirect()
             ->route('users.index')
             ->with('success', 'Pengguna berhasil diarsipkan.');
+    }
+
+    public function restore(int $id): RedirectResponse
+    {
+        Gate::authorize('create', User::class);
+
+        /** @var User $user */
+        $user = User::onlyTrashed()->findOrFail($id);
+        $user->restore();
+
+        return redirect()
+            ->route('users.index')
+            ->with('success', "Akun pengguna {$user->name} berhasil diaktifkan kembali.");
     }
 }
