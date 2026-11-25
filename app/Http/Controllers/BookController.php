@@ -117,6 +117,7 @@ class BookController extends Controller
         $categories = Category::orderBy('name')->get();
         $shelves = Shelf::orderBy('code')->get();
         $publishers = Publisher::orderBy('name')->get();
+        $seriesCandidates = Book::where('collection_type', '!=', 'physical')->orderBy('title')->get();
 
         return view('books.form', [
             'book' => new Book([
@@ -130,6 +131,7 @@ class BookController extends Controller
             'categories' => $categories,
             'shelves' => $shelves,
             'publishers' => $publishers,
+            'seriesCandidates' => $seriesCandidates,
             'isEdit' => false,
             'digitalAvailable' => 0,
         ]);
@@ -289,12 +291,14 @@ class BookController extends Controller
         $categories = Category::orderBy('name')->get();
         $shelves = Shelf::orderBy('code')->get();
         $publishers = Publisher::orderBy('name')->get();
+        $seriesCandidates = Book::where('id', '!=', $book->id)->where('collection_type', '!=', 'physical')->orderBy('title')->get();
 
         return view('books.form', [
             'book' => $book,
             'categories' => $categories,
             'shelves' => $shelves,
             'publishers' => $publishers,
+            'seriesCandidates' => $seriesCandidates,
             'isEdit' => true,
             'digitalAvailable' => $digitalBorrowingService->availableLicensesForBook($book),
         ]);

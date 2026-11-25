@@ -7,6 +7,8 @@
         <span class="font-medium text-ink">Detail Peminjaman</span>
     </x-slot:breadcrumbs>
 
+    <div style="font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;" class="loan-detail-plus-jakarta font-sans [&_h1]:font-sans [&_h2]:font-sans [&_h3]:font-sans [&_h4]:font-sans [&_p]:font-sans [&_span]:font-sans [&_div]:font-sans [&_dt]:font-sans [&_dd]:font-sans [&_table]:font-sans [&_th]:font-sans [&_td]:font-sans">
+
     <!-- SCR-015: Borrowing Detail / Return (Critical Screen) -->
     <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
         <div>
@@ -280,4 +282,5 @@
             });
         </script>
     @endif
+    </div>
 </x-layouts.app>

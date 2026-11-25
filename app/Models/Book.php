@@ -33,6 +33,8 @@ class Book extends Model
         'series_id',
         'series_title',
         'volume_label',
+        'volume_number',
+        'edition',
         'title',
         'author',
         'collection_type',
@@ -91,6 +93,7 @@ class Book extends Model
     {
         return [
             'publication_year' => 'integer',
+            'volume_number' => 'integer',
             'stock_total' => 'integer',
             'stock_available' => 'integer',
             'total_copies' => 'integer',
@@ -177,7 +180,7 @@ class Book extends Model
         }
 
         if ($hasExplicitSeries) {
-            return $query->orderBy('volume_label')->orderBy('id')->get();
+            return $query->orderBy('volume_number')->orderBy('volume_label')->orderBy('id')->get();
         }
 
         // Smart fallback: same author and similar series base title
@@ -322,6 +325,14 @@ class Book extends Model
     public function isEbook(): bool
     {
         return ! $this->isPhysical();
+    }
+
+    public function isNovel(): bool
+    {
+        return ! $this->isPhysical() && (
+            $this->collection_type === self::COLLECTION_TYPE_NOVEL
+            || str_contains(strtolower($this->category?->name ?? ''), 'novel')
+        );
     }
 
     public function favorites(): HasMany

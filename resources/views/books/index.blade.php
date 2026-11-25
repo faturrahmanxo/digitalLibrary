@@ -72,65 +72,54 @@
         @endif
     </div>
 
-    <!-- 07. CENTRALIZED SEARCH & ADVANCED FILTERS -->
-    <form method="GET" action="{{ route('books.index') }}" class="bg-surface rounded-card border border-line p-5 mb-6 shadow-xs space-y-4">
-        <!-- Main Search Row -->
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
-            <div class="md:col-span-6">
-                <label for="q" class="block text-xs font-semibold text-text-muted mb-1">Pencarian Koleksi</label>
+    <!-- 07. CENTRALIZED SEARCH & STREAMLINED FILTERS -->
+    <form method="GET" action="{{ route('books.index') }}" class="bg-surface rounded-card border border-line p-4 sm:p-5 mb-6 shadow-xs space-y-3">
+        <!-- Main Filter Row: 6 Core Aligned Controls -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-3 items-end">
+            <!-- 1. Keyword Search -->
+            <div class="sm:col-span-2 md:col-span-3">
+                <label for="q" class="block text-xs font-semibold text-text-muted mb-1">Pencarian</label>
                 <div class="relative">
                     <input
                         type="search"
                         id="q"
                         name="q"
                         value="{{ $search }}"
-                        placeholder="Cari berdasarkan judul buku, penulis, atau ISBN..."
-                        class="w-full min-h-10 pl-9 pr-3.5 py-2 rounded-control border border-line text-sm bg-surface text-ink focus:outline-2 focus:outline-focus"
+                        placeholder="Judul, penulis, ISBN..."
+                        class="w-full min-h-9.5 pl-8.5 pr-3 py-1.5 rounded-control border border-line text-xs sm:text-sm bg-surface text-ink focus:outline-2 focus:outline-focus"
                     >
-                    <svg class="w-4 h-4 text-text-muted absolute left-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="w-4 h-4 text-text-muted absolute left-2.5 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                 </div>
             </div>
 
-            <div class="md:col-span-3">
+            <!-- 2. Jenis Koleksi -->
+            <div class="md:col-span-2">
                 <label for="collection_type" class="block text-xs font-semibold text-text-muted mb-1">Jenis Koleksi</label>
-                <select id="collection_type" name="collection_type" class="w-full min-h-10 px-3 py-2 rounded-control border border-line text-sm bg-surface text-ink focus:outline-2 focus:outline-focus cursor-pointer">
-                    <option value="">Semua Jenis Koleksi</option>
+                <select id="collection_type" name="collection_type" class="w-full min-h-9.5 px-2.5 py-1.5 rounded-control border border-line text-xs sm:text-sm bg-surface text-ink focus:outline-2 focus:outline-focus cursor-pointer">
+                    <option value="">Semua Jenis</option>
                     <option value="physical" @selected($collectionType === 'physical')>Buku Fisik</option>
-                    <option value="e-book" @selected($collectionType === 'e-book')>E-book</option>
+                    <option value="e-book" @selected(in_array($collectionType, ['ebook', 'e-book'], true))>E-book</option>
                     <option value="novel" @selected($collectionType === 'novel')>Novel Digital</option>
                 </select>
             </div>
 
-            <div class="md:col-span-3">
+            <!-- 3. Kategori -->
+            <div class="md:col-span-2">
                 <label for="category_id" class="block text-xs font-semibold text-text-muted mb-1">Kategori</label>
-                <select id="category_id" name="category_id" class="w-full min-h-10 px-3 py-2 rounded-control border border-line text-sm bg-surface text-ink focus:outline-2 focus:outline-focus cursor-pointer">
+                <select id="category_id" name="category_id" class="w-full min-h-9.5 px-2.5 py-1.5 rounded-control border border-line text-xs sm:text-sm bg-surface text-ink focus:outline-2 focus:outline-focus cursor-pointer">
                     <option value="">Semua Kategori</option>
                     @foreach ($categories as $cat)
                         <option value="{{ $cat->id }}" @selected((string) $categoryId === (string) $cat->id)>{{ $cat->name }}</option>
                     @endforeach
                 </select>
             </div>
-        </div>
 
-        <!-- Filter Row 2: Shelf, Publisher, Stock Availability, Status -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-3 border-t border-line">
-            <div>
-                <label for="shelf_id" class="block text-xs font-semibold text-text-muted mb-1">Rak Buku (Buku Fisik)</label>
-                <select id="shelf_id" name="shelf_id" class="w-full min-h-10 px-3 py-2 rounded-control border border-line text-sm bg-surface text-ink focus:outline-2 focus:outline-focus cursor-pointer">
-                    <option value="">Semua Rak</option>
-                    @foreach ($shelves as $shelf)
-                        <option value="{{ $shelf->id }}" @selected((string) $shelfId === (string) $shelf->id)>
-                            {{ $shelf->name }} ({{ $shelf->code }})
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div>
+            <!-- 4. Penerbit -->
+            <div class="md:col-span-2">
                 <label for="publisher_id" class="block text-xs font-semibold text-text-muted mb-1">Penerbit</label>
-                <select id="publisher_id" name="publisher_id" class="w-full min-h-10 px-3 py-2 rounded-control border border-line text-sm bg-surface text-ink focus:outline-2 focus:outline-focus cursor-pointer">
+                <select id="publisher_id" name="publisher_id" class="w-full min-h-9.5 px-2.5 py-1.5 rounded-control border border-line text-xs sm:text-sm bg-surface text-ink focus:outline-2 focus:outline-focus cursor-pointer">
                     <option value="">Semua Penerbit</option>
                     @foreach ($publishers as $pub)
                         <option value="{{ $pub->id }}" @selected((string) $publisherId === (string) $pub->id)>{{ $pub->name }}</option>
@@ -138,38 +127,67 @@
                 </select>
             </div>
 
-            <div>
-                <label for="availability" class="block text-xs font-semibold text-text-muted mb-1">Ketersediaan Stok Fisik</label>
-                <select id="availability" name="availability" class="w-full min-h-10 px-3 py-2 rounded-control border border-line text-sm bg-surface text-ink focus:outline-2 focus:outline-focus cursor-pointer">
-                    <option value="">Semua Ketersediaan</option>
+            <!-- 5. Stok / Ketersediaan -->
+            <div class="md:col-span-2">
+                <label for="availability" class="block text-xs font-semibold text-text-muted mb-1">Ketersediaan Stok</label>
+                <select id="availability" name="availability" class="w-full min-h-9.5 px-2.5 py-1.5 rounded-control border border-line text-xs sm:text-sm bg-surface text-ink focus:outline-2 focus:outline-focus cursor-pointer">
+                    <option value="">Semua Stok</option>
                     <option value="available" @selected($availability === 'available')>Stok Tersedia (> 0)</option>
                     <option value="empty" @selected($availability === 'empty')>Stok Habis (0)</option>
                 </select>
             </div>
 
-            <div>
-                <label for="status" class="block text-xs font-semibold text-text-muted mb-1">Status Katalog</label>
-                <select id="status" name="status" class="w-full min-h-10 px-3 py-2 rounded-control border border-line text-sm bg-surface text-ink focus:outline-2 focus:outline-focus cursor-pointer">
-                    <option value="">Semua Status</option>
+            <!-- 6. Status Katalog -->
+            <div class="md:col-span-1">
+                <label for="status" class="block text-xs font-semibold text-text-muted mb-1">Status</label>
+                <select id="status" name="status" class="w-full min-h-9.5 px-2.5 py-1.5 rounded-control border border-line text-xs sm:text-sm bg-surface text-ink focus:outline-2 focus:outline-focus cursor-pointer">
+                    <option value="">Semua</option>
                     <option value="active" @selected($statusFilter === 'active')>Aktif</option>
                     <option value="inactive" @selected($statusFilter === 'inactive')>Nonaktif</option>
                 </select>
             </div>
         </div>
 
-        <!-- Filter Submit & Reset Actions -->
-        <div class="flex items-center justify-between pt-2">
-            <span class="text-xs text-text-muted font-medium">
-                Ditemukan <strong class="text-ink">{{ $books->total() }}</strong> koleksi buku
-            </span>
+        <!-- Advanced Filter (Collapsible details for Rak Buku Fisik) -->
+        <div id="advanced-filters" class="{{ $shelfId ? 'block' : 'hidden' }} pt-3 border-t border-line/60">
+            <div class="max-w-xs">
+                <label for="shelf_id" class="block text-xs font-semibold text-text-muted mb-1">Rak Buku Fisik</label>
+                <select id="shelf_id" name="shelf_id" class="w-full min-h-9.5 px-2.5 py-1.5 rounded-control border border-line text-xs sm:text-sm bg-surface text-ink focus:outline-2 focus:outline-focus cursor-pointer">
+                    <option value="">Semua Lokasi Rak</option>
+                    @foreach ($shelves as $shelf)
+                        <option value="{{ $shelf->id }}" @selected((string) $shelfId === (string) $shelf->id)>
+                            {{ $shelf->name }} ({{ $shelf->code }})
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
+        <!-- Filter Action Toolbar -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-line/60 text-xs">
+            <div class="flex items-center gap-3">
+                <span class="text-text-muted font-medium">
+                    Total: <strong class="text-ink">{{ $books->total() }}</strong> buku
+                </span>
+                <button
+                    type="button"
+                    onclick="document.getElementById('advanced-filters').classList.toggle('hidden')"
+                    class="text-brand-600 dark:text-brand-400 hover:underline font-semibold flex items-center gap-1 cursor-pointer"
+                >
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                    </svg>
+                    <span>Filter Lanjutan (Rak)</span>
+                </button>
+            </div>
 
             <div class="flex items-center gap-2">
                 @if ($hasActiveFilter)
-                    <a href="{{ route('books.index') }}" class="min-h-10 inline-flex items-center px-4 py-2 rounded-control border border-line text-xs font-semibold text-text-muted hover:text-ink transition-colors">
-                        Reset Filter
+                    <a href="{{ route('books.index') }}" class="min-h-9 inline-flex items-center px-3.5 py-1.5 rounded-control border border-line text-xs font-semibold text-text-muted hover:text-ink hover:bg-surface-soft transition-colors">
+                        Reset
                     </a>
                 @endif
-                <button type="submit" class="min-h-10 px-5 py-2 rounded-control bg-brand-600 text-white text-xs font-semibold hover:bg-brand-700 transition-colors shadow-xs cursor-pointer">
+                <button type="submit" class="min-h-9 px-4 py-1.5 rounded-control bg-brand-600 text-white text-xs font-semibold hover:bg-brand-700 transition-colors shadow-xs cursor-pointer">
                     Terapkan Filter
                 </button>
             </div>

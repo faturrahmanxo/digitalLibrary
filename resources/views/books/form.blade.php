@@ -188,8 +188,8 @@
                             class="w-full min-h-11 px-3.5 py-2 rounded-control border {{ $errors->has('collection_type') ? 'border-danger-fg ring-1 ring-danger-fg' : 'border-line' }} bg-surface text-ink text-sm focus:outline-2 focus:outline-focus cursor-pointer"
                         >
                             <option value="physical" @selected($currentType === 'physical')>Buku Fisik (Inventaris Perpustakaan)</option>
-                            <option value="e-book" @selected($currentType === 'e-book')>E-book (Pustaka Digital)</option>
-                            <option value="novel" @selected($currentType === 'novel')>Novel Digital</option>
+                            <option value="ebook" @selected(in_array($currentType, ['ebook', 'e-book'], true))>E-book Keilmuan (Pustaka Digital)</option>
+                            <option value="novel" @selected($currentType === 'novel')>E-book Novel / Novel Digital</option>
                         </select>
                         @error('collection_type')
                             <p class="mt-1.5 text-xs font-medium text-danger-fg">{{ $message }}</p>
@@ -458,6 +458,116 @@
                     </div>
                 </div>
 
+                <!-- ================================================= -->
+                <!-- DYNAMIC SECTION: NOVEL SERIES & VOLUME SUPPORT   -->
+                <!-- ================================================= -->
+                <div id="section-novel-series" class="{{ $currentType === 'novel' ? 'block' : 'hidden' }} pt-5 border-t border-line space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-base font-bold text-ink flex items-center gap-2">
+                                <svg class="w-4 h-4 text-brand-600 dark:text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                </svg>
+                                <span>Struktur Seri &amp; Volume Novel</span>
+                            </h3>
+                            <p class="text-xs text-text-muted mt-0.5">Hubungkan buku ini dengan seri atau volume lain agar tampil pada section "Bagian Seri Ini" di detail page.</p>
+                        </div>
+                        @if ($isEdit && $book->collection_type === 'novel')
+                            <a href="{{ route('books.volumes.index', $book) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-brand-500/30 bg-brand-500/10 text-brand-700 dark:text-brand-300 text-xs font-semibold hover:bg-brand-500/20 transition-colors">
+                                <span>Kelola Sub-Volume ({{ $book->novelVolumes()->count() }})</span>
+                                &rarr;
+                            </a>
+                        @endif
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Judul Seri / Judul Induk -->
+                        <div>
+                            <label for="series_title" class="block text-xs font-semibold text-ink mb-1.5">
+                                Nama Seri / Judul Induk <span class="text-xs text-text-muted font-normal">(Opsional)</span>
+                            </label>
+                            <input
+                                id="series_title"
+                                name="series_title"
+                                type="text"
+                                value="{{ old('series_title', $book->series_title) }}"
+                                placeholder="Contoh: Laskar Pelangi, Bumi Manusia"
+                                class="w-full min-h-11 px-3.5 py-2 rounded-control border border-line bg-surface text-ink text-sm focus:outline-2 focus:outline-focus"
+                            >
+                            <p class="mt-1 text-[11px] text-text-muted">Buku dengan nama seri yang sama otomatis saling terhubung.</p>
+                        </div>
+
+                        <!-- Relasi Buku Induk (series_id) -->
+                        <div>
+                            <label for="series_id" class="block text-xs font-semibold text-ink mb-1.5">
+                                Induk Seri Buku <span class="text-xs text-text-muted font-normal">(Opsional)</span>
+                            </label>
+                            <select
+                                id="series_id"
+                                name="series_id"
+                                class="w-full min-h-11 px-3.5 py-2 rounded-control border border-line bg-surface text-ink text-sm focus:outline-2 focus:outline-focus cursor-pointer"
+                            >
+                                <option value="">-- Tidak Berinduk / Buku Volume Pertama --</option>
+                                @foreach ($seriesCandidates ?? [] as $cand)
+                                    <option value="{{ $cand->id }}" @selected((string) old('series_id', $book->series_id) === (string) $cand->id)>
+                                        {{ $cand->title }} ({{ $cand->author }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            <p class="mt-1 text-[11px] text-text-muted">Pilih buku volume 1 jika buku ini merupakan volume lanjutan.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <!-- Urutan Volume (Angka) -->
+                        <div>
+                            <label for="volume_number" class="block text-xs font-semibold text-ink mb-1.5">
+                                Nomor Urutan Volume <span class="text-xs text-text-muted font-normal">(Angka)</span>
+                            </label>
+                            <input
+                                id="volume_number"
+                                name="volume_number"
+                                type="number"
+                                min="1"
+                                step="1"
+                                value="{{ old('volume_number', $book->volume_number) }}"
+                                placeholder="1, 2, 3..."
+                                class="w-full min-h-11 px-3.5 py-2 rounded-control border border-line bg-surface text-ink text-sm tabular-nums focus:outline-2 focus:outline-focus"
+                            >
+                        </div>
+
+                        <!-- Label Volume (Teks) -->
+                        <div>
+                            <label for="volume_label" class="block text-xs font-semibold text-ink mb-1.5">
+                                Label / Nama Volume
+                            </label>
+                            <input
+                                id="volume_label"
+                                name="volume_label"
+                                type="text"
+                                value="{{ old('volume_label', $book->volume_label) }}"
+                                placeholder="Contoh: Volume 1, Bagian 2, Buku 1"
+                                class="w-full min-h-11 px-3.5 py-2 rounded-control border border-line bg-surface text-ink text-sm focus:outline-2 focus:outline-focus"
+                            >
+                        </div>
+
+                        <!-- Versi / Edisi -->
+                        <div>
+                            <label for="edition" class="block text-xs font-semibold text-ink mb-1.5">
+                                Versi / Edisi <span class="text-xs text-text-muted font-normal">(Opsional)</span>
+                            </label>
+                            <input
+                                id="edition"
+                                name="edition"
+                                type="text"
+                                value="{{ old('edition', $book->edition) }}"
+                                placeholder="Contoh: Edisi Revisi, Cetakan 2"
+                                class="w-full min-h-11 px-3.5 py-2 rounded-control border border-line bg-surface text-ink text-sm focus:outline-2 focus:outline-focus"
+                            >
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Form Actions -->
                 <div class="pt-5 border-t border-line flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
                     <a href="{{ route('books.index') }}" class="min-h-11 inline-flex items-center justify-center px-5 py-2.5 rounded-control border border-line bg-surface text-sm font-semibold text-ink hover:bg-surface-soft transition-colors">
@@ -477,6 +587,7 @@
             const collectionTypeSelect = document.getElementById('collection_type');
             const sectionPhysical = document.getElementById('section-physical-book');
             const sectionEbook = document.getElementById('section-ebook-links');
+            const sectionNovelSeries = document.getElementById('section-novel-series');
             const previewTypeBadge = document.getElementById('preview-type-badge');
             const previewStockPanel = document.getElementById('preview-stock-panel');
             const previewDigitalPanel = document.getElementById('preview-digital-panel');
@@ -529,9 +640,11 @@
             function updateCollectionType() {
                 const type = collectionTypeSelect.value;
                 const isPhysical = type === 'physical';
+                const isNovel = type === 'novel';
 
                 if (sectionPhysical) sectionPhysical.classList.toggle('hidden', !isPhysical);
                 if (sectionEbook) sectionEbook.classList.toggle('hidden', isPhysical);
+                if (sectionNovelSeries) sectionNovelSeries.classList.toggle('hidden', !isNovel);
                 if (previewStockPanel) previewStockPanel.classList.toggle('hidden', !isPhysical);
                 if (previewDigitalPanel) previewDigitalPanel.classList.toggle('hidden', isPhysical);
 

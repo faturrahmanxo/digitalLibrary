@@ -57,6 +57,11 @@ class UpdateBookRequest extends FormRequest
             'isbn' => $this->filled('isbn') ? trim((string) $this->input('isbn')) : null,
             'publisher' => $publisherName,
             'publisher_id' => $publisherId,
+            'series_id' => $this->filled('series_id') ? (int) $this->input('series_id') : null,
+            'series_title' => $this->filled('series_title') ? trim((string) $this->input('series_title')) : null,
+            'volume_label' => $this->filled('volume_label') ? trim((string) $this->input('volume_label')) : null,
+            'volume_number' => $this->filled('volume_number') ? (int) $this->input('volume_number') : null,
+            'edition' => $this->filled('edition') ? trim((string) $this->input('edition')) : null,
             'status' => $this->filled('status') ? trim((string) $this->input('status')) : ($book->status ?? 'active'),
         ];
 
@@ -95,6 +100,11 @@ class UpdateBookRequest extends FormRequest
             'publisher' => ['nullable', 'string', 'max:255'],
             'publisher_id' => ['nullable', 'integer', Rule::exists('publishers', 'id')],
             'publication_year' => ['nullable', 'integer', 'min:1000', 'max:2100'],
+            'series_id' => ['nullable', 'integer', Rule::exists('books', 'id')],
+            'series_title' => ['nullable', 'string', 'max:255'],
+            'volume_label' => ['nullable', 'string', 'max:100'],
+            'volume_number' => ['nullable', 'integer', 'min:1', 'max:10000'],
+            'edition' => ['nullable', 'string', 'max:100'],
             'description' => ['nullable', 'string', 'max:20000'],
             'synopsis' => ['nullable', 'string', 'max:20000'],
             'cover' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],

@@ -8,6 +8,7 @@ use App\Models\BorrowingItem;
 use App\Models\Category;
 use App\Models\Favorite;
 use App\Models\NovelVolume;
+use App\Models\Shelf;
 use App\Services\DigitalBorrowingService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -25,6 +26,7 @@ class CatalogController extends Controller
         $isbn = trim((string) $request->query('isbn', ''));
         $publisher = trim((string) $request->query('publisher', ''));
         $year = $request->query('year');
+        $shelfId = $request->query('shelf_id');
         $categoryId = $request->query('category_id');
         $genre = trim((string) $request->query('genre', ''));
         $availability = trim((string) $request->query('availability', ''));
@@ -109,6 +111,10 @@ class CatalogController extends Controller
             $query->where('category_id', (int) $categoryId);
         }
 
+        if ($shelfId !== null && $shelfId !== '') {
+            $query->where('shelf_id', (int) $shelfId);
+        }
+
         if ($availability === 'available') {
             $query->where(function ($sub) {
                 $sub->where('available_copies', '>', 0)
@@ -138,6 +144,7 @@ class CatalogController extends Controller
         $books = $query->paginate(15)->withQueryString();
 
         $categories = Category::withCount('books')->orderBy('name')->get();
+        $shelves = Shelf::orderBy('name')->get();
 
         $years = Book::select('publication_year')
             ->distinct()
@@ -155,9 +162,11 @@ class CatalogController extends Controller
         return view('catalog.index', [
             'books' => $books,
             'categories' => $categories,
+            'shelves' => $shelves,
             'years' => $years,
             'search' => $search,
             'collectionType' => $collectionType,
+            'shelfId' => $shelfId ? (int) $shelfId : null,
             'author' => $author,
             'isbn' => $isbn,
             'publisher' => $publisher,

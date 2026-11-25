@@ -26,6 +26,10 @@ Route::get('/', [LandingController::class, 'index'])->name('home');
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
 Route::get('/jelajahi', [CatalogController::class, 'index'])->name('jelajahi');
 Route::get('/katalog', fn () => redirect()->route('catalog.index'));
+Route::get('/buku-fisik', fn () => redirect()->route('catalog.index', ['collection_type' => 'physical']))->name('catalog.physical');
+Route::get('/ebook', fn () => redirect()->route('catalog.index', ['collection_type' => 'ebook']))->name('catalog.ebook');
+Route::get('/koleksi/buku-fisik', fn () => redirect()->route('catalog.index', ['collection_type' => 'physical']));
+Route::get('/koleksi/ebook', fn () => redirect()->route('catalog.index', ['collection_type' => 'ebook']));
 Route::get('/profil', [InfoController::class, 'profil'])->name('info.profil');
 Route::get('/layanan', [InfoController::class, 'layanan'])->name('info.layanan');
 Route::get('/books/{book}', [CatalogController::class, 'show'])

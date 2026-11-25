@@ -405,53 +405,7 @@
             @else
                 <div class="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 lg:grid-cols-5 sm:gap-x-5">
                     @foreach ($physicalBooks as $book)
-                        <a
-                            href="{{ route('books.show', $book) }}"
-                            class="group card-interactive bg-surface rounded-2xl border border-line p-3.5 sm:p-4 shadow-xs hover:border-brand-400 flex flex-col justify-between transition-all duration-200 hover:shadow-md hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus cursor-pointer"
-                            title="{{ $book->title }}"
-                        >
-                            <div>
-                                <!-- Cover Book (Aspect 4/5) -->
-                                <div class="w-full aspect-[4/5] rounded-xl bg-gradient-to-tr from-brand-800 via-brand-600 to-brand-400 text-white p-3.5 sm:p-4 flex flex-col justify-between shadow-xs mb-3.5 relative overflow-hidden group-hover:scale-[1.03] transition-transform duration-300 ease-out" role="img" aria-label="Sampul {{ $book->collection_type === 'novel' ? 'novel' : 'buku' }} tidak tersedia untuk {{ $book->title }}">
-                                    @if (filled($book->cover_path))
-                                        <img src="{{ asset('storage/' . $book->cover_path) }}" alt="Sampul {{ $book->title }}" class="absolute inset-0 w-full h-full object-cover">
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                                    @endif
-                                    <span class="relative z-10 text-[10px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md px-2 py-0.5 rounded w-max border border-white/20 truncate max-w-full text-white">
-                                        {{ $book->category?->name ?? 'Koleksi' }}
-                                    </span>
-                                    <div class="relative z-10">
-                                        <p class="text-[11px] uppercase tracking-wider text-white/70 font-semibold mb-0.5">Litera</p>
-                                        <p class="text-xs font-bold leading-snug line-clamp-2 text-white">{{ $book->title }}</p>
-                                    </div>
-                                </div>
-
-                                <!-- Card Content -->
-                                <div class="space-y-1">
-                                    <h3 class="text-sm font-bold text-ink leading-snug line-clamp-1 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
-                                        {{ $book->title }}
-                                    </h3>
-                                    <p class="text-xs text-text-muted line-clamp-1">
-                                        <span>{{ $book->author ?: 'Litera' }}</span>
-                                        @if ($book->publication_year)
-                                            <span>·</span>
-                                            <span class="font-year font-semibold">{{ $book->publication_year }}</span>
-                                        @endif
-                                    </p>
-                                </div>
-                            </div>
-
-                            <!-- Bottom Row: Stock / Availability & Detail Link -->
-                            <div class="pt-3 border-t border-line mt-3 flex items-center justify-between text-xs">
-                                <div>
-                                    <span class="font-bold text-ink tabular-nums">{{ $book->available_copies ?? $book->stock_available ?? 0 }}</span>
-                                    <span class="text-text-muted text-[10px]">tersedia</span>
-                                </div>
-                                <span class="font-semibold text-brand-600 dark:text-brand-400 group-hover:underline">
-                                    Detail &rarr;
-                                </span>
-                            </div>
-                        </a>
+                        <x-book-card :book="$book" />
                     @endforeach
                 </div>
 
@@ -496,52 +450,7 @@
             @else
                 <div class="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 lg:grid-cols-5 sm:gap-x-5">
                     @foreach ($ebooks as $book)
-                        <a
-                            href="{{ route('books.show', $book) }}"
-                            class="group card-interactive bg-surface rounded-2xl border border-line p-3.5 sm:p-4 shadow-xs hover:border-brand-400 flex flex-col justify-between transition-all duration-200 hover:shadow-md hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus cursor-pointer"
-                            title="{{ $book->title }}"
-                        >
-                            <div>
-                                <!-- Cover Book (Aspect 4/5) -->
-                                <div class="w-full aspect-[4/5] rounded-xl bg-gradient-to-tr from-brand-800 via-brand-600 to-brand-400 text-white p-3.5 sm:p-4 flex flex-col justify-between shadow-xs mb-3.5 relative overflow-hidden group-hover:scale-[1.03] transition-transform duration-300 ease-out" role="img" aria-label="Sampul {{ $book->collection_type === 'novel' ? 'novel' : 'e-book' }} tidak tersedia untuk {{ $book->title }}">
-                                    @if (filled($book->cover_path))
-                                        <img src="{{ asset('storage/' . $book->cover_path) }}" alt="Sampul {{ $book->title }}" class="absolute inset-0 w-full h-full object-cover">
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                                    @endif
-                                    <span class="relative z-10 text-[10px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md px-2 py-0.5 rounded w-max border border-white/20 truncate max-w-full text-white">
-                                        {{ $book->category?->name ?? 'Literasi Digital' }}
-                                    </span>
-                                    <div class="relative z-10">
-                                        <p class="text-[11px] uppercase tracking-wider text-white/70 font-semibold mb-0.5">Litera</p>
-                                        <p class="text-xs font-bold leading-snug line-clamp-2 text-white">{{ $book->title }}</p>
-                                    </div>
-                                </div>
-
-                                <!-- Card Content -->
-                                <div class="space-y-1">
-                                    <h3 class="text-sm font-bold text-ink leading-snug line-clamp-1 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
-                                        {{ $book->title }}
-                                    </h3>
-                                    <p class="text-xs text-text-muted line-clamp-1">
-                                        <span>{{ $book->author ?: 'Litera' }}</span>
-                                        @if ($book->publication_year)
-                                            <span>·</span>
-                                            <span class="font-year font-semibold">{{ $book->publication_year }}</span>
-                                        @endif
-                                    </p>
-                                </div>
-                            </div>
-
-                            <!-- Bottom Row: Digital Access Badge & Detail Link -->
-                            <div class="pt-3 border-t border-line mt-3 flex items-center justify-between text-xs">
-                                <div>
-                                    <span class="text-[10px] font-semibold text-brand-600 dark:text-brand-400">Digital</span>
-                                </div>
-                                <span class="font-semibold text-brand-600 dark:text-brand-400 group-hover:underline">
-                                    Detail &rarr;
-                                </span>
-                            </div>
-                        </a>
+                        <x-book-card :book="$book" />
                     @endforeach
                 </div>
 
