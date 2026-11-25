@@ -112,6 +112,39 @@ class AdminNavbarGlassmorphismAndAccountSettingsTest extends TestCase
         $appearanceResponse->assertSee('Mode Terang');
         $appearanceResponse->assertSee('Mode Gelap');
         $appearanceResponse->assertSee('Ikuti Sistem');
+
+        // Verify simplified layout: extraneous info cards are removed
+        $securityResponse->assertDontSee('Informasi Keamanan &amp; Sesi', false);
+        $securityResponse->assertDontSee('Standar Bcrypt Terproteksi');
+        $appearanceResponse->assertDontSee('Design System Litera');
+    }
+
+    public function test_seeder_creates_3_accounts_per_role_with_gmail_domain(): void
+    {
+        $names = ['fatur', 'genbi', 'damar'];
+        $roles = [User::ROLE_ADMIN, User::ROLE_PETUGAS, User::ROLE_ANGGOTA];
+
+        foreach ($roles as $role) {
+            foreach ($names as $name) {
+                $email = "{$name}.{$role}@gmail.com";
+                $this->assertDatabaseHas('users', [
+                    'email' => $email,
+                    'role' => $role,
+                ]);
+            }
+        }
+
+        $this->assertDatabaseHas('users', ['email' => 'fatur@gmail.com', 'role' => User::ROLE_ADMIN]);
+        $this->assertDatabaseHas('users', ['email' => 'genbi@gmail.com', 'role' => User::ROLE_PETUGAS]);
+        $this->assertDatabaseHas('users', ['email' => 'damar@gmail.com', 'role' => User::ROLE_ANGGOTA]);
+    }
+
+    public function test_landing_page_book_sections_use_centered_layout(): void
+    {
+        $response = $this->get(route('home'));
+
+        $response->assertOk();
+        $response->assertSee('flex flex-wrap justify-center', false);
     }
 
     public function test_form_does_not_contain_tanda_bintang_wajib_diisi(): void

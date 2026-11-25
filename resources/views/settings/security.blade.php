@@ -113,36 +113,6 @@
                     </div>
                 </form>
             </div>
-
-            <!-- Card 2: Informasi Keamanan Sesi -->
-            <div class="bg-surface rounded-2xl border border-line p-5 sm:p-6 shadow-xs">
-                <h3 class="text-base font-bold text-ink">Informasi Keamanan &amp; Sesi</h3>
-                <p class="text-xs text-text-muted mt-0.5">Pantau status autentikasi dan integritas sesi Anda.</p>
-
-                <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="p-4 rounded-xl border border-line bg-surface-soft/40">
-                        <div class="flex items-center gap-2 text-xs font-semibold text-text-muted">
-                            <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                            </svg>
-                            <span>Enkripsi Kata Sandi</span>
-                        </div>
-                        <p class="mt-1.5 text-sm font-bold text-ink">Standar Bcrypt Terproteksi</p>
-                        <p class="mt-1 text-xs text-text-muted">Kredensial disimpan dengan algoritma hash satu arah yang aman.</p>
-                    </div>
-
-                    <div class="p-4 rounded-xl border border-line bg-surface-soft/40">
-                        <div class="flex items-center gap-2 text-xs font-semibold text-text-muted">
-                            <svg class="w-4 h-4 text-brand-600 dark:text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            <span>Sesi Aktif</span>
-                        </div>
-                        <p class="mt-1.5 text-sm font-bold text-ink">Peramban Saat Ini</p>
-                        <p class="mt-1 text-xs text-text-muted">Sesi berakhir otomatis setelah 120 menit tidak ada aktivitas.</p>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </x-layouts.app>

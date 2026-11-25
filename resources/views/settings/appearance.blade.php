@@ -107,26 +107,6 @@
                     </button>
                 </div>
             </div>
-
-            <!-- Card 2: Tipografi & Karakteristik Desain Litera -->
-            <div class="bg-surface rounded-2xl border border-line p-5 sm:p-6 shadow-xs">
-                <h3 class="text-base font-bold text-ink">Design System Litera</h3>
-                <p class="text-xs text-text-muted mt-0.5">Karakteristik visual yang digunakan di seluruh ekosistem Litera.</p>
-
-                <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="p-4 rounded-xl border border-line bg-surface-soft/40">
-                        <p class="text-xs font-semibold text-text-muted">Tipografi Antarmuka</p>
-                        <p class="mt-1 text-base font-bold text-ink font-sans">Plus Jakarta Sans &amp; Cormorant Garamond</p>
-                        <p class="mt-1 text-xs text-text-muted">Kombinasi sans-serif geometris modern untuk kejelasan data dengan sentuhan serif klasik untuk estetika literatur.</p>
-                    </div>
-
-                    <div class="p-4 rounded-xl border border-line bg-surface-soft/40">
-                        <p class="text-xs font-semibold text-text-muted">Palet Warna Utama</p>
-                        <p class="mt-1 text-base font-bold text-emerald-800 dark:text-emerald-300">Forest Green &amp; Ivory Warmth</p>
-                        <p class="mt-1 text-xs text-text-muted">Memberikan rasa tenang, prestisius, dan fokus akademis tanpa rasa lelah pada mata.</p>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 

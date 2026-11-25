@@ -403,9 +403,11 @@
                     </a>
                 </div>
             @else
-                <div class="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 lg:grid-cols-5 sm:gap-x-5">
+                <div class="flex flex-wrap justify-center gap-x-4 gap-y-7 sm:gap-x-5">
                     @foreach ($physicalBooks as $book)
-                        <x-book-card :book="$book" />
+                        <div class="w-[calc(50%-0.6rem)] sm:w-[calc(33.333%-0.9rem)] lg:w-[calc(20%-1.1rem)] min-w-[150px] max-w-[240px] flex">
+                            <x-book-card :book="$book" />
+                        </div>
                     @endforeach
                 </div>
 
@@ -448,9 +450,11 @@
                     </a>
                 </div>
             @else
-                <div class="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 lg:grid-cols-5 sm:gap-x-5">
+                <div class="flex flex-wrap justify-center gap-x-4 gap-y-7 sm:gap-x-5">
                     @foreach ($ebooks as $book)
-                        <x-book-card :book="$book" />
+                        <div class="w-[calc(50%-0.6rem)] sm:w-[calc(33.333%-0.9rem)] lg:w-[calc(20%-1.1rem)] min-w-[150px] max-w-[240px] flex">
+                            <x-book-card :book="$book" />
+                        </div>
                     @endforeach
                 </div>
 

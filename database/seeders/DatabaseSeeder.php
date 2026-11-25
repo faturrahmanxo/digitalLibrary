@@ -50,6 +50,77 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        // 3 Akun untuk masing-masing role: Admin, Petugas, Anggota (Fatur, Genbi, Damar) dengan domain @gmail.com
+        $personNames = ['Fatur', 'Genbi', 'Damar'];
+        $roleMap = [
+            'admin' => User::ROLE_ADMIN,
+            'petugas' => User::ROLE_PETUGAS,
+            'anggota' => User::ROLE_ANGGOTA,
+        ];
+
+        foreach ($roleMap as $roleKey => $roleValue) {
+            foreach ($personNames as $idx => $pName) {
+                $email = strtolower($pName).'.'.$roleKey.'@gmail.com';
+                $username = strtolower($pName).'_'.$roleKey;
+
+                User::updateOrCreate(
+                    ['email' => $email],
+                    [
+                        'name' => $pName,
+                        'username' => $username,
+                        'password' => Hash::make('password123'),
+                        'role' => $roleValue,
+                        'email_verified_at' => now(),
+                    ]
+                );
+
+                if ($roleValue === User::ROLE_ANGGOTA) {
+                    $code = sprintf('AGT-%s%02d', strtoupper(substr($pName, 0, 3)), $idx + 1);
+                    Member::firstOrCreate(
+                        ['email' => $email],
+                        [
+                            'member_code' => $code,
+                            'name' => $pName,
+                            'phone' => '0812'.sprintf('%08d', 11110000 + ($idx * 100)),
+                            'address' => 'Jl. Litera Kampus No. '.($idx + 1),
+                        ]
+                    );
+                }
+            }
+        }
+
+        // Akun langsung @gmail.com (fatur@gmail.com, genbi@gmail.com, damar@gmail.com)
+        $directAccounts = [
+            ['name' => 'Fatur', 'email' => 'fatur@gmail.com', 'username' => 'fatur_id', 'role' => User::ROLE_ADMIN],
+            ['name' => 'Genbi', 'email' => 'genbi@gmail.com', 'username' => 'genbi_id', 'role' => User::ROLE_PETUGAS],
+            ['name' => 'Damar', 'email' => 'damar@gmail.com', 'username' => 'damar_id', 'role' => User::ROLE_ANGGOTA],
+        ];
+
+        foreach ($directAccounts as $idx => $dAcc) {
+            User::updateOrCreate(
+                ['email' => $dAcc['email']],
+                [
+                    'name' => $dAcc['name'],
+                    'username' => $dAcc['username'],
+                    'password' => Hash::make('password123'),
+                    'role' => $dAcc['role'],
+                    'email_verified_at' => now(),
+                ]
+            );
+
+            if ($dAcc['role'] === User::ROLE_ANGGOTA) {
+                Member::firstOrCreate(
+                    ['email' => $dAcc['email']],
+                    [
+                        'member_code' => 'AGT-DMR99',
+                        'name' => $dAcc['name'],
+                        'phone' => '081299998888',
+                        'address' => 'Jl. Litera Kampus No. 99',
+                    ]
+                );
+            }
+        }
+
         $memberAlya = Member::firstOrCreate(
             ['member_code' => 'AGT-00042'],
             [

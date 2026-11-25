@@ -39,8 +39,8 @@
 @endphp
 
 <a
+    {{ $attributes->merge(['class' => 'group card-interactive bg-surface rounded-2xl border border-line p-3.5 sm:p-4 shadow-xs hover:border-brand-400 flex flex-col justify-between transition-all duration-200 hover:shadow-md hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus cursor-pointer w-full']) }}
     href="{{ $href }}"
-    class="group card-interactive bg-surface rounded-2xl border border-line p-3.5 sm:p-4 shadow-xs hover:border-brand-400 flex flex-col justify-between transition-all duration-200 hover:shadow-md hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus cursor-pointer"
     title="{{ $book->title }}"
 >
     <div>
