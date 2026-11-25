@@ -40,85 +40,81 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $anggota = User::updateOrCreate(
-            ['email' => 'anggota@perpustakaan.local'],
-            [
-                'name' => 'Dimas Nugroho (Anggota)',
-                'password' => Hash::make('password123'),
-                'role' => User::ROLE_ANGGOTA,
-                'email_verified_at' => now(),
-            ]
-        );
+        // Bersihkan seluruh akun anggota dummy/lama di database agar daftar anggota bersih
+        User::withTrashed()->whereIn('email', [
+            'anggota@perpustakaan.local',
+            'fatur@perpustakan.local',
+            'budi@perpustakaan.local',
+            'dono@gmail.com',
+            'fatur.anggota@gmail.com',
+            'genbi.anggota@gmail.com',
+            'damar.anggota@gmail.com',
+        ])->forceDelete();
 
-        // 3 Akun untuk masing-masing role: Admin, Petugas, Anggota (Fatur, Genbi, Damar) dengan domain @gmail.com
-        $personNames = ['Fatur', 'Genbi', 'Damar'];
-        $roleMap = [
+        Member::whereIn('email', [
+            'anggota@perpustakaan.local',
+            'fatur@perpustakan.local',
+            'budi@perpustakaan.local',
+            'dono@gmail.com',
+            'fatur.anggota@gmail.com',
+            'genbi.anggota@gmail.com',
+            'damar.anggota@gmail.com',
+            'damar@gmail.com',
+        ])->forceDelete();
+
+        // 3 Akun untuk Admin & Petugas (Fatur, Genbi, Damar)
+        $staffRoles = [
             'admin' => User::ROLE_ADMIN,
             'petugas' => User::ROLE_PETUGAS,
-            'anggota' => User::ROLE_ANGGOTA,
         ];
+        $staffNames = ['Fatur', 'Genbi', 'Damar'];
 
-        foreach ($roleMap as $roleKey => $roleValue) {
-            foreach ($personNames as $idx => $pName) {
-                $email = strtolower($pName).'.'.$roleKey.'@gmail.com';
-                $username = strtolower($pName).'_'.$roleKey;
+        foreach ($staffRoles as $roleKey => $roleValue) {
+            foreach ($staffNames as $sName) {
+                $email = strtolower($sName).'.'.$roleKey.'@gmail.com';
+                $username = strtolower($sName).'_'.$roleKey;
 
                 User::updateOrCreate(
                     ['email' => $email],
                     [
-                        'name' => $pName,
+                        'name' => $sName,
                         'username' => $username,
                         'password' => Hash::make('password123'),
                         'role' => $roleValue,
                         'email_verified_at' => now(),
                     ]
                 );
-
-                if ($roleValue === User::ROLE_ANGGOTA) {
-                    $code = sprintf('AGT-%s%02d', strtoupper(substr($pName, 0, 3)), $idx + 1);
-                    Member::firstOrCreate(
-                        ['email' => $email],
-                        [
-                            'member_code' => $code,
-                            'name' => $pName,
-                            'phone' => '0812'.sprintf('%08d', 11110000 + ($idx * 100)),
-                            'address' => 'Jl. Litera Kampus No. '.($idx + 1),
-                        ]
-                    );
-                }
             }
         }
 
-        // Akun langsung @gmail.com (fatur@gmail.com, genbi@gmail.com, damar@gmail.com)
-        $directAccounts = [
-            ['name' => 'Fatur', 'email' => 'fatur@gmail.com', 'username' => 'fatur_id', 'role' => User::ROLE_ADMIN],
-            ['name' => 'Genbi', 'email' => 'genbi@gmail.com', 'username' => 'genbi_id', 'role' => User::ROLE_PETUGAS],
-            ['name' => 'Damar', 'email' => 'damar@gmail.com', 'username' => 'damar_id', 'role' => User::ROLE_ANGGOTA],
+        // Tepat 3 akun Anggota resmi: Fatur, Genbi, Damar (@gmail.com)
+        $memberAccounts = [
+            ['name' => 'Fatur', 'email' => 'fatur@gmail.com', 'username' => 'fatur_member', 'code' => 'AGT-FAT01'],
+            ['name' => 'Genbi', 'email' => 'genbi@gmail.com', 'username' => 'genbi_member', 'code' => 'AGT-GEN02'],
+            ['name' => 'Damar', 'email' => 'damar@gmail.com', 'username' => 'damar_member', 'code' => 'AGT-DAM03'],
         ];
 
-        foreach ($directAccounts as $idx => $dAcc) {
+        foreach ($memberAccounts as $idx => $mAcc) {
             User::updateOrCreate(
-                ['email' => $dAcc['email']],
+                ['email' => $mAcc['email']],
                 [
-                    'name' => $dAcc['name'],
-                    'username' => $dAcc['username'],
+                    'name' => $mAcc['name'],
+                    'username' => $mAcc['username'],
                     'password' => Hash::make('password123'),
-                    'role' => $dAcc['role'],
+                    'role' => User::ROLE_ANGGOTA,
                     'email_verified_at' => now(),
                 ]
             );
 
-            if ($dAcc['role'] === User::ROLE_ANGGOTA) {
-                Member::firstOrCreate(
-                    ['email' => $dAcc['email']],
-                    [
-                        'member_code' => 'AGT-DMR99',
-                        'name' => $dAcc['name'],
-                        'phone' => '081299998888',
-                        'address' => 'Jl. Litera Kampus No. 99',
-                    ]
-                );
-            }
+            Member::updateOrCreate(
+                ['email' => $mAcc['email']],
+                [
+                    'member_code' => $mAcc['code'],
+                    'name' => $mAcc['name'],
+                    'phone' => '0812'.sprintf('%08d', 11112222 + ($idx * 111)),
+                    'address' => 'Jl. Litera Kampus No. '.($idx + 1),
+                ]
+            );
         }
 
         $memberAlya = Member::firstOrCreate(
@@ -148,16 +144,6 @@ class DatabaseSeeder extends Seeder
                 'email' => 'citra.lestari@example.test',
                 'phone' => '081200000044',
                 'address' => 'Jl. Diponegoro No. 8, Surabaya (Data Fiktif)',
-            ]
-        );
-
-        $memberDimas = Member::firstOrCreate(
-            ['member_code' => 'AGT-00045'],
-            [
-                'name' => 'Dimas Nugroho',
-                'email' => 'anggota@perpustakaan.local',
-                'phone' => '081200000045',
-                'address' => 'Jl. Sudirman No. 21, Jakarta (Data Fiktif)',
             ]
         );
 

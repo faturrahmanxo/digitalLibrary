@@ -119,12 +119,12 @@ class AdminNavbarGlassmorphismAndAccountSettingsTest extends TestCase
         $appearanceResponse->assertDontSee('Design System Litera');
     }
 
-    public function test_seeder_creates_3_accounts_per_role_with_gmail_domain(): void
+    public function test_seeder_creates_clean_user_accounts_per_role(): void
     {
         $names = ['fatur', 'genbi', 'damar'];
-        $roles = [User::ROLE_ADMIN, User::ROLE_PETUGAS, User::ROLE_ANGGOTA];
+        $staffRoles = [User::ROLE_ADMIN, User::ROLE_PETUGAS];
 
-        foreach ($roles as $role) {
+        foreach ($staffRoles as $role) {
             foreach ($names as $name) {
                 $email = "{$name}.{$role}@gmail.com";
                 $this->assertDatabaseHas('users', [
@@ -134,9 +134,15 @@ class AdminNavbarGlassmorphismAndAccountSettingsTest extends TestCase
             }
         }
 
-        $this->assertDatabaseHas('users', ['email' => 'fatur@gmail.com', 'role' => User::ROLE_ADMIN]);
-        $this->assertDatabaseHas('users', ['email' => 'genbi@gmail.com', 'role' => User::ROLE_PETUGAS]);
+        // Anggota hanya 3 akun: fatur, genbi, damar (@gmail.com)
+        $this->assertDatabaseHas('users', ['email' => 'fatur@gmail.com', 'role' => User::ROLE_ANGGOTA]);
+        $this->assertDatabaseHas('users', ['email' => 'genbi@gmail.com', 'role' => User::ROLE_ANGGOTA]);
         $this->assertDatabaseHas('users', ['email' => 'damar@gmail.com', 'role' => User::ROLE_ANGGOTA]);
+
+        // Anggota dummy dibersihkan
+        $this->assertDatabaseMissing('users', ['email' => 'anggota@perpustakaan.local']);
+        $this->assertDatabaseMissing('users', ['email' => 'dono@gmail.com']);
+        $this->assertSame(3, User::where('role', User::ROLE_ANGGOTA)->count());
     }
 
     public function test_landing_page_book_sections_use_centered_layout(): void
