@@ -86,7 +86,8 @@ class AdminNavbarGlassmorphismAndAccountSettingsTest extends TestCase
         // 2. Profile Page
         $profileResponse = $this->actingAs($admin)->get(route('settings.profile'));
         $profileResponse->assertOk();
-        $profileResponse->assertSee('tab-btn-profil', false);
+        $profileResponse->assertSee('Pengaturan Profil');
+        $profileResponse->assertDontSee('tab-btn-profil');
         $profileResponse->assertSee('panel-profil', false);
         $profileResponse->assertSee($admin->name);
         $profileResponse->assertSee($admin->email);
@@ -96,7 +97,8 @@ class AdminNavbarGlassmorphismAndAccountSettingsTest extends TestCase
         // 3. Security Page
         $securityResponse = $this->actingAs($admin)->get(route('settings.security'));
         $securityResponse->assertOk();
-        $securityResponse->assertSee('tab-btn-keamanan', false);
+        $securityResponse->assertSee('Pengaturan Keamanan');
+        $securityResponse->assertDontSee('tab-btn-keamanan');
         $securityResponse->assertSee('panel-keamanan', false);
         $securityResponse->assertSee('action="'.route('profile.password.update').'"', false);
         $securityResponse->assertSee('current_password');
@@ -104,7 +106,8 @@ class AdminNavbarGlassmorphismAndAccountSettingsTest extends TestCase
         // 4. Appearance Page
         $appearanceResponse = $this->actingAs($admin)->get(route('settings.appearance'));
         $appearanceResponse->assertOk();
-        $appearanceResponse->assertSee('tab-btn-tampilan', false);
+        $appearanceResponse->assertSee('Pengaturan Tampilan');
+        $appearanceResponse->assertDontSee('tab-btn-tampilan');
         $appearanceResponse->assertSee('panel-tampilan', false);
         $appearanceResponse->assertSee('Mode Terang');
         $appearanceResponse->assertSee('Mode Gelap');
